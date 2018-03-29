@@ -1,0 +1,36 @@
+html
+    head
+        title() Rademade perceptive
+        style
+            | .week-info {float:left; border: 1px solid black;}
+            | .is-current h3 {color:red}
+    body
+        h1 Rademade perceptive
+        div
+            each weekData in weeksData
+                div.week-info(class=weekData.isCurrentWeek() ? "is-current" : "")
+                    h3 Week №#{weekData.getWeekNumber()}
+                    div #{weekData.startDate.format('ll')} – #{weekData.endDate.format('ll')}
+
+                    div.utilization
+                        span Company health:
+                        ul
+                            li Total capacity – #{weekData.totalCapacityHours()}h.
+                            li Planned – #{weekData.plannedHours()}h. [#{weekData.plannedPercent()}]%
+                            li Billed – #{weekData.billedHours()}h. [#{weekData.billablePercent()}]%
+                            li Internal process #{weekData.internalProcessHours()}h. [#{weekData.internalProcessPercent()}]%
+                            li Vacations #{weekData.vacationHours()}h. [#{weekData.vacationPercent()}]%
+                            li Bench #{weekData.benchHours()}h. [#{weekData.benchPercent()}]%
+
+                    div.departments
+                        span Departments health:
+                            ul
+                                li (?)
+                            // - List and % / Add free hours
+
+                    div.rotation
+                        span Rotation teammates:
+                        ul
+                            each member in weekData.getBenchMembers()
+                                li #{member.getName()} – #{member.getBenchHours()} h.
+
