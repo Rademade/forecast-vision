@@ -3,7 +3,7 @@ const { DataScraping } = require('./data-scraping');
 const { WeekReportData } = require('./week-report-data');
 
 const DAYS_IN_WEEK = 7;
-const DISPLAY_WEEKS = 6;
+const DISPLAY_WEEKS = 5;
 const START_WEEKS_AGO = 1;
 
 class Report {
