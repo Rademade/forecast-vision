@@ -17,9 +17,6 @@ class WeekReportMember {
     getBenchHours() {
         return Math.round(this.getBenchMinutes() / 60);
     }
-    isRotation() {
-        return this.getBenchHours() > 1
-    }
 }
 
 exports.WeekReportMember = WeekReportMember;

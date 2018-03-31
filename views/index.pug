@@ -29,7 +29,13 @@ html
                             // - List and % / Add free hours
 
                     div.rotation
-                        span Rotation teammates:
+                        span Rotation. Bad planing:
+                        ul
+                            each member in weekData.getBadPlaningMembers()
+                                li #{member.getName()} – #{member.getBenchHours()} h.
+
+                    div.rotation
+                        span Rotation. Need new project:
                         ul
                             each member in weekData.getBenchMembers()
                                 li #{member.getName()} – #{member.getBenchHours()} h.

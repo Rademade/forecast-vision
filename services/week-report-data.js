@@ -74,9 +74,15 @@ class WeekReportData {
         return Math.round(number * 10000) / 100
     }
 
+    getBadPlaningMembers() {
+        return this.members.filter((member) => {
+            return 1 < member.getBenchHours()&& member.getBenchHours() <= 14;
+        });
+    }
+
     getBenchMembers() {
         return this.members.filter((member) => {
-            return member.isRotation();
+            return 15 <= member.getBenchHours();
         });
     }
 
