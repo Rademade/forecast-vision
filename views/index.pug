@@ -1,18 +1,26 @@
 html
     head
-        title() Rademade perceptive
+        title() Rademade perspective
         style
-            | .week-info {float:left; border: 1px solid black;}
+            |
+            | .week-info {vertical-align: text-top; padding: 5px}
             | .is-current h3 {color:red}
     body
         h1 Rademade perspective
-        div
-            each weekData in weeksData
-                div.week-info(class=weekData.isCurrentWeek() ? "is-current" : "")
-                    h3 Week №#{weekData.getWeekNumber()}
-                    div #{weekData.startDate.format('ll')} – #{weekData.endDate.format('ll')}
 
-                    div.utilization
+        table(border="1")
+            tr
+                each weekData in weeksData
+                    td.week-info(class=weekData.isCurrentWeek() ? "is-current" : "")
+                        h3 Week №#{weekData.getWeekNumber()}
+            tr
+                each weekData in weeksData
+                    td.week-info()
+                        div #{weekData.startDate.format('ll')} – #{weekData.endDate.format('ll')}
+
+            tr
+                each weekData in weeksData
+                    td.week-info.utilization
                         span Company health:
                         ul
                             li Total capacity – #{weekData.totalCapacityHours()}h.
@@ -22,21 +30,29 @@ html
                             li Vacations #{weekData.vacationHours()}h. [#{weekData.vacationPercent()}]%
                             li Bench #{weekData.benchHours()}h. [#{weekData.benchPercent()}]%
 
-                    div.departments
-                        span Departments health:
-                            ul
-                                li (?)
-                            // - List and % / Add free hours
-
-                    div.rotation
-                        span Rotation. Bad planing:
+            tr
+                each weekData in weeksData
+                    td.week-info.rotation
+                        span Rotation. Bad planing.
+                        span Total – #{weekData.getBadPlaningMembersHours()}h.
                         ul
                             each member in weekData.getBadPlaningMembers()
                                 li #{member.getName()} – #{member.getBenchHours()} h.
 
-                    div.rotation
-                        span Rotation. Need new project:
+            tr
+                each weekData in weeksData
+                    td.week-info.rotation
+                        span Rotation. Bench.
+                        span Total – #{weekData.getBenchMembersHours()}h.
                         ul
                             each member in weekData.getBenchMembers()
                                 li #{member.getName()} – #{member.getBenchHours()} h.
+
+            tr
+                each weekData in weeksData
+                    td.week-info.departments
+                        span Departments health:
+                            ul
+                                li (?)
+                            // - List and % / Add free hours
 

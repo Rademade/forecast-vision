@@ -80,10 +80,22 @@ class WeekReportData {
         });
     }
 
+    getBadPlaningMembersHours() {
+        return this.getBadPlaningMembers().reduce((a, b) => {
+            return a + b.getBenchHours();
+        }, 0);
+    }
+
     getBenchMembers() {
         return this.members.filter((member) => {
             return 15 <= member.getBenchHours();
         });
+    }
+
+    getBenchMembersHours() {
+        return this.getBenchMembers().reduce((a, b) => {
+            return a + b.getBenchHours();
+        }, 0);
     }
 
 }
