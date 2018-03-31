@@ -23,7 +23,6 @@ class ClientInitialize {
     }
     setCookieLink() {
         return new ApolloLink((operation, forward) => {
-            // console.log(this.cookies)
             operation.setContext({
                 headers: {
                     cookie: this.cookies.join('')

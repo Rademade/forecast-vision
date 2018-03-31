@@ -3,13 +3,18 @@ const { DataScraping } = require('./data-scraping');
 const { WeekReportData } = require('./week-report-data');
 
 const DAYS_IN_WEEK = 7;
-const DISPLAY_WEEKS = 7;
-const START_WEEKS_AGO = 2;
+const DEFAULT_DISPLAY_WEEKS = 7;
+const DEFAULT_START_WEEKS_AGO = 2;
 
 class Report {
 
-    constructor() {
+    constructor(
+        displayWeeks = DEFAULT_DISPLAY_WEEKS,
+        preWeeks = DEFAULT_START_WEEKS_AGO
+    ) {
         this.scraper = new DataScraping();
+        this.displayWeeks = displayWeeks;
+        this.preWeeks = preWeeks;
     }
 
     /**
@@ -38,14 +43,14 @@ class Report {
 
     load(loadReadyCallback) {
         this.scraper.ready((scrapingMethods) => {
-            let startDate = moment().startOf('week').subtract(DAYS_IN_WEEK * (START_WEEKS_AGO), 'days');
+            let startDate = moment().startOf('week').subtract(DAYS_IN_WEEK * (this.preWeeks), 'days');
             let weeksListData = [];
 
             this.loadWeeksData(
                 scrapingMethods,
                 weeksListData,
                 startDate,
-                startDate.clone().add(DAYS_IN_WEEK * (DISPLAY_WEEKS - 1), 'd'),
+                startDate.clone().add(DAYS_IN_WEEK * (this.displayWeeks - 1), 'd'),
                 (() => {
                     console.log('All data loaded. Weeks count ' + weeksListData.length);
                     loadReadyCallback(weeksListData)

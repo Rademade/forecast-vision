@@ -34,18 +34,18 @@ html
                 each weekData in weeksData
                     td.week-info.rotation
                         span Rotation. Bad planing.
-                        span Total – #{weekData.getBadPlaningMembersHours()}h.
+                        span Total – #{weekData.getMembersList().getBadPlaningHours()}h.
                         ul
-                            each member in weekData.getBadPlaningMembers()
+                            each member in weekData.getMembersList().getBadPlaningMembers()
                                 li #{member.getName()} – #{member.getBenchHours()} h.
 
             tr
                 each weekData in weeksData
                     td.week-info.rotation
                         span Rotation. Bench.
-                        span Total – #{weekData.getBenchMembersHours()}h.
+                        span Total – #{weekData.getMembersList().getBenchHours()}h.
                         ul
-                            each member in weekData.getBenchMembers()
+                            each member in weekData.getMembersList().getBenchMembers()
                                 li #{member.getName()} – #{member.getBenchHours()} h.
 
             tr
@@ -53,6 +53,11 @@ html
                     td.week-info.departments
                         span Departments health:
                             ul
-                                li (?)
-                            // - List and % / Add free hours
+                                each department in weekData.getDepartmentsList()
+                                    li(
+                                        title='Department capacity: ' + department.getLoadHours() + 'h. / ' + department.getAvailableHours() + 'h.'
+                                    )
+                                        span #{department.getName()}
+                                        span –
+                                        span #{department.getLoadPercent()}%
 

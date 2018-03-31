@@ -1,5 +1,9 @@
 const moment = require('moment');
-const { WeekReportMember } = require('./week-report-member');
+
+const { WeekReportDepartment } = require('./week-report-department');
+const { WeekReportMembersList } = require('./week-report-members-list');
+
+const { TimeRound } = require('./time-round');
 
 class WeekReportData {
 
@@ -7,9 +11,9 @@ class WeekReportData {
         this.startDate = startDate;
         this.endDate = endDate;
         this.weekData = weekData.data.viewer.component.unitilization;
-        this.members = this.weekData.utilizationListData.map((memeberData) => {
-            return new WeekReportMember(memeberData);
-        });
+        this.departments = null;
+        this.membersList = WeekReportMembersList.buildMembers(this.weekData.utilizationListData);
+        this.departments = WeekReportDepartment.buildDepartments(this.membersList);
     }
 
     getWeekNumber() {
@@ -20,16 +24,24 @@ class WeekReportData {
         return this.getWeekNumber() === moment().startOf('week').isoWeek();
     }
 
+    getMembersList() {
+        return this.membersList;
+    }
+
+    getDepartmentsList() {
+        return this.departments;
+    }
+
     totalCapacityHours() {
-        return Math.round( this.weekData.availableMinutesTotal / 60 );
+        return TimeRound.minutesToHours( this.weekData.availableMinutesTotal );
     }
 
     plannedHours() {
-        return Math.round( this.weekData.scheduledMinutesTotal / 60 );
+        return TimeRound.minutesToHours( this.weekData.scheduledMinutesTotal );
     }
 
     plannedPercent() {
-        return this._round(this.plannedHours() / this.totalCapacityHours());
+        return TimeRound.roundPercents(this.plannedHours() / this.totalCapacityHours());
     }
 
     billedHours() {
@@ -63,39 +75,11 @@ class WeekReportData {
     }
 
     benchHours() {
-        return Math.round( this.totalCapacityHours() - this.plannedHours() );
+        return TimeRound.roundHours( this.totalCapacityHours() - this.plannedHours() );
     }
 
     benchPercent() {
-        return this._round(this.benchHours() / this.totalCapacityHours());
-    }
-
-    _round(number) {
-        return Math.round(number * 10000) / 100
-    }
-
-    getBadPlaningMembers() {
-        return this.members.filter((member) => {
-            return 1 < member.getBenchHours()&& member.getBenchHours() <= 14;
-        });
-    }
-
-    getBadPlaningMembersHours() {
-        return this.getBadPlaningMembers().reduce((a, b) => {
-            return a + b.getBenchHours();
-        }, 0);
-    }
-
-    getBenchMembers() {
-        return this.members.filter((member) => {
-            return 15 <= member.getBenchHours();
-        });
-    }
-
-    getBenchMembersHours() {
-        return this.getBenchMembers().reduce((a, b) => {
-            return a + b.getBenchHours();
-        }, 0);
+        return TimeRound.roundPercents(this.benchHours() / this.totalCapacityHours());
     }
 
 }
