@@ -8,6 +8,7 @@ class DataScraping {
         this.scrapingMethods = new DataScrapingMethods(this.client);
     }
     auth() {
+        // TODO extract ENV variable
         let loginQuery = gql`mutation Login_mutation {
             login(input: {
                 clientMutationId:"0",

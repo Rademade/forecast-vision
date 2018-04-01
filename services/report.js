@@ -28,10 +28,10 @@ class Report {
      * @param {Function} loadedWeeksCallback
      */
     loadWeeksData(api, resultData, loadDate, lastDate, loadedWeeksCallback) {
-        console.log('Called loadWeeksData ' + loadDate.format("dddd, MMMM Do YYYY"));
+        console.log('Called loadWeeksData(). Date: ' + loadDate.format("dddd, MMMM Do YYYY"));
 
-        let startDate  = loadDate.clone();
-        let endDate = loadDate.clone().add(DAYS_IN_WEEK, 'd');
+        const startDate  = loadDate.clone();
+        const endDate = loadDate.clone().add(DAYS_IN_WEEK, 'd');
 
         api.getUtilization(startDate, endDate).then((weekData) => {
             resultData.push(new WeekReportData(startDate, endDate, weekData, this.allocationReport));

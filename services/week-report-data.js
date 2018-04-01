@@ -61,7 +61,7 @@ class WeekReportData {
     }
 
     totalCapacityHours() {
-        // This logic support over-plan hours
+        // This logic support over-planing hours
         return TimeRound.roundHours( this.plannedHours() + this.benchHours() );
     }
 
