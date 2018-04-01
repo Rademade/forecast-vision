@@ -19,14 +19,9 @@ class DataScrapingMethods {
             console.error(error)
         });
     }
-    getProjects() {
+    getScheduleAllocations() {
         return this.client.query({
-            query: projectsQuery
-        })
-    }
-    getUsers() {
-        return this.client.query({
-            query: ''
+            query: scheduleQuery
         })
     }
 
@@ -58,6 +53,60 @@ query Component_relay_renderer($dateRange: String) {
           scheduledNonProjectTimeMinutes
           scheduledProjectTimeMinutes
           reported
+        }
+      }
+    }
+  }
+}`;
+
+let scheduleQuery = gql`
+query Viewer_queries {
+  viewer {
+    component: component(name: "scheduling")
+    company @include(if: true) {
+      allocations: allocations(first: 100000) {
+        edges {
+          node {
+            id
+            monday
+            tuesday
+            wednesday
+            thursday
+            friday
+            saturday
+            sunday
+            startYear
+            startMonth
+            startDay
+            endYear
+            endMonth
+            endDay
+            description
+            project {
+              id
+              name
+              companyProjectId
+              billable
+            }
+            person {
+              id
+              userType
+              firstName
+              lastName
+              monday
+              tuesday
+              wednesday
+              thursday
+              friday
+              saturday
+              sunday
+            }
+          }
+          cursor
+        }
+        pageInfo {
+          hasNextPage
+          hasPreviousPage
         }
       }
     }

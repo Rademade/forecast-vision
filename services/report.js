@@ -1,5 +1,6 @@
 const moment = require('moment');
 const { DataScraping } = require('./data-scraping');
+const { ReportAllocationList } = require('./report-allocation-list');
 const { WeekReportData } = require('./week-report-data');
 
 const DAYS_IN_WEEK = 7;
@@ -31,7 +32,7 @@ class Report {
         let endDate = loadDate.clone().add(DAYS_IN_WEEK, 'd');
 
         scrapingMethods.getUtilization(startDate, endDate).then((weekData) => {
-            resultData.push(new WeekReportData(startDate, endDate, weekData));
+            resultData.push(new WeekReportData(startDate, endDate, weekData, this.allocationReport));
 
             if (loadDate < lastDate) {
                 this.loadWeeksData(scrapingMethods, resultData, loadDate.add(DAYS_IN_WEEK, 'd'), lastDate, loadWeekCallback);
@@ -41,22 +42,32 @@ class Report {
         });
     }
 
+    /**
+     * @param {DataScrapingMethods} scrapingMethods
+     * @param {Function} loadReadyCallback
+     */
+    startWeeksLoading(scrapingMethods, loadReadyCallback) {
+        let startDate = moment().startOf('week').subtract(DAYS_IN_WEEK * (this.preWeeks), 'days');
+        let weeksListData = [];
+
+        this.loadWeeksData(
+            scrapingMethods,
+            weeksListData,
+            startDate,
+            startDate.clone().add(DAYS_IN_WEEK * (this.displayWeeks - 1), 'd'),
+            (() => {
+                console.log('All data loaded. Weeks count ' + weeksListData.length);
+                loadReadyCallback(weeksListData)
+            })
+        );
+    }
+
     load(loadReadyCallback) {
         this.scraper.ready((scrapingMethods) => {
-            let startDate = moment().startOf('week').subtract(DAYS_IN_WEEK * (this.preWeeks), 'days');
-            let weeksListData = [];
-
-            this.loadWeeksData(
-                scrapingMethods,
-                weeksListData,
-                startDate,
-                startDate.clone().add(DAYS_IN_WEEK * (this.displayWeeks - 1), 'd'),
-                (() => {
-                    console.log('All data loaded. Weeks count ' + weeksListData.length);
-                    loadReadyCallback(weeksListData)
-                })
-            );
-
+            scrapingMethods.getScheduleAllocations().then((allocationData) => {
+                this.allocationReport = new ReportAllocationList(allocationData);
+                this.startWeeksLoading(scrapingMethods, loadReadyCallback);
+            });
         });
     }
 

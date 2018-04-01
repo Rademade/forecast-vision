@@ -51,13 +51,14 @@ html
             tr
                 each weekData in weeksData
                     td.week-info.departments
-                        span Departments health:
+                        span Departments plan:
                             ul
                                 each department in weekData.getDepartmentsList()
                                     li(
-                                        title='Department capacity: ' + department.getLoadHours() + 'h. / ' + department.getAvailableHours() + 'h.'
+                                    title='Department capacity: ' + department.getLoadHours() + 'h. / ' + department.getAvailableHours() + 'h.'
                                     )
                                         span #{department.getName()}
                                         span –
                                         span #{department.getLoadPercent()}%
+
 

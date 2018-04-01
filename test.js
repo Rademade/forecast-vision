@@ -8,6 +8,10 @@ const { DataScraping } = require('./services/data-scraping');
 //     })
 // });
 
-(new Report(1, 0)).load((weeksData) => {
-    console.log(weeksData[0].getDepartmentsList()['Developer'].getLoadHours())
+// (new Report(1, 0)).load((weeksData) => {
+//     console.log(weeksData[0].getDepartmentsList()['Developer'].getLoadHours())
+// });
+
+(new Report(3, 2)).load((weeksData) => {
+    console.log(weeksData[0].billedHours());
 });
