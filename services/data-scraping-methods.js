@@ -22,7 +22,9 @@ class DataScrapingMethods {
     getScheduleAllocations() {
         return this.client.query({
             query: scheduleQuery
-        })
+        }).catch(function(error){
+            console.error(error)
+        });
     }
 
 }
@@ -107,21 +109,6 @@ query Viewer_queries {
         pageInfo {
           hasNextPage
           hasPreviousPage
-        }
-      }
-    }
-  }
-}`;
-
-let projectsQuery = gql`
-query Viewer_queries {
-  viewer {
-    id
-    projects: projects(first: 100000) {
-      edges {
-        node {
-          id
-          name
         }
       }
     }

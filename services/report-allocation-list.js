@@ -7,6 +7,12 @@ const moment = extendMoment(Moment);
 
 class ReportAllocationList {
 
+    /**
+     * Data loaded from API scheduleQuery
+     * https://app.forecast.it/scheduling
+     *
+     * @param allocationData
+     */
     constructor(allocationData) {
         this.allocations = allocationData.data.viewer.company.allocations.edges.map((allocation) => {
             return new ReportAllocation(allocation.node);
@@ -57,30 +63,11 @@ class ReportAllocationList {
      */
     matchAllocations(selectedRange, matchCallback) {
         this.allocations.forEach((allocation) => {
-            let matchedRange = ReportAllocationList._findMatchedRange(selectedRange, allocation.getRange() );
+            let matchedRange = selectedRange.intersect(allocation.getRange());
             if (matchedRange) {
                 matchCallback(allocation, matchedRange);
             }
         });
-    }
-
-    static _findMatchedRange(range1, range2) {
-        const start = range1.start.valueOf();
-        const end = range1.end.valueOf();
-        const otherStart = range2.start.valueOf();
-        const otherEnd = range2.end.valueOf();
-
-        // find later start date
-        let matchedStart = (start <= otherStart) ? otherStart : start;
-        // find early end date
-        let matchedEnd = (end <= otherEnd) ? end : otherEnd;
-
-        // Check is range overlap
-        if (matchedStart <= matchedEnd && matchedStart <= otherEnd && matchedStart <= end) {
-            return moment.range(matchedStart, matchedEnd);
-        } else {
-            return false;
-        }
     }
 
 }

@@ -6,7 +6,6 @@ const moment = extendMoment(Moment);
 const VACATION_PORJECT_ID = 21;
 
 class ReportAllocation {
-
     constructor(allocationData) {
         this.allocationData = allocationData;
         this.startDate = moment(new Date(allocationData.startYear, allocationData.startMonth - 1, allocationData.startDay));
@@ -48,6 +47,7 @@ class ReportAllocation {
      * @param {DateRange} range
      */
     getMinutesByRange(range) {
+        // TODO check
         let days = 0;
         let start = range.start.clone();
 

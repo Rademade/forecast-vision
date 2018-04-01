@@ -13,45 +13,47 @@ class Report {
         displayWeeks = DEFAULT_DISPLAY_WEEKS,
         preWeeks = DEFAULT_START_WEEKS_AGO
     ) {
-        this.scraper = new DataScraping();
+        this.apiLoader = new DataScraping();
         this.displayWeeks = displayWeeks;
         this.preWeeks = preWeeks;
     }
 
     /**
-     * @param {DataScrapingMethods} scrapingMethods
+     * Utilization week loading. Recursion function
+     *
+     * @param {DataScrapingMethods} api
      * @param {Array} resultData
      * @param {moment} loadDate
      * @param {moment} lastDate
-     * @param {Function} loadWeekCallback
+     * @param {Function} loadedWeeksCallback
      */
-    loadWeeksData(scrapingMethods, resultData, loadDate, lastDate, loadWeekCallback) {
+    loadWeeksData(api, resultData, loadDate, lastDate, loadedWeeksCallback) {
         console.log('Called loadWeeksData ' + loadDate.format("dddd, MMMM Do YYYY"));
 
         let startDate  = loadDate.clone();
         let endDate = loadDate.clone().add(DAYS_IN_WEEK, 'd');
 
-        scrapingMethods.getUtilization(startDate, endDate).then((weekData) => {
+        api.getUtilization(startDate, endDate).then((weekData) => {
             resultData.push(new WeekReportData(startDate, endDate, weekData, this.allocationReport));
 
             if (loadDate < lastDate) {
-                this.loadWeeksData(scrapingMethods, resultData, loadDate.add(DAYS_IN_WEEK, 'd'), lastDate, loadWeekCallback);
+                this.loadWeeksData(api, resultData, loadDate.add(DAYS_IN_WEEK, 'd'), lastDate, loadedWeeksCallback);
             } else {
-                loadWeekCallback();
+                loadedWeeksCallback();
             }
         });
     }
 
     /**
-     * @param {DataScrapingMethods} scrapingMethods
+     * @param {DataScrapingMethods} api
      * @param {Function} loadReadyCallback
      */
-    startWeeksLoading(scrapingMethods, loadReadyCallback) {
+    startWeeksLoading(api, loadReadyCallback) {
         let startDate = moment().startOf('week').subtract(DAYS_IN_WEEK * (this.preWeeks), 'days');
         let weeksListData = [];
 
         this.loadWeeksData(
-            scrapingMethods,
+            api,
             weeksListData,
             startDate,
             startDate.clone().add(DAYS_IN_WEEK * (this.displayWeeks - 1), 'd'),
@@ -63,10 +65,10 @@ class Report {
     }
 
     load(loadReadyCallback) {
-        this.scraper.ready((scrapingMethods) => {
-            scrapingMethods.getScheduleAllocations().then((allocationData) => {
+        this.apiLoader.ready((api) => {
+            api.getScheduleAllocations().then((allocationData) => {
                 this.allocationReport = new ReportAllocationList(allocationData);
-                this.startWeeksLoading(scrapingMethods, loadReadyCallback);
+                this.startWeeksLoading(api, loadReadyCallback);
             });
         });
     }

@@ -39,6 +39,9 @@ class WeekReportData {
         return this.getWeekNumber() === moment().startOf('week').isoWeek();
     }
 
+    /**
+     * @returns {WeekReportMembersList}
+     */
     getMembersList() {
         return this.membersList;
     }
@@ -47,13 +50,26 @@ class WeekReportData {
         return this.departments;
     }
 
-    totalCapacityHours() {
+    totalCapacityHoursDefault() {
+        // Forecast default data
         return TimeRound.minutesToHours( this.weekData.availableMinutesTotal );
     }
 
-    plannedHours() {
-        // return this.allocationReport.getPlannedHours(this.getRange());
+    plannedHoursDefault() {
+        // Forecast default data
         return TimeRound.minutesToHours( this.weekData.scheduledMinutesTotal );
+    }
+
+    totalCapacityHours() {
+        // This logic support over-plan hours
+        return TimeRound.roundHours( this.plannedHours() + this.benchHours() );
+    }
+
+    plannedHours() {
+        if (!this.plannedHoursAmount) {
+            this.plannedHoursAmount = TimeRound.roundHours(this.allocationReport.getPlannedHours(this.getRange()) );
+        }
+        return this.plannedHoursAmount;
     }
 
     plannedPercent() {
@@ -85,7 +101,7 @@ class WeekReportData {
     }
 
     benchHours() {
-        return TimeRound.roundHours( this.totalCapacityHours() - this.plannedHours() );
+        return TimeRound.roundHours( this.getMembersList().getTotalAvailableHours() );
     }
 
     benchPercent() {

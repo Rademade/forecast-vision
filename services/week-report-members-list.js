@@ -1,6 +1,7 @@
 const { TimeRound } = require('./time-round');
 const { WeekReportMember } = require('./week-report-member');
 
+const MIN_HOURS = 1;
 const NEED_ROTATION_LIMIT = 14;
 
 class WeekReportMembersList {
@@ -33,9 +34,15 @@ class WeekReportMembersList {
         });
     }
 
+    getTotalAvailableMemebers() {
+        return this.members.filter((member) => {
+            return MIN_HOURS < member.getBenchHours();
+        });
+    }
+
     getBadPlaningMembers() {
         return this.members.filter((member) => {
-            return 1 < member.getBenchHours()&& member.getBenchHours() <= NEED_ROTATION_LIMIT;
+            return MIN_HOURS < member.getBenchHours()&& member.getBenchHours() <= NEED_ROTATION_LIMIT;
         });
     }
 
@@ -47,6 +54,12 @@ class WeekReportMembersList {
 
     getBenchHours() {
         return TimeRound.roundHours( this.getBenchMembers().reduce((a, b) => {
+            return a + b.getBenchHours();
+        }, 0) );
+    }
+
+    getTotalAvailableHours() {
+        return TimeRound.roundHours( this.getTotalAvailableMemebers().reduce((a, b) => {
             return a + b.getBenchHours();
         }, 0) );
     }
