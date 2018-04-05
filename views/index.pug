@@ -67,7 +67,7 @@ html
                 tr
                     each weekData in weeksData
                         td.week-info.departments
-                            span Projects plan. Billable – #{weekData.getProjectList().getBillableCount()}:
+                            span Projects. Billable – #{weekData.getProjectList().getBillableCount()}:
                                 ul
                                     each project in weekData.getProjectList().getSortedProjects()
                                         li(class=project.isBillable() ? "is-billable" : "is-non-billable")
