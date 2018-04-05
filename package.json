@@ -12,6 +12,7 @@
     "apollo-client-preset": "^1.0.8",
     "apollo-link-context": "^1.0.7",
     "express": "^4.16.3",
+    "express-basic-auth": "^1.1.4",
     "express-reload": "^1.1.0",
     "graphql": "^0.13.2",
     "graphql-client": "^2.0.1",
