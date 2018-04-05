@@ -2,6 +2,9 @@ const gql = require('graphql-tag');
 const { ClientInitialize } = require('./client-initialize')
 const { DataScrapingMethods } = require('./data-scraping-methods')
 
+const FORECAST_LOGIN = process.env.FORECAST_LOGIN || '';
+const FORECAST_PASSWORD = process.env.FORECAST_PASSWORD || '';
+
 class DataScraping {
     constructor() {
         this.client = (new ClientInitialize()).client;
@@ -9,13 +12,8 @@ class DataScraping {
     }
     auth() {
         // TODO extract ENV variable
-        let loginQuery = gql`mutation Login_mutation {
-            login(input: {
-                clientMutationId:"0",
-                email: "ks@rademade.com",
-                password:"rademade",
-                rememberMe:true
-            }) {
+        let loginQuery = gql`mutation Login_mutation($input: LoginInput!) {
+            login(input: $input) {
               clientMutationId
               viewer {
                 id
@@ -27,8 +25,16 @@ class DataScraping {
             }
         }`;
         return this.client.mutate({
-            variables: {},
+            variables: {
+                input: {
+                    email: FORECAST_LOGIN,
+                    password: FORECAST_PASSWORD
+                }
+            },
             mutation: loginQuery,
+        }).catch((error) => {
+            console.log('Login error');
+            console.error(error);
         })
     }
     ready(callback) {
