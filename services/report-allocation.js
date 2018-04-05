@@ -18,6 +18,10 @@ class ReportAllocation {
         return 'User ' + this.allocationData.person.lastName + ' planed on project ' + this.allocationData.project.name;
     }
 
+    getProjectName() {
+        return this.allocationData.project.name;
+    }
+
     getStartDate() {
         return this.startDate;
     }

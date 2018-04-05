@@ -12,6 +12,11 @@ const { DataScraping } = require('./services/data-scraping');
 //     console.log(weeksData[0].getDepartmentsList()['Developer'].getLoadHours())
 // });
 
-(new Report(3, 2)).load((weeksData) => {
-    console.log(weeksData[0].billedHours());
+// (new Report(3, 2)).load((weeksData) => {
+//     console.log(weeksData[0].billedHours());
+// });
+
+
+(new Report(1, 0)).load((weeksData) => {
+    console.log(weeksData[0].getProjectList());
 });

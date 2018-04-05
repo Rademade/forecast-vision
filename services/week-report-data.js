@@ -46,6 +46,9 @@ class WeekReportData {
         return this.membersList;
     }
 
+    /**
+     * @returns {Array<WeekReportDepartment>}
+     */
     getDepartmentsList() {
         return this.departments;
     }
@@ -106,6 +109,13 @@ class WeekReportData {
 
     benchPercent() {
         return TimeRound.roundPercents(this.benchHours() / this.totalCapacityHours());
+    }
+
+    /**
+     * @returns {WeekReportProjectList}
+     */
+    getProjectList() {
+        return this.allocationReport.getProjectList( this.getRange() );
     }
 
 }

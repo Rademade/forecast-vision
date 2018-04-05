@@ -1,9 +1,6 @@
-const Moment = require('moment');
-const { extendMoment } = require('moment-range');
 const { ReportAllocation } = require('./report-allocation');
+const { WeekReportProjectList } = require('./week-report-project-list');
 const { TimeRound } = require('./time-round');
-
-const moment = extendMoment(Moment);
 
 class ReportAllocationList {
 
@@ -11,7 +8,7 @@ class ReportAllocationList {
      * Data loaded from API scheduleQuery
      * https://app.forecast.it/scheduling
      *
-     * @param allocationData
+     * @param {Object} allocationData
      */
     constructor(allocationData) {
         this.allocations = allocationData.data.viewer.company.allocations.edges.map((allocation) => {
@@ -35,6 +32,18 @@ class ReportAllocationList {
             }
         });
         return TimeRound.minutesToHours( billableHours );
+    }
+
+    /**
+     * @param {DateRange} rangeDates
+     * @returns {WeekReportProjectList}
+     */
+    getProjectList(rangeDates) {
+        let projectsCollection = new WeekReportProjectList();
+        this.matchAllocations(rangeDates, (allocation, matchedRange) => {
+            projectsCollection.addAllocation( allocation, matchedRange );
+        });
+        return projectsCollection;
     }
 
     getInternalProcessHours(rangeDates) {
@@ -65,6 +74,7 @@ class ReportAllocationList {
         this.allocations.forEach((allocation) => {
             let matchedRange = selectedRange.intersect(allocation.getRange());
             if (matchedRange) {
+                // TODO create new matched range object
                 matchCallback(allocation, matchedRange);
             }
         });

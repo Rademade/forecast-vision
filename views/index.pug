@@ -5,60 +5,75 @@ html
             |
             | .week-info {vertical-align: text-top; padding: 5px}
             | .is-current h3 {color:red}
+            | .is-non-billable {opacity: 0.4;}
     body
         h1 Rademade perspective
 
         table(border="1")
-            tr
-                each weekData in weeksData
-                    td.week-info(class=weekData.isCurrentWeek() ? "is-current" : "")
-                        h3 Week №#{weekData.getWeekNumber()}
-            tr
-                each weekData in weeksData
-                    td.week-info()
-                        div #{weekData.startDate.format('ll')} – #{weekData.endDate.format('ll')}
+            thead
+                tr
+                    each weekData in weeksData
+                        td.week-info(class=weekData.isCurrentWeek() ? "is-current" : "")
+                            h3 Week №#{weekData.getWeekNumber()}
+                tr
+                    each weekData in weeksData
+                        td.week-info()
+                            div #{weekData.startDate.format('ll')} – #{weekData.endDate.format('ll')}
 
-            tr
-                each weekData in weeksData
-                    td.week-info.utilization
-                        span Company health:
-                        ul
-                            li Total capacity – #{weekData.totalCapacityHours()}h.
-                            li Planned – #{weekData.plannedHours()}h. [#{weekData.plannedPercent()}]%
-                            li Billable – #{weekData.billedHours()}h. [#{weekData.billablePercent()}]%
-                            li Internal process #{weekData.internalProcessHours()}h. [#{weekData.internalProcessPercent()}]%
-                            li Vacations #{weekData.vacationHours()}h. [#{weekData.vacationPercent()}]%
-                            li Bench #{weekData.benchHours()}h. [#{weekData.benchPercent()}]%
-
-            tr
-                each weekData in weeksData
-                    td.week-info.rotation
-                        span Rotation. Bad planing.
-                        span Total – #{weekData.getMembersList().getBadPlaningHours()}h.
-                        ul
-                            each member in weekData.getMembersList().getBadPlaningMembers()
-                                li #{member.getName()} – #{member.getBenchHours()} h.
-
-            tr
-                each weekData in weeksData
-                    td.week-info.rotation
-                        span Rotation. Bench.
-                        span Total – #{weekData.getMembersList().getBenchHours()}h.
-                        ul
-                            each member in weekData.getMembersList().getBenchMembers()
-                                li #{member.getName()} – #{member.getBenchHours()} h.
-
-            tr
-                each weekData in weeksData
-                    td.week-info.departments
-                        span Departments plan:
+            tbody
+                tr
+                    each weekData in weeksData
+                        td.week-info.utilization
+                            span Company health:
                             ul
-                                each department in weekData.getDepartmentsList()
-                                    li(
-                                    title='Department capacity: ' + department.getLoadHours() + 'h. / ' + department.getAvailableHours() + 'h.'
-                                    )
-                                        span #{department.getName()}
-                                        span –
-                                        span #{department.getLoadPercent()}%
+                                li Total capacity – #{weekData.totalCapacityHours()}h.
+                                li Planned – #{weekData.plannedHours()}h. [#{weekData.plannedPercent()}]%
+                                li Billable – #{weekData.billedHours()}h. [#{weekData.billablePercent()}]%
+                                li Internal process #{weekData.internalProcessHours()}h. [#{weekData.internalProcessPercent()}]%
+                                li Vacations #{weekData.vacationHours()}h. [#{weekData.vacationPercent()}]%
+                                li Bench #{weekData.benchHours()}h. [#{weekData.benchPercent()}]%
+
+                tr
+                    each weekData in weeksData
+                        td.week-info.departments
+                            span Departments plan:
+                                ul
+                                    each department in weekData.getDepartmentsList()
+                                        li(
+                                            title='Department capacity: ' + department.getLoadHours() + 'h. / ' + department.getAvailableHours() + 'h.'
+                                        )
+                                            span #{department.getName()}
+                                            span –
+                                            span #{department.getLoadPercent()}%
+
+                tr
+                    each weekData in weeksData
+                        td.week-info.rotation
+                            span Rotation. Bad planing.
+                            span Total – #{weekData.getMembersList().getBadPlaningHours()}h.
+                            ul
+                                each member in weekData.getMembersList().getBadPlaningMembers()
+                                    li #{member.getName()} – #{member.getBenchHours()} h.
+
+                tr
+                    each weekData in weeksData
+                        td.week-info.rotation
+                            span Rotation. Bench.
+                            span Total – #{weekData.getMembersList().getBenchHours()}h.
+                            ul
+                                each member in weekData.getMembersList().getBenchMembers()
+                                    li #{member.getName()} – #{member.getBenchHours()} h.
+
+                tr
+                    each weekData in weeksData
+                        td.week-info.departments
+                            span Projects plan. Billable – #{weekData.getProjectList().getBillableCount()}:
+                                ul
+                                    each project in weekData.getProjectList().getSortedProjects()
+                                        li(class=project.isBillable() ? "is-billable" : "is-non-billable")
+                                            span #{project.getName()}
+                                            span –
+                                            span #{project.getTotalHours()}h.
+
 
 
