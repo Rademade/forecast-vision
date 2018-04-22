@@ -1,42 +1,89 @@
-const { TimeRound } = require('./time-round');
+const { Duration } = require('./duration');
 
-const DEFAULT_ROLE = 'Unknown';
+const DEFAULT_ROLE = 'Unknown department';
 
 class WeekReportMember {
-    constructor(data) {
-        this.data = data
+
+    /**
+     * {
+     *  id: 'Q2FyZExpc3RDYXJkOjk0MDgz',
+     *  name: 'Igor Zubkov',
+     *  profilePictureId: null,
+     *  profilePictureDefaultId: 5,
+     *  roleName: 'Developer',
+     *  availableMinutes: 2100,
+     *  scheduledMinutes: 2100,
+     *  scheduledNonProjectTimeMinutes: 0,
+     *  scheduledProjectTimeMinutes: 2100,
+     *  reported: 0,
+     *  }
+     * @param {Object} memberData
+     */
+    constructor(memberData) {
+        this.id = memberData.id;
+        this.userNmae = memberData.name;
+        this.roleName = memberData.roleName;
+        this.availableDuration = new Duration(memberData.availableMinutes);
+        this.matchedAllocations = [];
+    }
+
+    getId() {
+        return this.id;
     }
 
     getName() {
-        return this.data.name;
+        return this.userNmae
     }
 
     getRole() {
-        return this.data.roleName || DEFAULT_ROLE;
+        return this.roleName || DEFAULT_ROLE;
     }
 
-    getAvailableMinutes() {
-        return this.data.availableMinutes;
+    /**
+     * @param {ReportAllocation} allocation
+     * @param {DateRange} matchedRange
+     */
+    addAllocation(allocation, matchedRange) {
+        this.matchedAllocations.push({
+            allocation: allocation,
+            range: matchedRange
+        });
     }
 
-    getAvailableHours() {
-        return TimeRound.minutesToHours( this.getAvailableMinutes() );
+    getAvailableDuration() {
+        return this.availableDuration;
     }
 
-    getScheduledMinutes() {
-        return this.data.scheduledMinutes;
+    getScheduledDuration() {
+        let duration = new Duration();
+        this.matchedAllocations.forEach((data) => {
+            duration.add( data.allocation.getDurationByRange(data.range) );
+        });
+        return duration;
     }
 
-    getScheduledHours() {
-        return TimeRound.minutesToHours( this.getScheduledMinutes() );
+    getBillableDuration() {
+        let duration = new Duration();
+        this.matchedAllocations.forEach((data) => {
+            if (data.allocation.isBillable()) {
+                duration.add( data.allocation.getDurationByRange(data.range) );
+            }
+        });
+        return duration;
     }
 
-    getBenchMinutes() {
-        return this.getAvailableMinutes() - this.getScheduledMinutes()
+    getBenchDuration() {
+        let duration = this.getUnplannedDuration().clone();
+        this.matchedAllocations.forEach((data) => {
+            if (data.allocation.isBenchProject()) {
+                duration.add( data.allocation.getDurationByRange(data.range) );
+            }
+        });
+        return duration;
     }
 
-    getBenchHours() {
-        return TimeRound.minutesToHours( this.getBenchMinutes() );
+    getUnplannedDuration() {
+        return this.getAvailableDuration().clone().remove( this.getScheduledDuration(), {min: 0} );
     }
 
 }

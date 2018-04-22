@@ -21,7 +21,7 @@ class WeekReportProjectList {
             project = new WeekReportProject(allocation.getProjectName(), allocation.isBillable());
             this.projects[ projectAlias ] = project;
         }
-        project.addMinutes( allocation.getMinutesByRange(matchedRange) );
+        project.addDuration( allocation.getDurationByRange(matchedRange) );
     }
 
     /**

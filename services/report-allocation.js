@@ -3,10 +3,51 @@ const { extendMoment } = require('moment-range');
 
 const moment = extendMoment(Moment);
 
-const VACATION_PROJECT_ID = 21;
+const { Duration } = require('./duration');
+
+
+const PROJECT_ID_VACATION = 21;
+const PROJECT_ID_NEW_BIZ = 8;
+const PROJECT_ID_NEW_PROCESSES = 10;
+const PROJECT_ID_TEAM_LEADING = 53;
+
 const WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
 class ReportAllocation {
+
+    /**
+     *  Allocation Data
+     *
+     * "id": "QWxsb2NhdGlvbjoxMjU3OA==",
+     * "monday": 210,
+     * "tuesday": 210,
+     * "wednesday": 210,
+     * "thursday": 210,
+     * "friday": 210,
+     * "saturday": 0,
+     * "sunday": 0,
+     * "startYear": 2018,
+     * "startMonth": 1,
+     * "startDay": 25,
+     * "endYear": 2018,
+     * "endMonth": 2,
+     * "endDay": 7,
+     * "description": null,
+     * "project": {
+     *  "id": "UHJvamVjdFR5cGU6ODUzNA==",
+     *  "name": "Done - Hotel Booking (TransAvia)",
+     *  "companyProjectId": 6,
+     *  "billable": true
+     * },
+     * "person": {
+     *  "id": "UGVyc29uOjc2NDE3",
+     *  "userType": "NO_LOGIN",
+     *  "firstName": "Alena",
+     *  "lastName": "Panchenko"
+     * }
+     *
+     * @param allocationData
+     */
     constructor(allocationData) {
         this.allocationData = allocationData;
         this.startDate = moment(new Date(allocationData.startYear, allocationData.startMonth - 1, allocationData.startDay));
@@ -15,7 +56,14 @@ class ReportAllocation {
     }
 
     getAllocationInfo() {
-        return 'User ' + this.allocationData.person.lastName + ' planed on project ' + this.allocationData.project.name;
+        return 'User ' + this.getMemberName() + ' planed on project ' + this.allocationData.project.name;
+    }
+
+    getMemberName() {
+        return [
+            this.allocationData.person.firstName,
+            this.allocationData.person.lastName
+        ].join(' ');
     }
 
     getProjectName() {
@@ -39,28 +87,25 @@ class ReportAllocation {
     }
 
     isVacation() {
-        return this.allocationData.project.companyProjectId === VACATION_PROJECT_ID
+        return this.allocationData.project.companyProjectId === PROJECT_ID_VACATION
     }
 
-    getMinutesPerDay() {
-        let previousMinutes = 0;
-        for (let weekDay of WEEKDAYS) {
-            if (this.allocationData[weekDay] > 0 && this.allocationData[weekDay] > previousMinutes) {
-                // Additional debugging. Check for the same minutes summary
-                if (previousMinutes > 0) {
-                    console.error('One allocation has different time');
-                    console.log(this.getAllocationInfo())
-                }
-                previousMinutes = this.allocationData[weekDay];
-            }
-        }
-        return previousMinutes;
+    isUsefulProject() {
+        return [
+            PROJECT_ID_NEW_BIZ,
+            PROJECT_ID_NEW_PROCESSES,
+            PROJECT_ID_TEAM_LEADING
+        ].indexOf( this.allocationData.project.companyProjectId ) === -1;
+    }
+
+    isBenchProject() {
+        return !(this.isBillable() || this.isUsefulProject() || this.isVacation());
     }
 
     /**
      * @param {DateRange} range
      */
-    getMinutesByRange(range) {
+    getDurationByRange(range) {
         let days = 0;
         let start = range.start.clone();
 
@@ -84,7 +129,26 @@ class ReportAllocation {
             start.add(1, 'd');
         }
 
-        return days * this.getMinutesPerDay();
+        return new Duration(days * this._getMinutesPerDay());
+    }
+
+    /**
+     * @return {number}
+     * @private
+     */
+    _getMinutesPerDay() {
+        let previousMinutes = 0;
+        for (let weekDay of WEEKDAYS) {
+            if (this.allocationData[weekDay] > 0 && this.allocationData[weekDay] > previousMinutes) {
+                // Additional debugging. Check for the same minutes summary
+                if (previousMinutes > 0) {
+                    console.error('One allocation has different time');
+                    console.log(this.getAllocationInfo())
+                }
+                previousMinutes = this.allocationData[weekDay];
+            }
+        }
+        return previousMinutes;
     }
 
 }

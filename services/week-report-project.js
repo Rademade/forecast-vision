@@ -1,11 +1,11 @@
-const { TimeRound } = require('./time-round');
+const { Duration } = require('./duration');
 
 class WeekReportProject {
 
     constructor(name, billable) {
         this.name = name;
         this.billable = billable;
-        this.minutes = 0;
+        this.duration = new Duration(0);
     }
 
     getName() {
@@ -16,17 +16,14 @@ class WeekReportProject {
         return this.billable;
     }
 
-    addMinutes(minutes) {
-        this.minutes += minutes;
+    addDuration(duration) {
+        this.duration.add( duration );
     }
 
-    getTotalMinutes() {
-        return this.minutes;
+    getTotalDuration() {
+        return this.duration;
     }
 
-    getTotalHours() {
-        return TimeRound.minutesToHours( this.getTotalMinutes() );
-    }
 }
 
 exports.WeekReportProject = WeekReportProject;

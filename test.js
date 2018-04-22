@@ -8,15 +8,23 @@ const { DataScraping } = require('./services/data-scraping');
 //     })
 // });
 
+// Check departments load hours
 // (new Report(1, 0)).load((weeksData) => {
 //     console.log(weeksData[0].getDepartmentsList()['Developer'].getLoadHours())
 // });
 
+// Check total billable hours
 // (new Report(3, 2)).load((weeksData) => {
 //     console.log(weeksData[0].billedHours());
 // });
 
 
+// Load project list
+// (new Report(1, 0)).load((weeksData) => {
+//     console.log(weeksData[0].getProjectList());
+// });
+
+// Check member list loader
 (new Report(1, 0)).load((weeksData) => {
-    console.log(weeksData[0].getProjectList());
+    console.log(weeksData[0].getMembersList().getBenchMembers());
 });

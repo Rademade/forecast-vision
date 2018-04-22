@@ -1,6 +1,6 @@
 const { ReportAllocation } = require('./report-allocation');
 const { WeekReportProjectList } = require('./week-report-project-list');
-const { TimeRound } = require('./time-round');
+const { Duration } = require('./duration');
 
 class ReportAllocationList {
 
@@ -16,24 +16,6 @@ class ReportAllocationList {
         });
     }
 
-    getPlannedHours(rangeDates) {
-        let plannedHours = 0;
-        this.matchAllocations(rangeDates, (allocation, matchedRange) => {
-            plannedHours += allocation.getMinutesByRange(matchedRange);
-        });
-        return TimeRound.minutesToHours( plannedHours );
-    }
-
-    getBillableHours(rangeDates) {
-        let billableHours = 0;
-        this.matchAllocations(rangeDates, (allocation, matchedRange) => {
-            if (allocation.isBillable()) {
-                billableHours += allocation.getMinutesByRange(matchedRange);
-            }
-        });
-        return TimeRound.minutesToHours( billableHours );
-    }
-
     /**
      * @param {DateRange} rangeDates
      * @returns {WeekReportProjectList}
@@ -46,24 +28,24 @@ class ReportAllocationList {
         return projectsCollection;
     }
 
-    getInternalProcessHours(rangeDates) {
-        let internalProcessHours = 0;
+    getInternalProcessDuration(rangeDates) {
+        let duration = new Duration();
         this.matchAllocations(rangeDates, (allocation, matchedRange) => {
             if (!allocation.isBillable()) {
-                internalProcessHours += allocation.getMinutesByRange(matchedRange);
+                duration.add( allocation.getDurationByRange(matchedRange) );
             }
         });
-        return TimeRound.minutesToHours( internalProcessHours - this.getVacationHours(rangeDates) );
+        return duration.remove( this.getVacationDurations(rangeDates) );
     }
 
-    getVacationHours(rangeDates) {
-        let vacationHours = 0;
+    getVacationDurations(rangeDates) {
+        let duration = new Duration();
         this.matchAllocations(rangeDates, (allocation, matchedRange) => {
             if (allocation.isVacation()) {
-                vacationHours += allocation.getMinutesByRange(matchedRange);
+                duration.add( allocation.getDurationByRange(matchedRange) );
             }
         });
-        return TimeRound.minutesToHours( vacationHours );
+        return duration;
     }
 
     /**

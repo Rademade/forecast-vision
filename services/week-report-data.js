@@ -3,7 +3,6 @@ const { extendMoment } = require('moment-range');
 
 const { WeekReportDepartment } = require('./week-report-department');
 const { WeekReportMembersList } = require('./week-report-members-list');
-const { TimeRound } = require('./time-round');
 
 const moment = extendMoment(Moment);
 
@@ -21,10 +20,7 @@ class WeekReportData {
         this.endDate = endDate;
         this.range = moment.range(startDate, endDate);
         this.weekData = utilizationWeekData.data.viewer.component.unitilization;
-        this.departments = null;
         this.allocationReport = allocationReport;
-        this.membersList = WeekReportMembersList.buildMembers(this.weekData.utilizationListData);
-        this.departments = WeekReportDepartment.buildDepartments(this.membersList);
     }
 
     getWeekNumber() {
@@ -43,6 +39,13 @@ class WeekReportData {
      * @returns {WeekReportMembersList}
      */
     getMembersList() {
+        if (!this.membersList) {
+            this.membersList = WeekReportMembersList.buildMembersList(
+                this.weekData.utilizationListData,
+                this.allocationReport,
+                this.getRange()
+            );
+        }
         return this.membersList;
     }
 
@@ -50,65 +53,38 @@ class WeekReportData {
      * @returns {Array<WeekReportDepartment>}
      */
     getDepartmentsList() {
-        return this.departments;
-    }
-
-    totalCapacityHoursDefault() {
-        // Forecast default data
-        return TimeRound.minutesToHours( this.weekData.availableMinutesTotal );
-    }
-
-    plannedHoursDefault() {
-        // Forecast default data
-        return TimeRound.minutesToHours( this.weekData.scheduledMinutesTotal );
-    }
-
-    totalCapacityHours() {
-        // This logic support over-planing hours
-        return TimeRound.roundHours( this.plannedHours() + this.benchHours() );
-    }
-
-    plannedHours() {
-        if (!this.plannedHoursAmount) {
-            this.plannedHoursAmount = TimeRound.roundHours(this.allocationReport.getPlannedHours(this.getRange()) );
+        if (!this.departmentsList) {
+            this.departmentsList = WeekReportDepartment.buildDepartments(this.getMembersList());
         }
-        return this.plannedHoursAmount;
+        return this.departmentsList;
     }
 
-    plannedPercent() {
-        return TimeRound.roundPercents(this.plannedHours() / this.totalCapacityHours(this.getRange()));
+    getTotalCapacityDuration() {
+        // This logic support over-planing hours
+        return this.getPlannedDuration().clone().add( this.getUnplannedDuration() );
     }
 
-    billedHours() {
-        return TimeRound.roundHours( this.allocationReport.getBillableHours(this.getRange()) );
+    getPlannedDuration() {
+        if (!this.plannedDuration) {
+            this.plannedDuration = this.getMembersList().getPlannedDuration();
+        }
+        return this.plannedDuration;
     }
 
-    billablePercent() {
-        return TimeRound.roundPercents(this.billedHours() / this.totalCapacityHours());
+    getBillableDuration() {
+        return this.getMembersList().getBillableDuration();
     }
 
-    internalProcessHours() {
-        return TimeRound.roundHours( this.allocationReport.getInternalProcessHours(this.getRange()));
+    getInternalProcessDuration() {
+        return this.allocationReport.getInternalProcessDuration(this.getRange());
     }
 
-    internalProcessPercent() {
-        return TimeRound.roundPercents(this.internalProcessHours() / this.totalCapacityHours());
+    getVacationDuration() {
+        return this.allocationReport.getVacationDurations(this.getRange());
     }
 
-    vacationHours() {
-        return TimeRound.roundHours( this.allocationReport.getVacationHours(this.getRange()));
-    }
-
-    vacationPercent() {
-        return TimeRound.roundPercents(this.vacationHours() / this.totalCapacityHours());
-    }
-
-    benchHours() {
-        return TimeRound.roundHours( this.getMembersList().getTotalAvailableHours() );
-    }
-
-    benchPercent() {
-        return TimeRound.roundPercents(this.benchHours() / this.totalCapacityHours());
+    getUnplannedDuration() {
+        return this.getMembersList().getUnplannedDuration();
     }
 
     /**
@@ -116,6 +92,30 @@ class WeekReportData {
      */
     getProjectList() {
         return this.allocationReport.getProjectList( this.getRange() );
+    }
+
+    // // //
+    // PERCENT BLOCK
+    // // //
+
+    getPlannedPercent() {
+        return this.getPlannedDuration().getRatio( this.getTotalCapacityDuration() );
+    }
+
+    getBillablePercent() {
+        return this.getBillableDuration().getRatio( this.getTotalCapacityDuration() );
+    }
+
+    getVacationPercent() {
+        return this.getVacationDuration().getRatio( this.getTotalCapacityDuration() );
+    }
+
+    getInternalProcessPercent() {
+        return this.getInternalProcessDuration().getRatio( this.getTotalCapacityDuration() );
+    }
+
+    getUnplannedPercent() {
+        return this.getUnplannedDuration().getRatio( this.getTotalCapacityDuration() );
     }
 
 }

@@ -95,13 +95,6 @@ query Viewer_queries {
               userType
               firstName
               lastName
-              monday
-              tuesday
-              wednesday
-              thursday
-              friday
-              saturday
-              sunday
             }
           }
           cursor

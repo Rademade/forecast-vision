@@ -1,4 +1,4 @@
-const { TimeRound } = require('./time-round');
+const { Duration } = require('./duration');
 
 class WeekReportDepartment {
 
@@ -8,7 +8,7 @@ class WeekReportDepartment {
      */
     static buildDepartments(membersList) {
         let departments = {};
-        membersList.getAllMembers().forEach(function(member){
+        membersList.getAllMembers().forEach(function(member) {
             let key = member.getRole();
             if (!departments[key]) {
                 departments[key] = new WeekReportDepartment( member.getRole() );
@@ -34,28 +34,26 @@ class WeekReportDepartment {
         return this.name;
     }
 
-    getAvailableHours() {
+    getAvailableDuration() {
         if (!this.avaliableHours) {
-            this.avaliableHours = this.members.reduce((hours, member) => {
-                return hours + member.getAvailableHours();
-            }, 0);
-            this.avaliableHours = TimeRound.roundHours( this.avaliableHours );
+            this.avaliableHours = this.members.reduce((duration, member) => {
+                return duration.add( member.getAvailableDuration() );
+            }, new Duration());
         }
         return this.avaliableHours;
     }
 
-    getLoadHours() {
+    getScheduledDuration() {
         if (!this.loadHours) {
-            this.loadHours = this.members.reduce((hours, member) => {
-                return hours + member.getScheduledHours();
-            }, 0);
-            this.loadHours = TimeRound.roundHours( this.loadHours );
+            this.loadHours = this.members.reduce((duration, member) => {
+                return duration.add( member.getScheduledDuration() );
+            }, new Duration());
         }
         return this.loadHours;
     }
 
     getLoadPercent() {
-        return TimeRound.roundPercents( this.getLoadHours() / this.getAvailableHours());
+        return this.getScheduledDuration().getRatio( this.getAvailableDuration());
     }
 
 }

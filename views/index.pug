@@ -26,12 +26,12 @@ html
                         td.week-info.utilization
                             span Company health:
                             ul
-                                li Total capacity – #{weekData.totalCapacityHours()}h.
-                                li Planned – #{weekData.plannedHours()}h. [#{weekData.plannedPercent()}]%
-                                li Billable – #{weekData.billedHours()}h. [#{weekData.billablePercent()}]%
-                                li Internal process #{weekData.internalProcessHours()}h. [#{weekData.internalProcessPercent()}]%
-                                li Vacations #{weekData.vacationHours()}h. [#{weekData.vacationPercent()}]%
-                                li Bench #{weekData.benchHours()}h. [#{weekData.benchPercent()}]%
+                                li Total capacity – #{weekData.getTotalCapacityDuration()}h.
+                                li Planned – #{weekData.getPlannedDuration()}h. [#{weekData.getPlannedPercent()}]%
+                                li Billable – #{weekData.getBillableDuration()}h. [#{weekData.getBillablePercent()}]%
+                                li Internal process #{weekData.getInternalProcessDuration()}h. [#{weekData.getInternalProcessPercent()}]%
+                                li Vacations #{weekData.getVacationDuration()}h. [#{weekData.getVacationPercent()}]%
+                                li Unplanned #{weekData.getUnplannedDuration()}h. [#{weekData.getUnplannedPercent()}]%
 
                 tr
                     each weekData in weeksData
@@ -40,7 +40,7 @@ html
                                 ul
                                     each department in weekData.getDepartmentsList()
                                         li(
-                                            title='Department capacity: ' + department.getLoadHours() + 'h. / ' + department.getAvailableHours() + 'h.'
+                                            title='Department capacity: ' + department.getScheduledDuration() + 'h. / ' + department.getAvailableDuration() + 'h.'
                                         )
                                             span #{department.getName()}
                                             span –
@@ -49,20 +49,20 @@ html
                 tr
                     each weekData in weeksData
                         td.week-info.rotation
-                            span Rotation. Bad planing.
-                            span Total – #{weekData.getMembersList().getBadPlaningHours()}h.
+                            span Unplanned members.
+                            span Total – #{weekData.getMembersList().getUnplannedDuration()}h.
                             ul
-                                each member in weekData.getMembersList().getBadPlaningMembers()
-                                    li #{member.getName()} – #{member.getBenchHours()} h.
+                                each member in weekData.getMembersList().getUnplannedMembers()
+                                    li #{member.getName()} – #{member.getUnplannedDuration()} h.
 
                 tr
                     each weekData in weeksData
                         td.week-info.rotation
-                            span Rotation. Bench.
-                            span Total – #{weekData.getMembersList().getBenchHours()}h.
+                            span Bench members.
+                            span Total – #{weekData.getMembersList().getBenchDuration()}h.
                             ul
                                 each member in weekData.getMembersList().getBenchMembers()
-                                    li #{member.getName()} – #{member.getBenchHours()} h.
+                                    li #{member.getName()} – #{member.getBenchDuration()} h.
 
                 tr
                     each weekData in weeksData
@@ -73,7 +73,7 @@ html
                                         li(class=project.isBillable() ? "is-billable" : "is-non-billable")
                                             span #{project.getName()}
                                             span –
-                                            span #{project.getTotalHours()}h.
+                                            span #{project.getTotalDuration()}h.
 
 
 
