@@ -1,6 +1,6 @@
 const moment = require('moment')
 const { Report } = require('./services/report');
-const { DataScraping } = require('./services/data-scraping');
+const { DataScraping } = require('./services/forecast-grabber/scraping-auth');
 
 // (new DataScraping).ready((scrapingMethods) => {
 //     scrapingMethods.getUtilization(moment(), moment().add(7, 'd')).then((weekData) => {

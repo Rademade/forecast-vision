@@ -1,8 +1,9 @@
-const { Duration } = require('./duration');
+const { Duration } = require('../duration');
+const { ForecastAllocationItem } = require('../forecast-allocation/item');
 
 const DEFAULT_ROLE = 'Unknown department';
 
-class WeekReportMember {
+class ReportMember {
 
     /**
      * {
@@ -20,15 +21,10 @@ class WeekReportMember {
      * @param {Object} memberData
      */
     constructor(memberData) {
-        this.id = memberData.id;
         this.userNmae = memberData.name;
         this.roleName = memberData.roleName;
         this.availableDuration = new Duration(memberData.availableMinutes);
         this.matchedAllocations = [];
-    }
-
-    getId() {
-        return this.id;
     }
 
     getName() {
@@ -40,7 +36,7 @@ class WeekReportMember {
     }
 
     /**
-     * @param {ReportAllocation} allocation
+     * @param {ForecastAllocationItem} allocation
      * @param {DateRange} matchedRange
      */
     addAllocation(allocation, matchedRange) {
@@ -88,4 +84,4 @@ class WeekReportMember {
 
 }
 
-exports.WeekReportMember = WeekReportMember;
+exports.ReportMember = ReportMember;

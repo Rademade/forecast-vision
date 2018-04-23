@@ -1,9 +1,8 @@
 const _ = require('lodash');
 
-const { WeekReportProject } = require('./week-report-project');
-const { ReportAllocation } = require('./report-allocation');
+const { ReportProject } = require('./project');
 
-class WeekReportProjectList {
+class ReportProjectList {
 
     constructor() {
         this.projects = {};
@@ -11,14 +10,14 @@ class WeekReportProjectList {
 
     /**
      *
-     * @param {ReportAllocation} allocation
+     * @param {ForecastAllocationItem} allocation
      * @param {DateRange} matchedRange
      */
     addAllocation(allocation, matchedRange) {
         let projectAlias = allocation.getProjectName();
         let project = this.projects[ projectAlias ];
         if (!project) {
-            project = new WeekReportProject(allocation.getProjectName(), allocation.isBillable());
+            project = new ReportProject(allocation.getProjectName(), allocation.isBillable());
             this.projects[ projectAlias ] = project;
         }
         project.addDuration( allocation.getDurationByRange(matchedRange) );
@@ -26,14 +25,14 @@ class WeekReportProjectList {
 
 
     /**
-     * @returns {WeekReportProject[]}
+     * @returns {ReportProject[]}
      */
     getAllProjects() {
         return _.values(this.projects);
     }
 
     /**
-     * @return {WeekReportProject[]}
+     * @return {ReportProject[]}
      */
     getBillableProjects() {
         return this.getAllProjects().filter((project) => {
@@ -58,4 +57,4 @@ class WeekReportProjectList {
 
 }
 
-exports.WeekReportProjectList = WeekReportProjectList;
+exports.ReportProjectList = ReportProjectList;

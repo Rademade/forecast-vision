@@ -1,6 +1,6 @@
-const { Duration } = require('./duration');
+const { Duration } = require('../duration');
 
-class WeekReportProject {
+class ReportProject {
 
     constructor(name, billable) {
         this.name = name;
@@ -26,4 +26,4 @@ class WeekReportProject {
 
 }
 
-exports.WeekReportProject = WeekReportProject;
+exports.ReportProject = ReportProject;

@@ -1,7 +1,7 @@
 const gql = require('graphql-tag');
 const { ApolloClient } = require('apollo-client');
 
-class DataScrapingMethods {
+class ForecastGrabberScrapingMethods {
 
     /**
      * @param {ApolloClient} client
@@ -108,4 +108,4 @@ query Viewer_queries {
   }
 }`;
 
-exports.DataScrapingMethods = DataScrapingMethods;
+exports.ForecastGrabberScrapingMethods = ForecastGrabberScrapingMethods;

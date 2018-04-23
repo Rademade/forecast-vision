@@ -1,8 +1,7 @@
-const { ReportAllocation } = require('./report-allocation');
-const { WeekReportProjectList } = require('./week-report-project-list');
-const { Duration } = require('./duration');
+const { ForecastAllocationItem } = require('./item');
+const { Duration } = require('../duration');
 
-class ReportAllocationList {
+class ForecastAllocationList {
 
     /**
      * Data loaded from API scheduleQuery
@@ -12,20 +11,8 @@ class ReportAllocationList {
      */
     constructor(allocationData) {
         this.allocations = allocationData.data.viewer.company.allocations.edges.map((allocation) => {
-            return new ReportAllocation(allocation.node);
+            return new ForecastAllocationItem(allocation.node);
         });
-    }
-
-    /**
-     * @param {DateRange} rangeDates
-     * @returns {WeekReportProjectList}
-     */
-    getProjectList(rangeDates) {
-        let projectsCollection = new WeekReportProjectList();
-        this.matchAllocations(rangeDates, (allocation, matchedRange) => {
-            projectsCollection.addAllocation( allocation, matchedRange );
-        });
-        return projectsCollection;
     }
 
     getInternalProcessDuration(rangeDates) {
@@ -64,4 +51,4 @@ class ReportAllocationList {
 
 }
 
-exports.ReportAllocationList = ReportAllocationList;
+exports.ForecastAllocationList = ForecastAllocationList;

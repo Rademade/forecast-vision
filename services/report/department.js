@@ -1,17 +1,17 @@
-const { Duration } = require('./duration');
+const { Duration } = require('../duration');
 
-class WeekReportDepartment {
+class ReportDepartment {
 
     /**
-     * @param {WeekReportMembersList} membersList
-     * @return {Array<WeekReportDepartment>}
+     * @param {ReportMembersList} membersList
+     * @return {ReportDepartment[]}
      */
     static buildDepartments(membersList) {
         let departments = {};
         membersList.getAllMembers().forEach(function(member) {
             let key = member.getRole();
             if (!departments[key]) {
-                departments[key] = new WeekReportDepartment( member.getRole() );
+                departments[key] = new ReportDepartment( member.getRole() );
             }
             departments[key].addMember( member );
         });
@@ -24,7 +24,7 @@ class WeekReportDepartment {
     }
 
     /**
-     * @param {WeekReportMember} member
+     * @param {ReportMember} member
      */
     addMember(member) {
         this.members.push(member);
@@ -58,4 +58,4 @@ class WeekReportDepartment {
 
 }
 
-exports.WeekReportDepartment = WeekReportDepartment;
+exports.ReportDepartment = ReportDepartment;

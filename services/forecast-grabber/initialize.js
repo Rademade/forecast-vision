@@ -5,7 +5,7 @@ const { ApolloClient } = require('apollo-client');
 const { ApolloLink } = require('apollo-link');
 const { InMemoryCache } = require('apollo-cache-inmemory');
 
-class ClientInitialize {
+class ForecastGrabberInitialize {
 
     constructor() {
         this.cookies = [];
@@ -45,4 +45,4 @@ class ClientInitialize {
     }
 }
 
-exports.ClientInitialize = ClientInitialize;
+exports.ForecastGrabberInitialize = ForecastGrabberInitialize;

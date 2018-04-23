@@ -3,7 +3,7 @@ const { extendMoment } = require('moment-range');
 
 const moment = extendMoment(Moment);
 
-const { Duration } = require('./duration');
+const { Duration } = require('../duration');
 
 
 const PROJECT_ID_VACATION = 21;
@@ -13,7 +13,7 @@ const PROJECT_ID_TEAM_LEADING = 53;
 
 const WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
-class ReportAllocation {
+class ForecastAllocationItem {
 
     /**
      *  Allocation Data
@@ -153,4 +153,4 @@ class ReportAllocation {
 
 }
 
-exports.ReportAllocation = ReportAllocation;
+exports.ForecastAllocationItem = ForecastAllocationItem;

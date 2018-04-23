@@ -1,7 +1,8 @@
 const moment = require('moment');
-const { DataScraping } = require('./data-scraping');
-const { ReportAllocationList } = require('./report-allocation-list');
-const { WeekReportData } = require('./week-report-data');
+
+const { ForecastGrabberScrapingAuth } = require('./forecast-grabber/scraping-auth');
+const { ForecastAllocationList } = require('./forecast-allocation/list');
+const { ReportData } = require('./report-data');
 
 const DAYS_IN_WEEK = 7;
 const DEFAULT_DISPLAY_WEEKS = 7;
@@ -13,7 +14,7 @@ class Report {
         displayWeeks = DEFAULT_DISPLAY_WEEKS,
         preWeeks = DEFAULT_START_WEEKS_AGO
     ) {
-        this.apiLoader = new DataScraping();
+        this.apiLoader = new ForecastGrabberScrapingAuth();
         this.displayWeeks = displayWeeks;
         this.preWeeks = preWeeks;
     }
@@ -21,7 +22,7 @@ class Report {
     /**
      * Utilization week loading. Recursion function
      *
-     * @param {DataScrapingMethods} api
+     * @param {ForecastGrabberScrapingMethods} api
      * @param {Array} resultData
      * @param {moment} loadDate
      * @param {moment} lastDate
@@ -34,7 +35,7 @@ class Report {
         const endDate = loadDate.clone().add(DAYS_IN_WEEK, 'd');
 
         api.getUtilization(startDate, endDate).then((weekData) => {
-            resultData.push(new WeekReportData(startDate, endDate, weekData, this.allocationReport));
+            resultData.push(new ReportData(startDate, endDate, weekData, this.allocationReport));
 
             if (loadDate < lastDate) {
                 this.loadWeeksData(api, resultData, loadDate.add(DAYS_IN_WEEK, 'd'), lastDate, loadedWeeksCallback);
@@ -45,7 +46,7 @@ class Report {
     }
 
     /**
-     * @param {DataScrapingMethods} api
+     * @param {ForecastGrabberScrapingMethods} api
      * @param {Function} loadReadyCallback
      */
     startWeeksLoading(api, loadReadyCallback) {
@@ -67,7 +68,7 @@ class Report {
     load(loadReadyCallback) {
         this.apiLoader.ready((api) => {
             api.getScheduleAllocations().then((allocationData) => {
-                this.allocationReport = new ReportAllocationList(allocationData);
+                this.allocationReport = new ForecastAllocationList(allocationData);
                 this.startWeeksLoading(api, loadReadyCallback);
             });
         });

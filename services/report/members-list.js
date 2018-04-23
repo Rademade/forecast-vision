@@ -1,42 +1,22 @@
 const _ = require('lodash');
 
-const { WeekReportMember } = require('./week-report-member');
-const { Duration } = require('./duration');
+const { ReportMember } = require('./member');
+const { Duration } = require('../duration');
 
 const MIN_HOURS = 1;
 const BENCH_MIN_HOURS = 9;
 
-class WeekReportMembersList {
+class ReportMembersList {
 
     /**
-     * @param {Object} utilizationListData
-     * @param {ReportAllocationList} allocationReport
-     * @param {DateRange} dateRange
-     * @return {WeekReportMembersList}
-     */
-    static buildMembersList(utilizationListData, allocationReport, dateRange) {
-        let members = utilizationListData.map((memberData) => {
-            return new WeekReportMember(memberData);
-        });
-
-        let membersList = new WeekReportMembersList(members);
-
-        allocationReport.matchAllocations(dateRange, (allocation, matchedRange) => {
-            membersList.addAllocation( allocation, matchedRange );
-        });
-
-        return membersList;
-    }
-
-    /**
-     * @param {Array<WeekReportMember>} members
+     * @param {ReportMember[]} members
      */
     constructor(members) {
         this.members = members;
     }
 
     /**
-     * @param {ReportAllocation} allocation
+     * @param {ForecastAllocationItem} allocation
      * @param {DateRange} matchedRange
      */
     addAllocation(allocation, matchedRange) {
@@ -49,7 +29,7 @@ class WeekReportMembersList {
 
     /**
      * @param name
-     * @return WeekReportMember
+     * @return ReportMember
      */
     findByName(name) {
         return _.find(this.members, (member) => {
@@ -59,14 +39,14 @@ class WeekReportMembersList {
 
 
     /**
-     * @return {WeekReportMember[]}
+     * @return {ReportMember[]}
      */
     getAllMembers() {
         return _.values( this.members );
     }
 
     /**
-     * @return {WeekReportMember[]}
+     * @return {ReportMember[]}
      */
     getUnplannedMembers() {
         return this.getAllMembers().filter((member) => {
@@ -77,7 +57,7 @@ class WeekReportMembersList {
     }
 
     /**
-     * @return {WeekReportMember[]}
+     * @return {ReportMember[]}
      */
     getBenchMembers() {
         return this.getAllMembers().filter((member) => {
@@ -113,4 +93,4 @@ class WeekReportMembersList {
 
 }
 
-exports.WeekReportMembersList = WeekReportMembersList;
+exports.ReportMembersList = ReportMembersList;
