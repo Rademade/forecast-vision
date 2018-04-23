@@ -1,79 +1,61 @@
-html
-    head
-        title() Rademade perspective
-        style
-            |
-            | .week-info {vertical-align: text-top; padding: 5px; min-width: 300px}
-            | .is-current h3 {color:red}
-            | .is-non-billable {opacity: 0.4;}
-    body
-        h1 Rademade perspective
+extends _layout-week-report
 
-        table(border="1")
-            thead
-                tr
-                    each weekData in weeksData
-                        td.week-info(class=weekData.isCurrentWeek() ? "is-current" : "")
-                            h3 Week №#{weekData.getWeekNumber()}
-                tr
-                    each weekData in weeksData
-                        td.week-info()
-                            div #{weekData.startDate.format('ll')} – #{weekData.endDate.format('ll')}
+block table_body
 
-            tbody
-                tr
-                    each weekData in weeksData
-                        td.week-info.utilization
-                            span Company health:
-                            ul
-                                li Total capacity – #{weekData.getTotalCapacityDuration()}h.
-                                li Planned – #{weekData.getPlannedDuration()}h. [#{weekData.getPlannedPercent()}]%
-                                li Billable – #{weekData.getBillableDuration()}h. [#{weekData.getBillablePercent()}]%
-                                li Internal process #{weekData.getInternalProcessDuration()}h. [#{weekData.getInternalProcessPercent()}]%
-                                li Vacations #{weekData.getVacationDuration()}h. [#{weekData.getVacationPercent()}]%
-                                li Unplanned #{weekData.getUnplannedDuration()}h. [#{weekData.getUnplannedPercent()}]%
+    tbody
+        tr
+            each weekData in weeksData
+                td.week-info.utilization
+                    span Company health:
+                    ul
+                        li Total capacity – #{weekData.getTotalCapacityDuration()}h.
+                        li Planned – #{weekData.getPlannedDuration()}h. [#{weekData.getPlannedPercent()}]%
+                        li Billable – #{weekData.getBillableDuration()}h. [#{weekData.getBillablePercent()}]%
+                        li Internal process #{weekData.getInternalProcessDuration()}h. [#{weekData.getInternalProcessPercent()}]%
+                        li Vacations #{weekData.getVacationDuration()}h. [#{weekData.getVacationPercent()}]%
+                        li Unplanned #{weekData.getUnplannedDuration()}h. [#{weekData.getUnplannedPercent()}]%
 
-                tr
-                    each weekData in weeksData
-                        td.week-info.departments
-                            span Departments plan:
-                                ul
-                                    each department in weekData.getDepartmentsList()
-                                        li(
-                                            title='Department capacity: ' + department.getScheduledDuration() + 'h. / ' + department.getAvailableDuration() + 'h.'
-                                        )
-                                            span #{department.getName()}
-                                            span –
-                                            span #{department.getLoadPercent()}%
+        tr
+            each weekData in weeksData
+                td.week-info.departments
+                    span Departments plan:
+                        ul
+                            each department in weekData.getDepartmentsList()
+                                li(
+                                    title='Department capacity: ' + department.getScheduledDuration() + 'h. / ' + department.getAvailableDuration() + 'h.'
+                                )
+                                    span #{department.getName()}
+                                    span –
+                                    span #{department.getLoadPercent()}%
 
-                tr
-                    each weekData in weeksData
-                        td.week-info.rotation
-                            span Unplanned members.
-                            span Total – #{weekData.getMembersList().getUnplannedDuration()}h.
-                            ul
-                                each member in weekData.getMembersList().getUnplannedMembers()
-                                    li #{member.getName()} – #{member.getUnplannedDuration()} h.
+        tr
+            each weekData in weeksData
+                td.week-info.rotation
+                    span Unplanned members.
+                    span Total – #{weekData.getMembersList().getUnplannedDuration()}h.
+                    ul
+                        each member in weekData.getMembersList().getUnplannedMembers()
+                            li #{member.getName()} – #{member.getUnplannedDuration()} h.
 
-                tr
-                    each weekData in weeksData
-                        td.week-info.rotation
-                            span Bench members.
-                            span Total – #{weekData.getMembersList().getBenchDuration()}h.
-                            ul
-                                each member in weekData.getMembersList().getBenchMembers()
-                                    li #{member.getName()} – #{member.getBenchDuration()} h.
+        tr
+            each weekData in weeksData
+                td.week-info.rotation
+                    span Bench members.
+                    span Total – #{weekData.getMembersList().getBenchDuration()}h.
+                    ul
+                        each member in weekData.getMembersList().getBenchMembers()
+                            li #{member.getName()} – #{member.getBenchDuration()} h.
 
-                tr
-                    each weekData in weeksData
-                        td.week-info.departments
-                            span Projects. Billable – #{weekData.getProjectList().getBillableCount()}:
-                                ul
-                                    each project in weekData.getProjectList().getSortedProjects()
-                                        li(class=project.isBillable() ? "is-billable" : "is-non-billable")
-                                            span #{project.getName()}
-                                            span –
-                                            span #{project.getTotalDuration()}h.
+        tr
+            each weekData in weeksData
+                td.week-info.departments
+                    span Projects. Billable – #{weekData.getProjectList().getBillableCount()}:
+                        ul
+                            each project in weekData.getProjectList().getSortedProjects()
+                                li(class=project.isBillable() ? "is-billable" : "is-non-billable")
+                                    span #{project.getName()}
+                                    span –
+                                    span #{project.getTotalDuration()}h.
 
 
 

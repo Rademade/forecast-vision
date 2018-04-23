@@ -1,0 +1,35 @@
+extends _layout-week-report
+
+block table_body
+
+    tr
+        each weekData in weeksData
+            td.week-info.rotation
+                table.simple-table
+                    tr
+                        td Project name
+                        td Planned h.
+                        td Fact h.
+                        td Deviation
+                    each project in weekData.getProjectList().getBillableProjects()
+                        tr
+                            td #{project.getName()}
+                            td #{project.getTotalDuration()} h.
+                            td
+                            td
+
+    tr
+        each weekData in weeksData
+            td.week-info.rotation
+                table.simple-table
+                    tr
+                        td Member name
+                        td Planned h.
+                        td Fact h.
+                        td Deviation
+                    each member in weekData.getMembersList().getAllMembers()
+                        tr
+                            td #{member.getName()}
+                            td #{member.getBillableDuration()} h.
+                            td
+                            td

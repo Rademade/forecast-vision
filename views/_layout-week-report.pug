@@ -1,0 +1,17 @@
+extends _layout
+
+block content
+
+    table(border="1")
+        thead
+            tr
+                each weekData in weeksData
+                    td.week-info(class=weekData.isCurrentWeek() ? "is-current" : "")
+                        h3 Week №#{weekData.getWeekNumber()}
+            tr
+                each weekData in weeksData
+                    td.week-info()
+                        div #{weekData.startDate.format('ll')} – #{weekData.endDate.format('ll')}
+
+        block table_body
+

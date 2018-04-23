@@ -24,24 +24,32 @@ class WeekReportProjectList {
         project.addDuration( allocation.getDurationByRange(matchedRange) );
     }
 
+
+    /**
+     * @returns {WeekReportProject[]}
+     */
+    getAllProjects() {
+        return _.values(this.projects);
+    }
+
+    /**
+     * @return {WeekReportProject[]}
+     */
+    getBillableProjects() {
+        return this.getAllProjects().filter((project) => {
+            return project.isBillable();
+        });
+    }
+
     /**
      * @returns {Number}
      */
     getBillableCount() {
-        return this.getProjects().filter((project) => {
-            return project.isBillable();
-        }).length;
-    }
-
-    /**
-     * @returns {Array<WeekReportProject>}
-     */
-    getProjects() {
-        return _.values(this.projects);
+        return this.getBillableProjects().length;
     }
 
     getSortedProjects() {
-        return _.sortBy(this.getProjects(), (project) => {
+        return _.sortBy(this.getAllProjects(), (project) => {
             return project.isBillable();
         }, (project) => {
             return project.getName();
