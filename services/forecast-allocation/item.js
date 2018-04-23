@@ -7,8 +7,10 @@ const { Duration } = require('../duration');
 
 
 const PROJECT_ID_VACATION = 21;
-const PROJECT_ID_NEW_BIZ = 8;
-const PROJECT_ID_NEW_PROCESSES = 10;
+
+const PROJECT_ID_NEW_BIZ = 30;
+const PROJECT_ID_PROCESSES = 10;
+const PROJECT_ID_RECRUITMENT = 20;
 const PROJECT_ID_TEAM_LEADING = 53;
 const PROJECT_ID_HOLIDAY = 55;
 
@@ -94,10 +96,11 @@ class ForecastAllocationItem {
     isUsefulProject() {
         return [
             PROJECT_ID_NEW_BIZ,
-            PROJECT_ID_NEW_PROCESSES,
+            // PROJECT_ID_PROCESSES,
+            PROJECT_ID_RECRUITMENT,
             PROJECT_ID_TEAM_LEADING,
             PROJECT_ID_HOLIDAY
-        ].indexOf( this.allocationData.project.companyProjectId ) === -1;
+        ].indexOf( this.allocationData.project.companyProjectId ) !== -1;
     }
 
     isBenchProject() {
