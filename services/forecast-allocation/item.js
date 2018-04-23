@@ -10,6 +10,7 @@ const PROJECT_ID_VACATION = 21;
 const PROJECT_ID_NEW_BIZ = 8;
 const PROJECT_ID_NEW_PROCESSES = 10;
 const PROJECT_ID_TEAM_LEADING = 53;
+const PROJECT_ID_HOLIDAY = 55;
 
 const WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
@@ -94,7 +95,8 @@ class ForecastAllocationItem {
         return [
             PROJECT_ID_NEW_BIZ,
             PROJECT_ID_NEW_PROCESSES,
-            PROJECT_ID_TEAM_LEADING
+            PROJECT_ID_TEAM_LEADING,
+            PROJECT_ID_HOLIDAY
         ].indexOf( this.allocationData.project.companyProjectId ) === -1;
     }
 
