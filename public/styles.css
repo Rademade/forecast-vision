@@ -21,8 +21,10 @@ body, html {
     border-collapse: collapse;
 }
 
-.simple-table,
-.simple-table th,
 .simple-table td {
     border: 1px solid #04071d;
+}
+
+.simple-table .table-head {
+    background: #ffff002e;
 }

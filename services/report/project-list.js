@@ -1,6 +1,7 @@
 const _ = require('lodash');
 
 const { ReportProject } = require('./project');
+const { Duration } = require('../duration');
 
 class ReportProjectList {
 
@@ -38,6 +39,15 @@ class ReportProjectList {
         return this.getAllProjects().filter((project) => {
             return project.isBillable();
         });
+    }
+
+    /**
+     * @return {Duration}
+     */
+    getBillableDuration() {
+        return this.getBillableProjects().reduce((a, b) => {
+            return a.add( b.getTotalDuration() );
+        }, new Duration());
     }
 
     /**

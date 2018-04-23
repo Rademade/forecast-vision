@@ -6,7 +6,7 @@ block table_body
         each weekData in weeksData
             td.week-info.rotation
                 table.simple-table
-                    tr
+                    tr.table-head
                         td Project name
                         td Planned h.
                         td Fact h.
@@ -17,17 +17,12 @@ block table_body
                             td #{project.getTotalDuration()} h.
                             td
                             td
-                    tr
-                        td Total
-                        td
-                        td
-                        td
 
     tr
         each weekData in weeksData
             td.week-info.rotation
                 table.simple-table
-                    tr
+                    tr.table-head
                         td Member name
                         td Planned h.
                         td Fact h.
@@ -40,6 +35,6 @@ block table_body
                             td
                     tr
                         td Total
-                        td
+                        td #{weekData.getMembersList().getBillableDuration()} h.
                         td
                         td
