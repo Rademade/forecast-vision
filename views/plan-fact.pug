@@ -10,13 +10,14 @@ block table_body
                         td Project name
                         td Planned h.
                         td Fact h.
-                        td Deviation
+                        td Accuracy %
                     each project in weekData.getProjectList().getBillableProjects()
                         tr
                             td #{project.getName()}
                             td #{project.getTotalDuration()}
-                            td
-                            td
+                            td #{project.getFactBillableDuration()}
+                            td(class=project.getPlanningAccuracyPercent() > 95 ? "good" : "wrong")
+                                span #{project.getPlanningAccuracyPercent()}
 
     tr
         each weekData in weeksData

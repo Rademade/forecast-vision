@@ -25,7 +25,12 @@ const { DataScraping } = require('./services/forecast-grabber/scraping-auth');
 // });
 
 // Check member list loader
-(new Report(1, 1)).load((weeksData) => {
-    weeksData[0].getMembersList().getAllMembers()[4].getFactBillableDuration()
+// (new Report(1, 1)).load((weeksData) => {
     // console.log(weeksData[0].getMembersList().getBenchMembers());
+// });
+
+
+// Check project list toggl report
+(new Report(1, 1)).load((weeksData) => {
+    weeksData[0].getProjectList().getBillableProjects();
 });

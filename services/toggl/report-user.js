@@ -1,4 +1,5 @@
 const { Duration } = require('../duration');
+const {TogglReportUserItem} = require('./report-user-item')
 
 class TogglReportUser {
 
@@ -13,10 +14,28 @@ class TogglReportUser {
         return this.userName;
     }
 
+    /**
+     * @return {TogglReportUserItem[]}
+     */
+    getItems() {
+        if (this.items) {
+            return this.items;
+        }
+
+        // Broken data params
+        if (!(this.data && this.data.items)) {
+            return this.items = [];
+        }
+
+        return this.items = this.data.items.map((projectItem) => {
+            return new TogglReportUserItem(projectItem);
+        });
+    }
+
     getBillableDuration() {
         if (!this.billableDuration) {
-            this.billableDuration = this.data.items.reduce((a, b) => {
-                return a.addMinutes( b.time / 1000 / 60 );
+            this.billableDuration = this.getItems().reduce((a, item) => {
+                return a.addMinutes( item.getTrackingMinutes() );
             }, new Duration());
         }
         return this.billableDuration;

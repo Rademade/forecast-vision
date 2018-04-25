@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
     });
 });
 
-app.get('/matter', (req, res) => {
+app.get('/plan-fact', (req, res) => {
     (new Report(3, 3)).load(function(weeksData){
         res.render('plan-fact', {
             weeksData: weeksData

@@ -1,15 +1,26 @@
 const { Duration } = require('../duration');
+const { TogglReportProject } = require('./../toggl/report-project')
 
 class ReportProject {
 
     constructor(name, billable) {
-        this.name = name;
+        this.name = name.trim();
         this.billable = billable;
         this.duration = new Duration(0);
     }
 
-    addTogglReport() {
-        //TODO
+    /**
+     * @param {TogglReportProject} togglFactReport
+     */
+    addTogglReport(togglFactReport) {
+        this.togglFactReport = togglFactReport;
+    }
+
+    /**
+     * @return {TogglReportProject}
+     */
+    getTogglReport() {
+        return this.togglFactReport;
     }
 
     getName() {
@@ -26,6 +37,29 @@ class ReportProject {
 
     getTotalDuration() {
         return this.duration;
+    }
+
+    getFactBillableDuration() {
+        return this.togglFactReport.getBillableDuration();
+    }
+
+    getPlanningAccuracyPercent() {
+        return this.getFactBillableDuration().getRatio( this.getTotalDuration() );
+    }
+
+    /**
+     * @param {ReportProject} project
+     */
+    isSame(project) {
+        return project instanceof ReportProject && this.getName() === project.getName();
+    }
+
+    /**
+     * @param {ReportProject} project
+     */
+    groupWith(project) {
+        this.addDuration( project.getTotalDuration() );
+        this.getTogglReport().groupWith( project.getTogglReport() );
     }
 
 }

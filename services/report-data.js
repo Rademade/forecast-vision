@@ -2,6 +2,7 @@ const Moment = require('moment');
 const { extendMoment } = require('moment-range');
 
 const { ForecastAllocationList } = require('./forecast-allocation/list');
+const { ReportProject } = require('./report/project');
 const { ReportMember } = require('./report/member');
 const { ReportMembersList } = require('./report/members-list');
 const { ReportDepartment } = require('./report/department');
@@ -131,6 +132,8 @@ class ReportData {
     _initMembers() {
         let members = this.weekData.utilizationListData.map((memberData) => {
             let member = new ReportMember(memberData);
+            // TODO add member from toggl side
+            // TODO group duplicated values
             member.addTogglReport( this.togglReport.findUserReportByName(member.getName()) );
             return member;
         });
@@ -147,13 +150,22 @@ class ReportData {
     _initProjects() {
         let projectsCollection = new ReportProjectList();
 
+        // Build projects from toggl side
+        this.togglReport.getProjectsList().getProjects().forEach((project) => {
+            projectsCollection.addProject( new ReportProject(project.getName(), true) );
+        });
+
+        // Add forecast allocations
         this.allocations.matchAllocations(this.getRange(), (allocation, matchedRange) => {
             projectsCollection.addAllocation( allocation, matchedRange );
         });
 
+        // Add toggl report to partical project
         projectsCollection.getAllProjects().forEach((project) => {
             project.addTogglReport( this.togglReport.findProjectReportByName(project.getName()) );
         });
+
+        projectsCollection.groupSimilar();
 
         return projectsCollection;
     }

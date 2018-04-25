@@ -3,6 +3,8 @@ const { Duration } = require('../duration');
 class ReportDepartment {
 
     /**
+     * @TODO Move department build
+     *
      * @param {ReportMembersList} membersList
      * @return {ReportDepartment[]}
      */

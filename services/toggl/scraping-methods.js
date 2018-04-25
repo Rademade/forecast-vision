@@ -3,13 +3,13 @@ const moment = require('moment');
 
 const { TogglReport } = require('./report');
 const { TogglReportUser } = require('./report-user');
+const { TogglReportUserList } = require('./report-user-list');
 
 const TOGGL_API_KEY = process.env.TOGGL_API_KEY || '';
 
 class TogglScrapingMethods {
 
     constructor() {
-        // TODO env variable
         this.toggl = new TogglClient({apiToken: TOGGL_API_KEY});
     }
 
@@ -17,7 +17,7 @@ class TogglScrapingMethods {
 
         // Pass empty report for feature dates. Don't spend request for load empty data
         if (endDate > moment()) {
-            callback(new TogglReport([]));
+            callback(new TogglReport(new TogglReportUserList()));
             return ;
         }
 
@@ -29,9 +29,10 @@ class TogglScrapingMethods {
             subgrouping: 'projects',
             billable: 'yes'
         }, (err, data) => {
-            callback( new TogglReport(data.data.map((togglUserData) => {
+            let usersList = new TogglReportUserList( data.data.map((togglUserData) => {
                 return new TogglReportUser(togglUserData);
-            })) );
+            }) );
+            callback( new TogglReport( usersList ) );
         });
     }
 

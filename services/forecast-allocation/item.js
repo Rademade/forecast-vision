@@ -70,7 +70,7 @@ class ForecastAllocationItem {
     }
 
     getProjectName() {
-        return this.allocationData.project.name;
+        return this.allocationData.project.name.trim();
     }
 
     getStartDate() {
