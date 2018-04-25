@@ -1,6 +1,7 @@
 const moment = require('moment');
 
 const { ForecastGrabberScrapingAuth } = require('./forecast-grabber/scraping-auth');
+const { TogglScrapingMethods } = require('./toggl/scraping-methods');
 const { ForecastAllocationList } = require('./forecast-allocation/list');
 const { ReportData } = require('./report-data');
 
@@ -15,6 +16,7 @@ class Report {
         preWeeks = DEFAULT_START_WEEKS_AGO
     ) {
         this.apiLoader = new ForecastGrabberScrapingAuth();
+        this.togglLoader = new TogglScrapingMethods();
         this.displayWeeks = displayWeeks;
         this.preWeeks = preWeeks;
     }
@@ -35,13 +37,16 @@ class Report {
         const endDate = loadDate.clone().add(DAYS_IN_WEEK, 'd');
 
         api.getUtilization(startDate, endDate).then((weekData) => {
-            resultData.push(new ReportData(startDate, endDate, weekData, this.allocationReport));
+            this.togglLoader.getReport(startDate, endDate, (togglReport) => {
+                resultData.push(new ReportData(startDate, endDate, weekData, this.allocationReport, togglReport));
 
-            if (loadDate < lastDate) {
-                this.loadWeeksData(api, resultData, loadDate.add(DAYS_IN_WEEK, 'd'), lastDate, loadedWeeksCallback);
-            } else {
-                loadedWeeksCallback();
-            }
+                if (loadDate < lastDate) {
+                    this.loadWeeksData(api, resultData, loadDate.add(DAYS_IN_WEEK, 'd'), lastDate, loadedWeeksCallback);
+                } else {
+                    loadedWeeksCallback();
+                }
+
+            });
         });
     }
 

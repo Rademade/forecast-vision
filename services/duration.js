@@ -6,10 +6,12 @@ class Duration {
 
     setMinutes(minutes) {
         this.minutes = minutes;
+        return this;
     }
 
     addMinutes(minutes) {
         this.minutes += minutes;
+        return this;
     }
 
     /**
@@ -44,6 +46,9 @@ class Duration {
     }
 
     getRatio(duration) {
+        if (this.getMinutes() === 0) return null;
+        if (duration.getMinutes() === 0) return null;
+
         let number = this.getMinutes() / duration.getMinutes();
         return Math.round(number * 10000) / 100
     }

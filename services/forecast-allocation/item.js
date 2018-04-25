@@ -66,7 +66,7 @@ class ForecastAllocationItem {
         return [
             this.allocationData.person.firstName,
             this.allocationData.person.lastName
-        ].join(' ');
+        ].join(' ').trim();
     }
 
     getProjectName() {

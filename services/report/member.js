@@ -21,14 +21,14 @@ class ReportMember {
      * @param {Object} memberData
      */
     constructor(memberData) {
-        this.userNmae = memberData.name;
-        this.roleName = memberData.roleName;
+        this.userName = memberData.name.trim();
+        this.roleName = memberData.roleName.trim();
         this.availableDuration = new Duration(memberData.availableMinutes);
         this.matchedAllocations = [];
     }
 
     getName() {
-        return this.userNmae
+        return this.userName
     }
 
     getRole() {
@@ -44,6 +44,13 @@ class ReportMember {
             allocation: allocation,
             range: matchedRange
         });
+    }
+
+    /**
+     * @param {TogglReportUser} togglFactReport
+     */
+    addTogglReport(togglFactReport) {
+        this.togglFactReport = togglFactReport;
     }
 
     getAvailableDuration() {
@@ -80,6 +87,14 @@ class ReportMember {
 
     getUnplannedDuration() {
         return this.getAvailableDuration().clone().remove( this.getScheduledDuration(), {min: 0} );
+    }
+
+    getFactBillableDuration() {
+        return this.togglFactReport.getBillableDuration();
+    }
+
+    getPlanningAccuracyPercent() {
+        return this.getFactBillableDuration().getRatio( this.getBillableDuration() );
     }
 
 }

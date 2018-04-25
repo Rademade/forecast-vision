@@ -91,6 +91,16 @@ class ReportMembersList {
         }, new Duration());
     }
 
+    getFactBillableDuration() {
+        return this.getAllMembers().reduce((a, b) => {
+            return a.add( b.getFactBillableDuration() );
+        }, new Duration() );
+    }
+
+    getPlanningAccuracyPercent() {
+        return this.getFactBillableDuration().getRatio( this.getBillableDuration() );
+    }
+
 }
 
 exports.ReportMembersList = ReportMembersList;

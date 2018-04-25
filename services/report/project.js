@@ -8,6 +8,10 @@ class ReportProject {
         this.duration = new Duration(0);
     }
 
+    addTogglReport() {
+        //TODO
+    }
+
     getName() {
         return this.name;
     }

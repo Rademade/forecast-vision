@@ -28,3 +28,11 @@ body, html {
 .simple-table .table-head {
     background: #ffff002e;
 }
+
+.simple-table td.good {
+    color: #00811c;
+}
+
+.simple-table td.wrong {
+    color: #860000;
+}

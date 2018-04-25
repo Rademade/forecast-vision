@@ -25,6 +25,7 @@ const { DataScraping } = require('./services/forecast-grabber/scraping-auth');
 // });
 
 // Check member list loader
-(new Report(1, 0)).load((weeksData) => {
-    console.log(weeksData[0].getMembersList().getBenchMembers());
+(new Report(1, 1)).load((weeksData) => {
+    weeksData[0].getMembersList().getAllMembers()[4].getFactBillableDuration()
+    // console.log(weeksData[0].getMembersList().getBenchMembers());
 });

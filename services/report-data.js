@@ -17,13 +17,15 @@ class ReportData {
      * @param {moment} endDate
      * @param {Object} utilizationWeekData
      * @param {ForecastAllocationList} allocations
+     * @param {TogglReport} togglReport
      */
-    constructor(startDate, endDate, utilizationWeekData, allocations) {
+    constructor(startDate, endDate, utilizationWeekData, allocations, togglReport) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.range = moment.range(startDate, endDate);
         this.weekData = utilizationWeekData.data.viewer.component.unitilization;
         this.allocations = allocations;
+        this.togglReport = togglReport;
     }
 
     getWeekNumber() {
@@ -128,7 +130,9 @@ class ReportData {
 
     _initMembers() {
         let members = this.weekData.utilizationListData.map((memberData) => {
-            return new ReportMember(memberData);
+            let member = new ReportMember(memberData);
+            member.addTogglReport( this.togglReport.findUserReportByName(member.getName()) );
+            return member;
         });
 
         let membersList = new ReportMembersList(members);
@@ -145,6 +149,10 @@ class ReportData {
 
         this.allocations.matchAllocations(this.getRange(), (allocation, matchedRange) => {
             projectsCollection.addAllocation( allocation, matchedRange );
+        });
+
+        projectsCollection.getAllProjects().forEach((project) => {
+            project.addTogglReport( this.togglReport.findProjectReportByName(project.getName()) );
         });
 
         return projectsCollection;
