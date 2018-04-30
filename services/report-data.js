@@ -38,7 +38,7 @@ class ReportData {
     }
 
     isCurrentWeek() {
-        return this.getWeekNumber() === moment().startOf('week').isoWeek();
+        return this.getWeekNumber() === (moment().startOf('week').isoWeek() + 1);
     }
 
 
@@ -169,7 +169,6 @@ class ReportData {
 
         return projectsCollection;
     }
-
 
 }
 
