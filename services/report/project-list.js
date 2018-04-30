@@ -88,7 +88,9 @@ class ReportProjectList {
             ['СЛУХ', 'SLUH'],
             ['HeavyTrack', 'Heavy Track'],
             ['Vticket', 'V-Ticket'],
-            ['PingPong. Support', 'Ping-pong — поддержка']
+            ['PingPong. Support', 'Ping-pong — поддержка'],
+            ['GroupTravel', 'Group travel'],
+            ['TheHub', 'Recruiting Hub']
         ];
 
         projectGroups.forEach((projectGroup) => {
