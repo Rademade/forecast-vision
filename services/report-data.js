@@ -30,7 +30,7 @@ class ReportData {
     }
 
     getWeekNumber() {
-        return this.startDate.isoWeek();
+        return this.startDate.isoWeek() + 1;
     }
 
     getRange() {
