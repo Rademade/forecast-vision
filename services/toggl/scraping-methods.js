@@ -16,7 +16,7 @@ class TogglScrapingMethods {
     getReport(startDate, endDate, callback) {
 
         // Pass empty report for feature dates. Don't spend request for load empty data
-        if (endDate > moment()) {
+        if (startDate > moment()) {
             callback(new TogglReport(new TogglReportUserList()));
             return ;
         }

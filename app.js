@@ -1,7 +1,7 @@
 const express = require('express');
 const basicAuth = require('express-basic-auth')
 
-const { Report } = require('./services/report');
+const { ReportFactory } = require('./services/report-factory');
 
 const app = express();
 
@@ -15,7 +15,7 @@ app.set('view engine', 'pug');
 app.set('views', './views');
 
 app.get('/', (req, res) => {
-    (new Report(6, 1)).load(function(weeksData){
+    ReportFactory.getWeeksRhythmReport().load(function(weeksData){
         res.render('index', {
             weeksData: weeksData
         });
@@ -23,9 +23,17 @@ app.get('/', (req, res) => {
 });
 
 app.get('/plan-fact', (req, res) => {
-    (new Report(3, 3)).load(function(weeksData){
+    ReportFactory.getWeeksFactReport().load(function(weeksData){
         res.render('plan-fact', {
             weeksData: weeksData
+        });
+    });
+});
+
+app.get('/month-report', (req, res) => {
+    ReportFactory.getMonthsReport().load(function(monthsReport){
+        res.render('month-report', {
+            monthsReport: monthsReport
         });
     });
 });

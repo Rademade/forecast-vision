@@ -1,0 +1,32 @@
+extends _layout
+
+include blocks/company-health
+include blocks/report-projects
+include blocks/report-members
+include blocks/bench-members
+
+block content
+
+    table(border="1")
+        thead
+            tr
+                each monthReport in monthsReport
+                    td.week-info()
+                        h3 Month #{monthReport.getMonthName()}
+            tr
+                each monthReport in monthsReport
+                    td.week-info()
+                        div #{monthReport.startDate.format('ll')} – #{monthReport.endDate.format('ll')}
+
+            tr
+                +companyHealth(monthsReport)
+
+            tr
+                +reportProjects(monthsReport)
+
+            tr
+                +reportMembers(monthsReport)
+
+            tr
+                +benchMembers(monthsReport)
+

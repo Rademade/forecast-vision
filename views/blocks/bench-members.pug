@@ -1,0 +1,8 @@
+mixin benchMembers(reports)
+    each report in reports
+        td.week-info.rotation
+            span Bench members.
+            span Total – #{report.getMembersList().getBenchDuration()}h.
+            ul
+                each member in report.getMembersList().getBenchMembers()
+                    li #{member.getName()} – #{member.getBenchDuration()} h.

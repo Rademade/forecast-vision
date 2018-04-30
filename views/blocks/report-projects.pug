@@ -1,0 +1,16 @@
+mixin reportProjects(reports)
+    each report in reports
+        td.week-info.rotation
+            table.simple-table
+                tr.table-head
+                    td Project name
+                    td Planned h.
+                    td Fact h.
+                    td Accuracy %
+                each project in report.getProjectList().getBillableProjects()
+                    tr
+                        td #{project.getName()}
+                        td #{project.getTotalDuration()}
+                        td #{project.getFactBillableDuration()}
+                        td(class=project.getPlanningAccuracyPercent() > 95 ? "good" : "wrong")
+                            span #{project.getPlanningAccuracyPercent()}

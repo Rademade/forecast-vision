@@ -5,77 +5,75 @@ const { TogglScrapingMethods } = require('./toggl/scraping-methods');
 const { ForecastAllocationList } = require('./forecast-allocation/list');
 const { ReportData } = require('./report-data');
 
-const DAYS_IN_WEEK = 7;
-const DEFAULT_DISPLAY_WEEKS = 7;
-const DEFAULT_START_WEEKS_AGO = 2;
-
 class Report {
 
-    constructor(
-        displayWeeks = DEFAULT_DISPLAY_WEEKS,
-        preWeeks = DEFAULT_START_WEEKS_AGO
-    ) {
+    /**
+     * @param dateStart
+     * @param dateEnd
+     * @param getIntervalEndDate
+     */
+    constructor(dateStart, dateEnd, getIntervalEndDate) {
         this.apiLoader = new ForecastGrabberScrapingAuth();
         this.togglLoader = new TogglScrapingMethods();
-        this.displayWeeks = displayWeeks;
-        this.preWeeks = preWeeks;
+        this.dateStart = dateStart;
+        this.dateEnd = dateEnd;
+        this.getIntervalEndDate = getIntervalEndDate;
+        this.reports = [];
+        this.scrappingAPI = null;
     }
 
     /**
      * Utilization week loading. Recursion function
      *
-     * @param {ForecastGrabberScrapingMethods} api
-     * @param {Array} resultData
      * @param {moment} loadDate
-     * @param {moment} lastDate
      * @param {Function} loadedWeeksCallback
      */
-    loadWeeksData(api, resultData, loadDate, lastDate, loadedWeeksCallback) {
-        console.log('Called loadWeeksData(). Date: ' + loadDate.format("dddd, MMMM Do YYYY"));
+    loadIntervalData(loadDate, loadedWeeksCallback) {
+        console.log('Called loadIntervalData(). Date: ' + loadDate.format("dddd, MMMM Do YYYY"));
 
         const startDate  = loadDate.clone();
-        const endDate = loadDate.clone().add(DAYS_IN_WEEK, 'd');
+        const endDate = this.getIntervalEndDate(startDate);
 
-        api.getUtilization(startDate, endDate).then((weekData) => {
+        // If last date load break out
+        if (endDate > this.dateEnd) {
+            console.log('Break', endDate, this.dateEnd)
+            loadedWeeksCallback()
+            return ;
+        }
+
+        this.scrappingAPI.getUtilization(startDate, endDate).then((weekData) => {
             this.togglLoader.getReport(startDate, endDate, (togglReport) => {
-                resultData.push(new ReportData(startDate, endDate, weekData, this.allocationReport, togglReport));
 
-                if (loadDate < lastDate) {
-                    this.loadWeeksData(api, resultData, loadDate.add(DAYS_IN_WEEK, 'd'), lastDate, loadedWeeksCallback);
-                } else {
-                    loadedWeeksCallback();
-                }
+                this.reports.push(new ReportData(startDate, endDate, weekData, this.allocationReport, togglReport));
+
+                this.loadIntervalData(endDate, loadedWeeksCallback);
 
             });
         });
     }
 
     /**
-     * @param {ForecastGrabberScrapingMethods} api
      * @param {Function} loadReadyCallback
      */
-    startWeeksLoading(api, loadReadyCallback) {
-        let startDate = moment().startOf('week').subtract(DAYS_IN_WEEK * (this.preWeeks), 'days');
-        let weeksListData = [];
-
-        this.loadWeeksData(
-            api,
-            weeksListData,
-            startDate,
-            startDate.clone().add(DAYS_IN_WEEK * (this.displayWeeks - 1), 'd'),
-            (() => {
-                console.log('All data loaded. Weeks count ' + weeksListData.length);
-                loadReadyCallback(weeksListData)
-            })
-        );
+    startIntervalLoading(loadReadyCallback) {
+        this.loadIntervalData(this.dateStart, () => {
+            console.log('All intervals loaded. Count ' + this.reports.length);
+            loadReadyCallback(this.reports);
+        });
     }
 
     load(loadReadyCallback) {
         this.apiLoader.ready((api) => {
+
+            // Init ForecastGrabberScrapingMethods API
+            this.scrappingAPI = api;
+
+            // Load Allocations
             api.getScheduleAllocations().then((allocationData) => {
                 this.allocationReport = new ForecastAllocationList(allocationData);
-                this.startWeeksLoading(api, loadReadyCallback);
+                this.startIntervalLoading(loadReadyCallback);
             });
+
         });
     }
 

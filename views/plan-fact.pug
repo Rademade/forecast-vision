@@ -1,43 +1,12 @@
 extends _layout-week-report
 
+include blocks/report-projects
+include blocks/report-members
+
 block table_body
 
     tr
-        each weekData in weeksData
-            td.week-info.rotation
-                table.simple-table
-                    tr.table-head
-                        td Project name
-                        td Planned h.
-                        td Fact h.
-                        td Accuracy %
-                    each project in weekData.getProjectList().getBillableProjects()
-                        tr
-                            td #{project.getName()}
-                            td #{project.getTotalDuration()}
-                            td #{project.getFactBillableDuration()}
-                            td(class=project.getPlanningAccuracyPercent() > 95 ? "good" : "wrong")
-                                span #{project.getPlanningAccuracyPercent()}
+        +reportProjects(weeksData)
 
     tr
-        each weekData in weeksData
-            td.week-info.rotation
-                table.simple-table
-                    tr.table-head
-                        td Member name
-                        td Planned h.
-                        td Fact h.
-                        td Accuracy %
-                    each member in weekData.getMembersList().getAllMembers()
-                        tr
-                            td #{member.getName()}
-                            td #{member.getBillableDuration()}
-                            td #{member.getFactBillableDuration()}
-                            td(class=member.getPlanningAccuracyPercent() > 95 ? "good" : "wrong")
-                                span #{member.getPlanningAccuracyPercent()}
-                    tr
-                        td Total
-                        td #{weekData.getMembersList().getBillableDuration()}
-                        td #{weekData.getMembersList().getFactBillableDuration()}
-                        td(class=weekData.getMembersList().getPlanningAccuracyPercent() > 95 ? "good" : "wrong")
-                            span #{weekData.getMembersList().getPlanningAccuracyPercent()}
+        +reportMembers(weeksData)

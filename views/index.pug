@@ -1,19 +1,13 @@
 extends _layout-week-report
 
+include blocks/company-health
+include blocks/bench-members
+
 block table_body
 
     tbody
         tr
-            each weekData in weeksData
-                td.week-info.utilization
-                    span Company health:
-                    ul
-                        li Total capacity – #{weekData.getTotalCapacityDuration()}h.
-                        li Planned – #{weekData.getPlannedDuration()}h. [#{weekData.getPlannedPercent()}]%
-                        li Billable – #{weekData.getBillableDuration()}h. [#{weekData.getBillablePercent()}]%
-                        li Internal process #{weekData.getInternalProcessDuration()}h. [#{weekData.getInternalProcessPercent()}]%
-                        li Vacations #{weekData.getVacationDuration()}h. [#{weekData.getVacationPercent()}]%
-                        li Unplanned #{weekData.getUnplannedDuration()}h. [#{weekData.getUnplannedPercent()}]%
+            +companyHealth(weeksData)
 
         tr
             each weekData in weeksData
@@ -38,13 +32,7 @@ block table_body
                             li #{member.getName()} – #{member.getUnplannedDuration()} h.
 
         tr
-            each weekData in weeksData
-                td.week-info.rotation
-                    span Bench members.
-                    span Total – #{weekData.getMembersList().getBenchDuration()}h.
-                    ul
-                        each member in weekData.getMembersList().getBenchMembers()
-                            li #{member.getName()} – #{member.getBenchDuration()} h.
+            +benchMembers(weeksData)
 
         tr
             each weekData in weeksData

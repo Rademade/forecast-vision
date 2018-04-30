@@ -33,6 +33,10 @@ class ReportData {
         return this.startDate.isoWeek() + 1;
     }
 
+    getMonthName() {
+        return this.startDate.format('MMMM');
+    }
+
     getRange() {
         return this.range;
     }
