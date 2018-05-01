@@ -7,10 +7,6 @@ class TogglReportUserList {
         this.users = users;
     }
 
-    isEmpty() {
-        return this.users.length === 0;
-    }
-
     /**
      * @return {TogglReportUser[]}
      */

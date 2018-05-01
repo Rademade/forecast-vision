@@ -3,6 +3,15 @@ const {TogglReportUserItem} = require('./report-user-item')
 
 class TogglReportUser {
 
+    static initNull() {
+        return new TogglReportUser({
+            items: [],
+            title: {
+                user: ''
+            }
+        });
+    }
+
     constructor(data) {
         this.data = data;
     }
@@ -39,6 +48,20 @@ class TogglReportUser {
             }, new Duration());
         }
         return this.billableDuration;
+    }
+
+    /**
+     * @param {TogglReportUser} togglReport
+     */
+    groupWith(togglReport) {
+        // Valid type check
+        if (!(togglReport instanceof TogglReportUser)) return;
+
+        this.billableDuration = null;
+        this.userName = this.getUserName() || togglReport.getUserName();
+
+        // TODO add unique item validation
+        this.items = this.getItems().concat( togglReport.getItems() );
     }
 
 }

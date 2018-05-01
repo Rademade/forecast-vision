@@ -8,6 +8,9 @@ class TogglReportProjectList {
         this.projects = {};
     }
 
+    /**
+     * @return {TogglReportProject[]}
+     */
     getProjects() {
         return _.values( this.projects );
     }

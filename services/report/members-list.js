@@ -1,18 +1,19 @@
 const _ = require('lodash');
 
 const { ReportMember } = require('./member');
+const { CollectionList } = require('./collection/list');
 const { Duration } = require('../duration');
 
 const MIN_HOURS = 1;
 const BENCH_MIN_HOURS = 9;
 
-class ReportMembersList {
+class ReportMembersList extends CollectionList {
 
     /**
-     * @param {ReportMember[]} members
+     * @param {ReportMember} member
      */
-    constructor(members) {
-        this.members = members;
+    addMember(member) {
+        return this.addItem(member);
     }
 
     /**
@@ -20,21 +21,12 @@ class ReportMembersList {
      * @param {DateRange} matchedRange
      */
     addAllocation(allocation, matchedRange) {
-        let member = this.findByName( allocation.getMemberName() );
+        let slug = allocation.getMemberName();
+        let member = this.items[ slug ];
         if (!member) {
             console.log('Member ' + allocation.getMemberName() + ' not founded');
         }
         member.addAllocation( allocation, matchedRange );
-    }
-
-    /**
-     * @param name
-     * @return ReportMember
-     */
-    findByName(name) {
-        return _.find(this.members, (member) => {
-            return member.getName() === name;
-        });
     }
 
 
@@ -42,7 +34,7 @@ class ReportMembersList {
      * @return {ReportMember[]}
      */
     getAllMembers() {
-        return _.values( this.members );
+        return _.values( this.items );
     }
 
     /**
@@ -100,6 +92,21 @@ class ReportMembersList {
     getPlanningAccuracyPercent() {
         return this.getFactBillableDuration().getRatio( this.getBillableDuration() );
     }
+
+    /**
+     * Group similar members in this collection
+     */
+    _getItemsGroups() {
+        // TODO move to config file
+        return [
+            ['Alexander Buzan', 'Alexandr Buzan'],
+            ['Denis Dvoryashin', 'Denys Dvoriashyn'],
+            ['Maksym Shutiak', 'Maxym Shutyak'],
+            ['Mikhail Gubenko', 'Mihail Gubenko'],
+            ['Denis Dymko', 'Denis', 'Denys Dymko']
+        ];
+    }
+
 
 }
 

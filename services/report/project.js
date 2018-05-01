@@ -1,18 +1,20 @@
 const { Duration } = require('../duration');
+const { CollectionItem } = require('./collection/item');
 const { TogglReportProject } = require('./../toggl/report-project')
 
-class ReportProject {
+class ReportProject extends CollectionItem {
 
-    constructor(name, billable) {
+
+    /**
+     * @param name
+     * @param billable
+     * @param {TogglReportProject} togglFactReport
+     */
+    constructor(name, billable, togglFactReport) {
+        super();
         this.name = name.trim();
         this.billable = billable;
         this.duration = new Duration(0);
-    }
-
-    /**
-     * @param {TogglReportProject} togglFactReport
-     */
-    addTogglReport(togglFactReport) {
         this.togglFactReport = togglFactReport;
     }
 
@@ -25,6 +27,10 @@ class ReportProject {
 
     getName() {
         return this.name;
+    }
+
+    getSlug() {
+        return this.getName();
     }
 
     isBillable() {
@@ -40,18 +46,11 @@ class ReportProject {
     }
 
     getFactBillableDuration() {
-        return this.togglFactReport.getBillableDuration();
+        return this.getTogglReport().getBillableDuration();
     }
 
     getPlanningAccuracyPercent() {
         return this.getFactBillableDuration().getRatio( this.getTotalDuration() );
-    }
-
-    /**
-     * @param {ReportProject} project
-     */
-    isSame(project) {
-        return project instanceof ReportProject && this.getName() === project.getName();
     }
 
     /**

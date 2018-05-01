@@ -7,9 +7,28 @@ const { ReportMember } = require('./report/member');
 const { ReportMembersList } = require('./report/members-list');
 const { ReportDepartment } = require('./report/department');
 const { ReportProjectList } = require('./report/project-list');
+const { TogglReportUser } = require('./toggl/report-user');
 
 const moment = extendMoment(Moment);
 
+
+/**
+ * User store data
+ * UnitilizationData / weekData
+ *
+ * {
+ *  id: 'Q2FyZExpc3RDYXJkOjk0MDgz',
+ *  name: 'Igor Zubkov',
+ *  profilePictureId: null,
+ *  profilePictureDefaultId: 5,
+ *  roleName: 'Developer',
+ *  availableMinutes: 2100,
+ *  scheduledMinutes: 2100,
+ *  scheduledNonProjectTimeMinutes: 0,
+ *  scheduledProjectTimeMinutes: 2100,
+ *  reported: 0
+ *  }
+ */
 
 class ReportData {
 
@@ -24,6 +43,7 @@ class ReportData {
         this.startDate = startDate;
         this.endDate = endDate;
         this.range = moment.range(startDate, endDate);
+        // TODO extract additional service
         this.weekData = utilizationWeekData.data.viewer.component.unitilization;
         this.allocations = allocations;
         this.togglReport = togglReport;
@@ -132,21 +152,27 @@ class ReportData {
     // PRIVATE
     // // //
 
-
     _initMembers() {
-        let members = this.weekData.utilizationListData.map((memberData) => {
-            let member = new ReportMember(memberData);
-            // TODO add member from toggl side
-            // TODO group duplicated values
-            member.addTogglReport( this.togglReport.findUserReportByName(member.getName()) );
-            return member;
+        let membersList = new ReportMembersList();
+
+        //Build members from toggl side
+        this.togglReport.getUsersList().getUsers().forEach((togglUser) => {
+            let member = new ReportMember(togglUser.getUserName(), '', 0, togglUser);
+            membersList.addMember(member);
         });
 
-        let membersList = new ReportMembersList(members);
+        // Build member from utilization report
+        this.weekData.utilizationListData.map((item) => {
+            let member = new ReportMember(item.name, item.roleName, item.availableMinutes, TogglReportUser.initNull());
+            membersList.addMember(member);
+        });
 
+        // Add allocations
         this.allocations.matchAllocations(this.getRange(), (allocation, matchedRange) => {
             membersList.addAllocation( allocation, matchedRange );
         });
+
+        membersList.groupSimilar();
 
         return membersList;
     }
@@ -155,18 +181,14 @@ class ReportData {
         let projectsCollection = new ReportProjectList();
 
         // Build projects from toggl side
-        this.togglReport.getProjectsList().getProjects().forEach((project) => {
-            projectsCollection.addProject( new ReportProject(project.getName(), true) );
+        this.togglReport.getProjectsList().getProjects().forEach((togglProject) => {
+            let project = new ReportProject(togglProject.getName(), true, togglProject);
+            projectsCollection.addProject( project );
         });
 
         // Add forecast allocations
         this.allocations.matchAllocations(this.getRange(), (allocation, matchedRange) => {
             projectsCollection.addAllocation( allocation, matchedRange );
-        });
-
-        // Add toggl report to partical project
-        projectsCollection.getAllProjects().forEach((project) => {
-            project.addTogglReport( this.togglReport.findProjectReportByName(project.getName()) );
         });
 
         projectsCollection.groupSimilar();

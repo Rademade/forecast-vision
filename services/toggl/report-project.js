@@ -2,6 +2,10 @@ const { Duration } = require('../duration');
 
 class TogglReportProject {
 
+    static initNull() {
+        return new TogglReportProject(null);
+    }
+
     constructor(name) {
         this.name = name;
         this.items = [];
@@ -36,6 +40,10 @@ class TogglReportProject {
      * @param {TogglReportProject} togglReport
      */
     groupWith(togglReport) {
+        // Valid type check
+        if (!(togglReport instanceof TogglReportProject)) return;
+
+        this.name = this.getName() || togglReport.getName();
         this.billableDuration = null;
         togglReport.getItems().forEach((item) => {
             this.addItem( item );

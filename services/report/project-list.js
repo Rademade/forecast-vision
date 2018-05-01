@@ -1,23 +1,18 @@
 const _ = require('lodash');
 
 const { ReportProject } = require('./project');
+const { CollectionList } = require('./collection/list');
+const { TogglReportProject } = require('./../toggl/report-project');
 const { Duration } = require('../duration');
 
-class ReportProjectList {
-
-    constructor() {
-        this.projects = {};
-    }
-
+class ReportProjectList extends CollectionList {
 
     /**
      * @param {ReportProject} project
      * @return ReportProject
      */
     addProject(project) {
-        let projectAlias = project.getName();
-        this.projects[ projectAlias ] = project;
-        return project;
+        return this.addItem(project);
     }
 
     /**
@@ -27,9 +22,10 @@ class ReportProjectList {
      */
     addAllocation(allocation, matchedRange) {
         let projectAlias = allocation.getProjectName();
-        let project = this.projects[ projectAlias ];
+        let project = this.items[ projectAlias ];
         if (!project) {
-            project = this.addProject( new ReportProject(allocation.getProjectName(), allocation.isBillable()) );
+            project = new ReportProject(allocation.getProjectName(), allocation.isBillable(), TogglReportProject.initNull());
+            this.addProject( project );
         }
         project.addDuration( allocation.getDurationByRange(matchedRange) );
     }
@@ -39,7 +35,7 @@ class ReportProjectList {
      * @returns {ReportProject[]}
      */
     getAllProjects() {
-        return _.values(this.projects);
+        return _.values(this.items);
     }
 
     /**
@@ -75,9 +71,9 @@ class ReportProjectList {
         })
     }
 
-    groupSimilar() {
+    _getItemsGroups() {
         // TODO extract to config file
-        let projectGroups = [
+        return [
             ['IIB (iib.com.ua)', 'IIB.com.ua'],
             ['CashTime', 'Cashtime'],
             ['doxy.me', 'Doxy.me'],
@@ -92,25 +88,6 @@ class ReportProjectList {
             ['GroupTravel', 'Group travel'],
             ['TheHub', 'Recruiting Hub']
         ];
-
-        projectGroups.forEach((projectGroup) => {
-            let baseProject;
-
-            for (let i = 0; i < projectGroup.length; i++) {
-
-                if (!baseProject) {
-                    baseProject = this.projects[projectGroup[i]];
-                }
-
-                let groupProject = this.projects[projectGroup[i]];
-
-                // Don't group same project
-                if (baseProject && groupProject && !baseProject.isSame(groupProject)) {
-                    baseProject.groupWith( groupProject );
-                    delete this.projects[projectGroup[i]];
-                }
-            }
-        });
     }
 
 }

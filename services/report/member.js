@@ -1,38 +1,35 @@
 const { Duration } = require('../duration');
+const { CollectionItem } = require('./collection/item');
 const { ForecastAllocationItem } = require('../forecast-allocation/item');
 
-const DEFAULT_ROLE = 'Unknown department';
+class ReportMember extends CollectionItem {
 
-class ReportMember {
 
     /**
-     * {
-     *  id: 'Q2FyZExpc3RDYXJkOjk0MDgz',
-     *  name: 'Igor Zubkov',
-     *  profilePictureId: null,
-     *  profilePictureDefaultId: 5,
-     *  roleName: 'Developer',
-     *  availableMinutes: 2100,
-     *  scheduledMinutes: 2100,
-     *  scheduledNonProjectTimeMinutes: 0,
-     *  scheduledProjectTimeMinutes: 2100,
-     *  reported: 0,
-     *  }
-     * @param {Object} memberData
+     * @param name
+     * @param roleName
+     * @param availableMinutes
+     * @param {TogglReportUser} togglFactReport
      */
-    constructor(memberData) {
-        this.userName = memberData.name.trim();
-        this.roleName = memberData.roleName.trim();
-        this.availableDuration = new Duration(memberData.availableMinutes);
+    constructor(name, roleName, availableMinutes = 0, togglFactReport) {
+        super();
+        this.userName = name.trim();
+        this.roleName = roleName.trim();
+        this.availableDuration = new Duration(availableMinutes);
         this.matchedAllocations = [];
+        this.togglFactReport = togglFactReport;
     }
 
     getName() {
         return this.userName
     }
 
+    getSlug() {
+        return this.getName();
+    }
+
     getRole() {
-        return this.roleName || DEFAULT_ROLE;
+        return this.roleName;
     }
 
     /**
@@ -47,10 +44,14 @@ class ReportMember {
     }
 
     /**
-     * @param {TogglReportUser} togglFactReport
+     * @return {Array}
      */
-    addTogglReport(togglFactReport) {
-        this.togglFactReport = togglFactReport;
+    getMatchedAllocations() {
+        return this.matchedAllocations;
+    }
+
+    getTogglReport() {
+        return this.togglFactReport;
     }
 
     getAvailableDuration() {
@@ -95,6 +96,16 @@ class ReportMember {
 
     getPlanningAccuracyPercent() {
         return this.getFactBillableDuration().getRatio( this.getBillableDuration() );
+    }
+
+    groupWith(member) {
+        this.userName = this.getName() || member.getName();
+        this.roleName = this.getRole() || member.getRole();
+        this.getAvailableDuration().add( member.getAvailableDuration() );
+        this.getTogglReport().groupWith( member.getTogglReport() );
+
+        // TODO add unique validation
+        this.matchedAllocations = this.getMatchedAllocations().concat( member.getMatchedAllocations() );
     }
 
 }
