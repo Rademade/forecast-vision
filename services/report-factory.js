@@ -8,7 +8,7 @@ const moment = require('moment');
 class ReportFactory {
 
     static getWeeksRhythmReport() {
-        let startDate = moment().subtract(1, 'weeks').startOf('week');
+        let startDate = moment().startOf('week');
         // If we use endOf function we have 59 second
         let endDate = moment().add(6, 'weeks').startOf('week').subtract(1, 'day');
 
@@ -28,7 +28,6 @@ class ReportFactory {
     }
 
     static getCustomFactReport(dateStart, dateEnd, projectId) {
-        // TODO toggl / forecast project
         let daysLength = dateEnd.diff(dateStart, 'days');
         // TODO Days validation
 

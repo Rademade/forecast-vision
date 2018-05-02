@@ -1,9 +1,13 @@
 extends _layout-week-report
 
+include blocks/company-health
 include blocks/report-projects
 include blocks/report-members
 
 block table_body
+
+    tr
+        +companyHealth(weeksData)
 
     tr
         +reportProjects(weeksData)
