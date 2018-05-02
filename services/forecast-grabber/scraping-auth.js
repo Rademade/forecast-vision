@@ -11,7 +11,6 @@ class ForecastGrabberScrapingAuth {
         this.scrapingMethods = new ForecastGrabberScrapingMethods(this.client);
     }
     auth() {
-        // TODO extract ENV variable
         let loginQuery = gql`mutation Login_mutation($input: LoginInput!) {
             login(input: $input) {
               clientMutationId

@@ -17,11 +17,11 @@ const moment = extendMoment(Moment);
  * UnitilizationData / weekData
  *
  * {
- *  id: 'Q2FyZExpc3RDYXJkOjk0MDgz',
- *  name: 'Igor Zubkov',
+ *  id: '',
+ *  name: '',
  *  profilePictureId: null,
  *  profilePictureDefaultId: 5,
- *  roleName: 'Developer',
+ *  roleName: '',
  *  availableMinutes: 2100,
  *  scheduledMinutes: 2100,
  *  scheduledNonProjectTimeMinutes: 0,
