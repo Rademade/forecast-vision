@@ -19,7 +19,7 @@ class Report {
         this.togglLoader = new TogglScrapingMethods();
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
-        this.projectId = parseInt(projectId, 10);
+        this.projectId = !isNaN(projectId) ? parseInt(projectId, 10) : 0;
         this.getIntervalEndDate = getIntervalEndDate;
         this.reports = [];
         this.scrappingAPI = null;
