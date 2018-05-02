@@ -73,6 +73,10 @@ class ForecastAllocationItem {
         return this.allocationData.project.name.trim();
     }
 
+    getProjectId() {
+        return this.allocationData.project.companyProjectId;
+    }
+
     getStartDate() {
         return this.startDate;
     }

@@ -54,6 +54,12 @@ class ReportMember extends CollectionItem {
         return this.togglFactReport;
     }
 
+    hasDisplayHours() {
+        return this.getScheduledDuration().getMinutes() > 0 ||
+            this.getFactBillableDuration().getMinutes() > 0 ||
+            this.getBillableDuration().getMinutes() > 0;
+    }
+
     getAvailableDuration() {
         return this.availableDuration;
     }
@@ -91,7 +97,7 @@ class ReportMember extends CollectionItem {
     }
 
     getFactBillableDuration() {
-        return this.togglFactReport.getBillableDuration();
+        return this.getTogglReport().getBillableDuration();
     }
 
     getPlanningAccuracyPercent() {

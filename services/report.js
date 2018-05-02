@@ -3,6 +3,7 @@ const moment = require('moment');
 const { ForecastGrabberScrapingAuth } = require('./forecast-grabber/scraping-auth');
 const { TogglScrapingMethods } = require('./toggl/scraping-methods');
 const { ForecastAllocationList } = require('./forecast-allocation/list');
+const { ForecastToggl } = require('./forecast-toggl');
 const { ReportData } = require('./report-data');
 
 class Report {
@@ -10,13 +11,15 @@ class Report {
     /**
      * @param dateStart
      * @param dateEnd
+     * @param projectId
      * @param getIntervalEndDate
      */
-    constructor(dateStart, dateEnd, getIntervalEndDate) {
+    constructor(dateStart, dateEnd, projectId, getIntervalEndDate) {
         this.apiLoader = new ForecastGrabberScrapingAuth();
         this.togglLoader = new TogglScrapingMethods();
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
+        this.projectId = parseInt(projectId, 10);
         this.getIntervalEndDate = getIntervalEndDate;
         this.reports = [];
         this.scrappingAPI = null;
@@ -29,25 +32,21 @@ class Report {
      * @param {Function} loadedWeeksCallback
      */
     loadIntervalData(loadDate, loadedWeeksCallback) {
-        console.log('Called loadIntervalData(). Date: ' + loadDate.format("dddd, MMMM Do YYYY"));
-
         const startDate  = loadDate.clone();
         const endDate = this.getIntervalEndDate(startDate);
 
         // If last date load break out
         if (endDate > this.dateEnd) {
-            console.log('Break', endDate, this.dateEnd)
-            loadedWeeksCallback()
+            console.log('Break', endDate, this.dateEnd);
+            loadedWeeksCallback();
             return ;
         }
 
         this.scrappingAPI.getUtilization(startDate, endDate).then((weekData) => {
-            this.togglLoader.getReport(startDate, endDate, (togglReport) => {
-
+            let togglProjectId = ForecastToggl.getTogglProjectId(this.projectId);
+            this.togglLoader.getReport(startDate, endDate, togglProjectId, (togglReport) => {
                 this.reports.push(new ReportData(startDate, endDate, weekData, this.allocationReport, togglReport));
-
                 this.loadIntervalData(endDate, loadedWeeksCallback);
-
             });
         });
     }
@@ -70,7 +69,9 @@ class Report {
 
             // Load Allocations
             api.getScheduleAllocations().then((allocationData) => {
-                this.allocationReport = new ForecastAllocationList(allocationData);
+                this.allocationReport = new ForecastAllocationList(allocationData, {
+                    projectId: this.projectId
+                });
                 this.startIntervalLoading(loadReadyCallback);
             });
 

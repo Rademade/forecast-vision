@@ -9,6 +9,7 @@ class ForecastGrabberScrapingMethods {
     constructor(client) {
         this.client = client
     }
+
     getUtilization(startDate, endDate) {
         return this.client.query({
             query: utilizationQuery,
@@ -19,6 +20,15 @@ class ForecastGrabberScrapingMethods {
             console.error(error)
         });
     }
+
+    getProjects() {
+        return this.client.query({
+            query: projectsQuery
+        }).catch(function(error){
+            console.error(error)
+        });
+    }
+
     getScheduleAllocations() {
         return this.client.query({
             query: scheduleQuery
@@ -28,6 +38,27 @@ class ForecastGrabberScrapingMethods {
     }
 
 }
+
+let projectsQuery = gql`
+query Viewer_queries {
+  viewer {    
+    projects: projects(first: 100000, excludeDoneOrHalted: true) {
+      edges {
+        node {
+          id
+          isInProjectGroup
+          companyProjectId
+          name
+          status
+        }
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+}`;
 
 
 let utilizationQuery = gql`

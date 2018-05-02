@@ -8,10 +8,18 @@ class ForecastAllocationList {
      * https://app.forecast.it/scheduling
      *
      * @param {Object} allocationData
+     *
+     * projectId – Forecast Project Id
+     * @param {Object} filters
      */
-    constructor(allocationData) {
+    constructor(allocationData, filters = {}) {
         this.allocations = allocationData.data.viewer.company.allocations.edges.map((allocation) => {
             return new ForecastAllocationItem(allocation.node);
+        }).filter((allocationItem) => {
+            if (filters.length === 0)  return true;
+            return (
+                (!filters.projectId || (filters.projectId && filters.projectId === allocationItem.getProjectId()))
+            )
         });
     }
 

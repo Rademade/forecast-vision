@@ -1,1 +1,33 @@
 extends _layout
+
+include blocks/report-members
+
+block content
+    h3 Custom plan/fact from
+    form(method="get" action="")
+        div
+            label(for="dateFrom") Date start
+            input(id="dateFrom" name="dateFrom" type="date" value=dateFrom)
+        div
+            label(for="dateTo") Date end
+            input(id="dateTo" name="dateTo" type="date" value=dateTo)
+        div
+            label(for="projectId") Project
+            select(id="projectId" name="projectId")
+                each project in projects
+                    option(value=project.node.companyProjectId selected=project.node.companyProjectId == projectId) #{project.node.name}
+
+        button Show report
+
+
+    if factReports && factReports.length > 0
+        h3 Plan/Fact report
+        table(border="1")
+            thead
+                tr
+                    each report in factReports
+                        td.week-info()
+                            div #{report.startDate.format('ll')} – #{report.endDate.format('ll')}
+
+                tr
+                    +reportMembers(factReports)

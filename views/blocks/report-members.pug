@@ -8,12 +8,13 @@ mixin reportMembers(reports)
                     td Fact h.
                     td Accuracy %
                 each member in report.getMembersList().getAllMembers()
-                    tr
-                        td #{member.getName()}
-                        td #{member.getBillableDuration()}
-                        td #{member.getFactBillableDuration()}
-                        td(class=member.getPlanningAccuracyPercent() > 95 ? "good" : "wrong")
-                            span #{member.getPlanningAccuracyPercent()}
+                    if (member.hasDisplayHours())
+                        tr
+                            td #{member.getName()}
+                            td #{member.getBillableDuration()}
+                            td #{member.getFactBillableDuration()}
+                            td(class=member.getPlanningAccuracyPercent() > 95 ? "good" : "wrong")
+                                span #{member.getPlanningAccuracyPercent()}
                 tr
                     td
                         b Total
