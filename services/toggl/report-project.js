@@ -3,7 +3,7 @@ const { Duration } = require('../duration');
 class TogglReportProject {
 
     static initNull() {
-        return new TogglReportProject(null);
+        return new TogglReportProject('');
     }
 
     constructor(name) {
