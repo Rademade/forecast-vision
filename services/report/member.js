@@ -13,8 +13,8 @@ class ReportMember extends CollectionItem {
      */
     constructor(name, roleName, availableMinutes = 0, togglFactReport) {
         super();
-        this.userName = name.trim();
-        this.roleName = roleName.trim();
+        this.userName = (name + '').trim();
+        this.roleName = (roleName + '').trim();
         this.availableDuration = new Duration(availableMinutes);
         this.matchedAllocations = [];
         this.togglFactReport = togglFactReport;
