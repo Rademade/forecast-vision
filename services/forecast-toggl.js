@@ -17,7 +17,7 @@ class ForecastToggl {
             case 22: return 68939269;
             case 42: return 11934670;
             case 48: return 94097607;
-            case 57: return 87769250;
+            case 57: return 87769250; // MonArome
             case 44: return 109310247;
             case 30: return 12198792;
             case 5: return 39390403;
@@ -29,6 +29,7 @@ class ForecastToggl {
             case 54: return 112464383;
             case 36: return 105427065;
             case 11: return 12436751;
+            case 58: return 118403052;// GrowthStripe
             default:
                 console.log('Error with ID', forecastProjectId);
                 return 0;
