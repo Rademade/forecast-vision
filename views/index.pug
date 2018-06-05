@@ -2,6 +2,7 @@ extends _layout-week-report
 
 include blocks/company-health
 include blocks/bench-members
+include blocks/project-list
 
 block table_body
 
@@ -35,15 +36,8 @@ block table_body
             +benchMembers(weeksData)
 
         tr
-            each weekData in weeksData
-                td.week-info.departments
-                    span Projects. Billable – #{weekData.getProjectList().getBillableCount()}:
-                        ul
-                            each project in weekData.getProjectList().getSortedProjects()
-                                li(class=project.isBillable() ? "is-billable" : "is-non-billable")
-                                    span #{project.getName()}
-                                    span –
-                                    span #{project.getTotalDuration()}h.
+            +projectList(weeksData)
+
 
 
 

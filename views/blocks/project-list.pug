@@ -1,0 +1,10 @@
+mixin projectList(reports)
+    each report in reports
+        td.week-info.departments
+            span Projects. Billable – #{report.getProjectList().getBillableCount()}:
+                ul
+                    each project in report.getProjectList().getSortedProjects()
+                        li(class=project.isBillable() ? "is-billable" : "is-non-billable")
+                            span #{project.getName()}
+                            span –
+                            span #{project.getTotalDuration()}h.
