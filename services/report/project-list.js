@@ -86,7 +86,10 @@ class ReportProjectList extends CollectionList {
             ['Vticket', 'V-Ticket'],
             ['PingPong. Support', 'Ping-pong — поддержка'],
             ['GroupTravel', 'Group travel'],
-            ['TheHub', 'Recruiting Hub']
+            ['TheHub', 'Recruiting Hub'],
+            ['MonArome', 'Monarome'],
+            ['Growthtribe.io', 'Growthtribe']
+
         ];
     }
 

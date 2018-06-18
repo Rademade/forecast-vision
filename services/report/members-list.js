@@ -103,7 +103,8 @@ class ReportMembersList extends CollectionList {
             ['Denis Dvoryashin', 'Denys Dvoriashyn'],
             ['Maksym Shutiak', 'Maxym Shutyak'],
             ['Mikhail Gubenko', 'Mihail Gubenko'],
-            ['Denis Dymko', 'Denis', 'Denys Dymko']
+            ['Denis Dymko', 'Denis', 'Denys Dymko'],
+            ['Stanislav Serhunin', 'Stanislav Sergunin']
         ];
     }
 
