@@ -104,7 +104,9 @@ class ReportMembersList extends CollectionList {
             ['Maksym Shutiak', 'Maxym Shutyak'],
             ['Mikhail Gubenko', 'Mihail Gubenko'],
             ['Denis Dymko', 'Denis', 'Denys Dymko'],
-            ['Stanislav Serhunin', 'Stanislav Sergunin']
+            ['Stanislav Serhunin', 'Stanislav Sergunin'],
+            ['A Stiks', 'Alex Stiques'],
+            ['Alex Khoroshko', 'Oleksii Khoroshko']
         ];
     }
 

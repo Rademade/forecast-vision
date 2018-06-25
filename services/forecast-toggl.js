@@ -30,6 +30,7 @@ class ForecastToggl {
             case 36: return 105427065;
             case 11: return 12436751;
             case 58: return 118403052;// GrowthStripe
+            case 65: return 123888741; // Rozetka
             default:
                 console.log('Error with ID', forecastProjectId);
                 return 0;

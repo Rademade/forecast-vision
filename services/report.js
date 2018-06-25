@@ -43,6 +43,8 @@ class Report {
         }
 
         this.scrappingAPI.getUtilization(startDate, endDate).then((weekData) => {
+            // TODO request for all toggl project. Launch matching proccess
+            //  - by names and config file
             let togglProjectId = ForecastToggl.getTogglProjectId(this.projectId);
             this.togglLoader.getReport(startDate, endDate, togglProjectId, (togglReport) => {
                 this.reports.push(new ReportData(startDate, endDate, weekData, this.allocationReport, togglReport));

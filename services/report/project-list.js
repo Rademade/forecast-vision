@@ -88,7 +88,8 @@ class ReportProjectList extends CollectionList {
             ['GroupTravel', 'Group travel'],
             ['TheHub', 'Recruiting Hub'],
             ['MonArome', 'Monarome'],
-            ['Growthtribe.io', 'Growthtribe']
+            ['Growthtribe.io', 'Growthtribe'],
+            ['Rozetka (UI/UX)', 'Rozetka (UX/UI)'],
 
         ];
     }
