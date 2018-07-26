@@ -11,6 +11,7 @@
   "dependencies": {
     "apollo-client-preset": "^1.0.8",
     "apollo-link-context": "^1.0.7",
+    "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "express-basic-auth": "^1.1.4",
     "express-reload": "^1.1.0",
@@ -21,6 +22,7 @@
     "lodash": "^4.17.5",
     "moment": "^2.21.0",
     "moment-range": "^3.1.1",
+    "mongoose": "^5.2.5",
     "node-fetch": "^2.1.2",
     "pug": "^2.0.3",
     "request": "^2.85.0",

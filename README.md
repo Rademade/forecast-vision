@@ -7,3 +7,4 @@
 - Check initialization services steps. High complexity
 - Task to generate mapping Toggl -> Forecast projects
 - Extract name mapping to config file
+

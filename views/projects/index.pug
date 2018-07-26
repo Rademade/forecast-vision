@@ -1,0 +1,22 @@
+extends ../layouts/index
+
+block content
+
+    div
+        div.actions
+            a(href="/projects/form") Add new project
+
+        table(border="1")
+            tr
+                td Project name
+                td Toggl id
+                td Forecast id
+                td Actions
+            each project in projects
+                tr()
+                    td() #{project.name}
+                    td() #{project.togglId}
+                    td() #{project.forecastId}
+                    td()
+                        a(href="/projects/" + project.id) Edit
+                        span(class="item-delete" data-url="/projects/" + project.id) Delete

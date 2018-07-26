@@ -8,6 +8,8 @@ const { ReportMembersList } = require('./report/members-list');
 const { ReportDepartment } = require('./report/department');
 const { ReportProjectList } = require('./report/project-list');
 const { TogglReportUser } = require('./toggl/report-user');
+const MemberModel = require('./../models/member');
+const ProjectModel = require('./../models/project');
 
 const moment = extendMoment(Moment);
 
@@ -153,24 +155,30 @@ class ReportData {
     // // //
 
     _initMembers() {
+        //TODO refactor to async
+
         let membersList = new ReportMembersList();
 
         //Build members from toggl side
         this.togglReport.getUsersList().getUsers().forEach((togglUser) => {
-            let member = new ReportMember(togglUser.getUserName(), '', 0, togglUser);
-            membersList.addMember(member);
+            MemberModel.getByTogglUser(togglUser).then((memberDocument) => {
+                let member = new ReportMember(togglUser.getUserName(), '', 0, togglUser, memberDocument);
+                membersList.addMember(member);
+            });
         });
 
         // Build member from utilization report
         this.weekData.utilizationListData.map((item) => {
-            let member = new ReportMember(item.name, item.roleName, item.availableMinutes, TogglReportUser.initNull());
-            membersList.addMember(member);
+            MemberModel.getByForecastUser(item).then((memberDocument) => {
+                let member = new ReportMember(item.name, item.roleName, item.availableMinutes, TogglReportUser.null(), memberDocument);
+                membersList.addMember(member);
+            });
         });
 
         // Add allocations
-        this.allocations.matchAllocations(this.getRange(), (allocation, matchedRange) => {
-            membersList.addAllocation( allocation, matchedRange );
-        });
+        // this.allocations.matchAllocations(this.getRange(), (allocation, matchedRange) => {
+        //     membersList.addAllocation( allocation, matchedRange );
+        // });
 
         membersList.groupSimilar();
 

@@ -1,0 +1,26 @@
+extends ../layouts/index
+
+block content
+    div.controll
+        a(href="/members") Back to members list
+
+    h1 Member form
+
+    form(action=submitUrl method="post")
+        div
+            label() Member name
+            input(type="input" name="name" value=member.name)
+
+        div
+            label() Toggl id
+            input(type="input" name="togglId" value=member.togglId)
+
+        div
+            label() Forecast id
+            input(type="input" name="forecastId" value=member.forecastId)
+
+        div
+            label() Member name options
+            textarea(name="nameOptions") #{member.nameOptions.join(',')}
+
+        input(type="submit" value="Save")

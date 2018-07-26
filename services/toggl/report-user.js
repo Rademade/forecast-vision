@@ -3,7 +3,7 @@ const {TogglReportUserItem} = require('./report-user-item')
 
 class TogglReportUser {
 
-    static initNull() {
+    static null() {
         return new TogglReportUser({
             items: [],
             title: {
@@ -21,6 +21,10 @@ class TogglReportUser {
             this.userName = this.data.title.user.trim();
         }
         return this.userName;
+    }
+
+    getTogglId() {
+        return this.data.id;
     }
 
     /**

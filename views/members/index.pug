@@ -1,0 +1,22 @@
+extends ../layouts/index
+
+block content
+
+    div
+        div.actions
+            a(href="/members/form") Add new member
+
+        table(border="1")
+            tr
+                td Member name
+                td Toggl id
+                td Forecast id
+                td Actions
+            each member in members
+                tr()
+                    td() #{member.name}
+                    td() #{member.togglId}
+                    td() #{member.forecastId}
+                    td()
+                        a(href="/members/" + member.id) Edit
+                        span(class="item-delete" data-url="/members/" + member.id) Delete

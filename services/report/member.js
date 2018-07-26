@@ -11,13 +11,14 @@ class ReportMember extends CollectionItem {
      * @param availableMinutes
      * @param {TogglReportUser} togglFactReport
      */
-    constructor(name, roleName, availableMinutes = 0, togglFactReport) {
+    constructor(name, roleName, availableMinutes = 0, togglFactReport, memberDocument) {
         super();
         this.userName = (name + '').trim();
         this.roleName = (roleName + '').trim();
         this.availableDuration = new Duration(availableMinutes);
         this.matchedAllocations = [];
         this.togglFactReport = togglFactReport;
+        this.memberDocument = memberDocument;
     }
 
     getName() {
