@@ -4,7 +4,7 @@ const { ForecastGrabberScrapingAuth } = require('./forecast-grabber/scraping-aut
 const { TogglScrapingMethods } = require('./toggl/scraping-methods');
 const { ForecastAllocationList } = require('./forecast-allocation/list');
 const { ForecastToggl } = require('./forecast-toggl');
-const { ReportData } = require('./report-data');
+const { ReportDataBuilder } = require('./report-data-builder');
 
 class Report {
 
@@ -37,7 +37,6 @@ class Report {
 
         // If last date load break out
         if (endDate > this.dateEnd) {
-            console.log('Break', endDate, this.dateEnd);
             loadedWeeksCallback();
             return ;
         }
@@ -45,10 +44,17 @@ class Report {
         this.scrappingAPI.getUtilization(startDate, endDate).then((weekData) => {
             // TODO request for all toggl project. Launch matching proccess
             //  - by names and config file
+            // console.log(this.projectId);
             let togglProjectId = ForecastToggl.getTogglProjectId(this.projectId);
             this.togglLoader.getReport(startDate, endDate, togglProjectId, (togglReport) => {
-                this.reports.push(new ReportData(startDate, endDate, weekData, this.allocationReport, togglReport));
-                this.loadIntervalData(endDate, loadedWeeksCallback);
+
+                (new ReportDataBuilder(startDate, endDate, weekData, this.allocationReport, togglReport))
+                    .getReport()
+                    .then((report) => {
+                        this.reports.push(report);
+                        this.loadIntervalData(endDate, loadedWeeksCallback);
+                    });
+
             });
         });
     }

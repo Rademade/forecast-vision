@@ -10,6 +10,7 @@ class ReportMember extends CollectionItem {
      * @param roleName
      * @param availableMinutes
      * @param {TogglReportUser} togglFactReport
+     * @param {Member} memberDocument
      */
     constructor(name, roleName, availableMinutes = 0, togglFactReport, memberDocument) {
         super();

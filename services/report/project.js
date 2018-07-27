@@ -9,13 +9,15 @@ class ReportProject extends CollectionItem {
      * @param name
      * @param billable
      * @param {TogglReportProject} togglFactReport
+     * @param projectDocument
      */
-    constructor(name, billable, togglFactReport) {
+    constructor(name, billable, togglFactReport, projectDocument) {
         super();
         this.name = name.trim();
         this.billable = billable;
         this.duration = new Duration(0);
         this.togglFactReport = togglFactReport;
+        this.projectDocument = projectDocument;
     }
 
     /**

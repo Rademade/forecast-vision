@@ -21,15 +21,16 @@ _self.getByTogglUser = (togglMember) => {
             ]})
             .exec()
             .then((document) => {
-                if (!document) document = _self.createByTogglUser(togglMember);
+                if (!document) document = _self.createByTogglProject(togglMember);
                 resolve(document);
             }).catch((e) => {
-                resolve( _self.createByTogglUser(togglMember) );
+                resolve( _self.createByTogglProject(togglMember) );
             });
     }).then((member) => {
         if (!member.togglId) {
             member.set({togglId: togglMember.getTogglId()}).save();
         }
+        return member;
     });
 };
 
@@ -37,7 +38,7 @@ _self.getByTogglUser = (togglMember) => {
  * @param togglMember
  * @return {Model}
  */
-_self.createByTogglUser = (togglMember) => {
+_self.createByTogglProject = (togglMember) => {
     let member = new (mongoose.model('Member'));
     member.set({
         name: togglMember.getUserName(),
@@ -68,6 +69,7 @@ _self.getByForecastUser = (forecastItem) => {
         if (!member.forecastId) {
             member.set({forecastId: forecastItem.id}).save();
         }
+        return member;
     });
 };
 
