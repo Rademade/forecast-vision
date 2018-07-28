@@ -4,11 +4,11 @@ class CollectionItem {
         throw new Error('Overwrite method getSlug()');
     }
 
-    isSame(item) {
-        return item instanceof CollectionItem && this.getSlug() === item.getSlug();
+    isSame(member) {
+        throw new Error('Overwrite method isSame()');
     }
 
-    groupWith() {
+    groupWith(member) {
         throw new Error('Overwrite method groupWith()');
     }
 

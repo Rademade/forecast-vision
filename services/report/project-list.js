@@ -24,7 +24,7 @@ class ReportProjectList extends CollectionList {
         let projectAlias = allocation.getProjectName();
         let project = this.items[ projectAlias ];
         if (!project) {
-            project = new ReportProject(allocation.getProjectName(), allocation.isBillable(), TogglReportProject.initNull());
+            project = new ReportProject(allocation.getProjectName(), allocation.isBillable(), TogglReportProject.initNull(), null);
             this.addProject( project );
         }
         project.addDuration( allocation.getDurationByRange(matchedRange) );
@@ -69,29 +69,6 @@ class ReportProjectList extends CollectionList {
         }, (project) => {
             return project.getName();
         })
-    }
-
-    _getItemsGroups() {
-        // TODO extract to config file
-        return [
-            ['IIB (iib.com.ua)', 'IIB.com.ua'],
-            ['CashTime', 'Cashtime'],
-            ['doxy.me', 'Doxy.me'],
-            ['A2 Invest', 'A2 Invest (CRM)'],
-            ['Shift planner.GCCS', 'GCCS'],
-            ['TradingIdea', 'TraidingIdea'],
-            ['Thrillism', 'Thrilism'],
-            ['СЛУХ', 'SLUH'],
-            ['HeavyTrack', 'Heavy Track'],
-            ['Vticket', 'V-Ticket'],
-            ['PingPong. Support', 'Ping-pong — поддержка'],
-            ['GroupTravel', 'Group travel'],
-            ['TheHub', 'Recruiting Hub'],
-            ['MonArome', 'Monarome'],
-            ['Growthtribe.io', 'Growthtribe'],
-            ['Rozetka (UI/UX)', 'Rozetka (UX/UI)'],
-
-        ];
     }
 
 }

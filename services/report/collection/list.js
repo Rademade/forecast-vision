@@ -9,6 +9,7 @@ class CollectionList {
      * @return {CollectionItem}
      */
     addItem(item) {
+        // TODO remove slugs
         let slug = item.getSlug();
         if (!this.items[ slug ]) {
             this.items[ slug ] = item;
@@ -24,28 +25,18 @@ class CollectionList {
      * Group similar members in this collection
      */
     groupSimilar() {
-        this._getItemsGroups().forEach((itemsGroup) => {
-            let _baseItem;
-
-            for (let i = 0; i < itemsGroup.length; i++) {
-
-                if (!_baseItem) {
-                    _baseItem = this.items[itemsGroup[i]];
-                }
-
-                let groupMember = this.items[itemsGroup[i]];
-
-                // Don't group same member
-                if (_baseItem && groupMember && !_baseItem.isSame(groupMember)) {
-                    _baseItem.groupWith( groupMember );
-                    delete this.items[itemsGroup[i]];
+        let keys = Object.keys(this.items);
+        let length = keys.length;
+        for (let i = 0; i < length - 1; i++) {
+            let checkItem = this.items[ keys[i] ];
+            for (let j = i + 1; j < length; j++) {
+                let matchedItem = this.items[ keys[j] ];
+                if (matchedItem && matchedItem.isSame(checkItem)) {
+                    checkItem.groupWith(matchedItem);
+                    delete this.items[ keys[j] ];
                 }
             }
-        });
-    }
-
-    _getItemsGroups() {
-        return [];
+        }
     }
 
 }

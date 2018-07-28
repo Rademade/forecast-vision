@@ -83,6 +83,7 @@ class ReportDataBuilder {
      * @return {Promise<ReportProjectList>}
      */
     async getReportProjectList() {
+        // TODO update builder
         let projectsCollection = new ReportProjectList();
 
         // Build projects from toggl side
@@ -92,9 +93,12 @@ class ReportDataBuilder {
             projectsCollection.addProject( project );
         }
 
+        // TODO forecast project
+
         // Add forecast allocations
         this.allocationReport.matchAllocations(this.range, (allocation, matchedRange) => {
             projectsCollection.addAllocation( allocation, matchedRange );
+            // Allocation add build a new projects
         });
 
         projectsCollection.groupSimilar();

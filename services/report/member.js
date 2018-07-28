@@ -106,6 +106,10 @@ class ReportMember extends CollectionItem {
         return this.getFactBillableDuration().getRatio( this.getBillableDuration() );
     }
 
+    isSame(member) {
+        return member instanceof ReportMember && this.memberDocument.id === member.memberDocument.id;
+    }
+
     groupWith(member) {
         this.userName = this.getName() || member.getName();
         this.roleName = this.getRole() || member.getRole();

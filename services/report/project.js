@@ -55,6 +55,10 @@ class ReportProject extends CollectionItem {
         return this.getFactBillableDuration().getRatio( this.getTotalDuration() );
     }
 
+    isSame(project) {
+        return false;
+    }
+
     /**
      * @param {ReportProject} project
      */

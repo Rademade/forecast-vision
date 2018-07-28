@@ -93,24 +93,6 @@ class ReportMembersList extends CollectionList {
         return this.getFactBillableDuration().getRatio( this.getBillableDuration() );
     }
 
-    /**
-     * Group similar members in this collection
-     */
-    _getItemsGroups() {
-        // TODO move to config file
-        return [
-            ['Alexander Buzan', 'Alexandr Buzan'],
-            ['Denis Dvoryashin', 'Denys Dvoriashyn'],
-            ['Maksym Shutiak', 'Maxym Shutyak'],
-            ['Mikhail Gubenko', 'Mihail Gubenko'],
-            ['Denis Dymko', 'Denis', 'Denys Dymko'],
-            ['Stanislav Serhunin', 'Stanislav Sergunin'],
-            ['A Stiks', 'Alex Stiques', 'Aleksey Stiques'],
-            ['Alex Khoroshko', 'Oleksii Khoroshko'],
-            ['Broviy', 'Bogdan Broviy'],
-            ['Yuriy.Shatalinskyi', 'Shatalinsky']
-        ];
-    }
 
 
 }
