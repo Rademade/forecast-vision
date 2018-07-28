@@ -55,7 +55,6 @@ class MembersController {
             name: body.name,
             togglId: body.togglId,
             forecastId: body.forecastId,
-            nameOptions: body.name.split(','),
         });
         return document;
     }

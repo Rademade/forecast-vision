@@ -23,6 +23,7 @@ _self.getByTogglProject = (togglProject) => {
                 if (!document) document = _self.createByTogglProject(togglProject);
                 resolve(document);
             }).catch((e) => {
+                console.log('Error project find', e);
                 resolve( _self.createByTogglProject(togglProject) );
             });
     });

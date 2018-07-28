@@ -19,8 +19,4 @@ block content
             label() Forecast id
             input(type="input" name="forecastId" value=member.forecastId)
 
-        div
-            label() Member name options
-            textarea(name="nameOptions") #{member.nameOptions.join(',')}
-
         input(type="submit" value="Save")

@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 const MemberSchema = new mongoose.Schema({
     name: String,
-    nameOptions: Array,
     togglId: String,
     forecastId: String
 });
@@ -24,6 +23,7 @@ _self.getByTogglUser = (togglMember) => {
                 if (!document) document = _self.createByTogglProject(togglMember);
                 resolve(document);
             }).catch((e) => {
+                console.log('Error member find', e);
                 resolve( _self.createByTogglProject(togglMember) );
             });
     }).then((member) => {
@@ -62,7 +62,7 @@ _self.getByForecastUser = (forecastItem) => {
                 if (!document) document = _self.createByForecastUser(forecastItem);
                 resolve(document);
             }).catch((e) => {
-                console.log(e);
+                console.log('Error member find', e);
                 resolve( _self.createByForecastUser(forecastItem) );
             });
     }).then((member) => {
