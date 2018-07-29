@@ -53,8 +53,7 @@ class ProjectsController {
         document.set({
             name: body.name,
             togglId: body.togglId,
-            forecastId: body.forecastId,
-            nameOptions: body.name.split(','),
+            forecastCompanyId: body.forecastCompanyId
         });
         return document;
     }

@@ -20,11 +20,11 @@ _self.getByTogglUser = (togglMember) => {
             ]})
             .exec()
             .then((document) => {
-                if (!document) document = _self.createByTogglProject(togglMember);
-                resolve(document);
-            }).catch((e) => {
-                console.log('Error member find', e);
-                resolve( _self.createByTogglProject(togglMember) );
+                if (!document) {
+                    _self.createByTogglProject(togglMember).then((document) => { resolve(document) });
+                } else {
+                    resolve(document);
+                }
             });
     }).then((member) => {
         if (!member.togglId) {
@@ -40,11 +40,10 @@ _self.getByTogglUser = (togglMember) => {
  */
 _self.createByTogglProject = (togglMember) => {
     let member = new (mongoose.model('Member'));
-    member.set({
+    return member.set({
         name: togglMember.getUserName(),
         togglId: togglMember.getTogglId()
     }).save();
-    return member;
 };
 
 /**
@@ -59,11 +58,11 @@ _self.getByForecastUser = (forecastItem) => {
             ]})
             .exec()
             .then((document) => {
-                if (!document) document = _self.createByForecastUser(forecastItem);
-                resolve(document);
-            }).catch((e) => {
-                console.log('Error member find', e);
-                resolve( _self.createByForecastUser(forecastItem) );
+                if (!document) {
+                    _self.createByForecastUser(forecastItem).then((document) => { resolve(document) });
+                } else {
+                    resolve(document);
+                }
             });
     }).then((member) => {
         if (!member.forecastId) {
@@ -79,11 +78,10 @@ _self.getByForecastUser = (forecastItem) => {
  */
 _self.createByForecastUser = (forecastItem) => {
     let member = new (mongoose.model('Member'));
-    member.set({
+    return member.set({
         name: forecastItem.name,
         forecastId: forecastItem.id
     }).save();
-    return member;
 };
 
 

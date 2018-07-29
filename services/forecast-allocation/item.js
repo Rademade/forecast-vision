@@ -3,9 +3,6 @@ const { extendMoment } = require('moment-range');
 
 const moment = extendMoment(Moment);
 
-const { Duration } = require('../duration');
-
-
 const PROJECT_ID_VACATION = 21;
 
 const PROJECT_ID_NEW_BIZ = 30;
@@ -58,7 +55,7 @@ class ForecastAllocationItem {
         this.range = moment.range(this.getStartDate(), this.getEndDate());
     }
 
-    getAllocationInfo() {
+    getInfo() {
         return 'User ' + this.getMemberName() + ' planed on project ' + this.allocationData.project.name;
     }
 
@@ -111,48 +108,25 @@ class ForecastAllocationItem {
         return !(this.isBillable() || this.isUsefulProject() || this.isVacation());
     }
 
-    /**
-     * @param {DateRange} range
-     */
-    getDurationByRange(range) {
-        let days = 0;
-        let start = range.start.clone();
+    hasWorkingSaturday() {
+        return this.allocationData.saturday > 0;
+    }
 
-        while (start <= range.end) {
-            //TODO matched current day with booked day. Accumulate summary
-            if (!(
-                (start.weekday() === 6) ||
-                (start.weekday() === 0 )
-            )) {
-                ++days;
-            } else {
-                if (start.weekday() === 6 && this.allocationData.saturday > 0) {
-                    console.error('Exist plan for saturday Total –' + this.allocationData.saturday);
-                    console.log(this.getAllocationInfo());
-                }
-                if (start.weekday() === 0 && this.allocationData.sunday > 0) {
-                    console.error('Exist plan for sunday. Total – ' + this.allocationData.sunday);
-                    console.log(this.getAllocationInfo());
-                }
-            }
-            start.add(1, 'd');
-        }
-
-        return new Duration(days * this._getMinutesPerDay());
+    hasWorkingSunday() {
+        return this.allocationData.sunday > 0;
     }
 
     /**
      * @return {number}
-     * @private
      */
-    _getMinutesPerDay() {
+    getMinutesPerDay() {
         let previousMinutes = 0;
         for (let weekDay of WEEKDAYS) {
             if (this.allocationData[weekDay] > 0 && this.allocationData[weekDay] > previousMinutes) {
                 // Additional debugging. Check for the same minutes summary
                 if (previousMinutes > 0) {
                     console.error('One allocation has different time');
-                    console.log(this.getAllocationInfo())
+                    console.log(this.getInfo())
                 }
                 previousMinutes = this.allocationData[weekDay];
             }

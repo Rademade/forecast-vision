@@ -17,17 +17,15 @@ class ReportProjectList extends CollectionList {
 
     /**
      *
-     * @param {ForecastAllocationItem} allocation
-     * @param {DateRange} matchedRange
+     * @param {ForecastAllocationItemMatch} matchedItem
      */
-    addAllocation(allocation, matchedRange) {
-        let projectAlias = allocation.getProjectName();
+    addMatchedAllocationItem(matchedItem) {
+        let projectAlias = matchedItem.getAllocation().getProjectName();
         let project = this.items[ projectAlias ];
         if (!project) {
-            project = new ReportProject(allocation.getProjectName(), allocation.isBillable(), TogglReportProject.initNull(), null);
-            this.addProject( project );
+            console.log('Project ' + projectAlias + ' not founded');
         }
-        project.addDuration( allocation.getDurationByRange(matchedRange) );
+        project.addDuration( matchedItem.getDuration() );
     }
 
 

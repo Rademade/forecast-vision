@@ -1,6 +1,5 @@
 const { Duration } = require('../duration');
 const { CollectionItem } = require('./collection/item');
-const { ForecastAllocationItem } = require('../forecast-allocation/item');
 
 class ReportMember extends CollectionItem {
 
@@ -35,20 +34,16 @@ class ReportMember extends CollectionItem {
     }
 
     /**
-     * @param {ForecastAllocationItem} allocation
-     * @param {DateRange} matchedRange
+     * @param {ForecastAllocationItemMatch} matchedItem
      */
-    addAllocation(allocation, matchedRange) {
-        this.matchedAllocations.push({
-            allocation: allocation,
-            range: matchedRange
-        });
+    addMatchedAllocationItem(matchedItem) {
+        this.matchedAllocations.push(matchedItem);
     }
 
     /**
      * @return {Array}
      */
-    getMatchedAllocations() {
+    getMatchedAllocationsItems() {
         return this.matchedAllocations;
     }
 
@@ -67,31 +62,21 @@ class ReportMember extends CollectionItem {
     }
 
     getScheduledDuration() {
-        let duration = new Duration();
-        this.matchedAllocations.forEach((data) => {
-            duration.add( data.allocation.getDurationByRange(data.range) );
-        });
-        return duration;
+        return this.getMatchedAllocationsItems().reduce((duration, item) => {
+            return duration.add( item.getDuration() );
+        }, new Duration());
     }
 
     getBillableDuration() {
-        let duration = new Duration();
-        this.matchedAllocations.forEach((data) => {
-            if (data.allocation.isBillable()) {
-                duration.add( data.allocation.getDurationByRange(data.range) );
-            }
-        });
-        return duration;
+        return this.getMatchedAllocationsItems().reduce((duration, item) => {
+            return duration.add( item.getAllocation().isBillable() ? item.getDuration() : new Duration());
+        }, new Duration());
     }
 
     getBenchDuration() {
-        let duration = this.getUnplannedDuration().clone();
-        this.matchedAllocations.forEach((data) => {
-            if (data.allocation.isBenchProject()) {
-                duration.add( data.allocation.getDurationByRange(data.range) );
-            }
-        });
-        return duration;
+        return this.getMatchedAllocationsItems().reduce((duration, item) => {
+            return duration.add( item.getAllocation().isBenchProject() ? item.getDuration() : new Duration());
+        }, new Duration());
     }
 
     getUnplannedDuration() {
@@ -117,7 +102,7 @@ class ReportMember extends CollectionItem {
         this.getTogglReport().groupWith( member.getTogglReport() );
 
         // TODO add unique validation
-        this.matchedAllocations = this.getMatchedAllocations().concat( member.getMatchedAllocations() );
+        this.matchedAllocations = this.getMatchedAllocationsItems().concat( member.getMatchedAllocationsItems() );
     }
 
 }

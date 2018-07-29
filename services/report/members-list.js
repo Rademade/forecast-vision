@@ -17,16 +17,15 @@ class ReportMembersList extends CollectionList {
     }
 
     /**
-     * @param {ForecastAllocationItem} allocation
-     * @param {DateRange} matchedRange
+     * @param {ForecastAllocationItemMatch} matchedItem
      */
-    addAllocation(allocation, matchedRange) {
-        let slug = allocation.getMemberName();
+    addMatchedAllocationItem(matchedItem) {
+        let slug = matchedItem.getAllocation().getMemberName();
         let member = this.items[ slug ];
         if (!member) {
-            console.log('Member ' + allocation.getMemberName() + ' not founded');
+            console.log('Member ' + slug + ' not founded');
         }
-        member.addAllocation( allocation, matchedRange );
+        member.addMatchedAllocationItem( matchedItem );
     }
 
 
@@ -92,8 +91,6 @@ class ReportMembersList extends CollectionList {
     getPlanningAccuracyPercent() {
         return this.getFactBillableDuration().getRatio( this.getBillableDuration() );
     }
-
-
 
 }
 

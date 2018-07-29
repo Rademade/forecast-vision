@@ -70,9 +70,9 @@ class ReportDataBuilder {
         }
 
         // Add allocations
-        this.allocationReport.matchAllocations(this.range, (allocation, matchedRange) => {
-            membersList.addAllocation( allocation, matchedRange );
-        });
+        for (let matchedItem of this.allocationReport.getMatchedAllocation(this.range)) {
+            membersList.addMatchedAllocationItem( matchedItem );
+        }
 
         membersList.groupSimilar();
 
@@ -83,23 +83,25 @@ class ReportDataBuilder {
      * @return {Promise<ReportProjectList>}
      */
     async getReportProjectList() {
-        // TODO update builder
         let projectsCollection = new ReportProjectList();
 
         // Build projects from toggl side
         for (let togglProject of this.togglReport.getProjectsList().getProjects()) {
+            // TODO toggl project id!
             let projectDocument = await ProjectModel.getByTogglProject(togglProject);
             let project = new ReportProject(togglProject.getName(), true, togglProject, projectDocument);
             projectsCollection.addProject( project );
         }
 
-        // TODO forecast project
-
-        // Add forecast allocations
-        this.allocationReport.matchAllocations(this.range, (allocation, matchedRange) => {
-            projectsCollection.addAllocation( allocation, matchedRange );
-            // Allocation add build a new projects
-        });
+        // Add allocations
+        for (let matchedItem of this.allocationReport.getMatchedAllocation(this.range)) {
+            let allocation = matchedItem.getAllocation();
+            // TODO was trouble on save!
+            let projectDocument = await  ProjectModel.getByForecastAllocation( allocation );
+            let project = new ReportProject(allocation.getProjectName(), allocation.isBillable(), TogglReportProject.initNull(), projectDocument);
+            projectsCollection.addProject( project );
+            projectsCollection.addMatchedAllocationItem( matchedItem );
+        }
 
         projectsCollection.groupSimilar();
 

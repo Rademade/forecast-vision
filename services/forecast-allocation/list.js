@@ -1,4 +1,5 @@
 const { ForecastAllocationItem } = require('./item');
+const { ForecastAllocationItemMatch } = require('./item-match');
 const { Duration } = require('../duration');
 
 class ForecastAllocationList {
@@ -25,36 +26,37 @@ class ForecastAllocationList {
 
     getInternalProcessDuration(rangeDates) {
         let duration = new Duration();
-        this.matchAllocations(rangeDates, (allocation, matchedRange) => {
-            if (!allocation.isBillable()) {
-                duration.add( allocation.getDurationByRange(matchedRange) );
+        for (let matchedItem of this.getMatchedAllocation(rangeDates)) {
+            if (!matchedItem.getAllocation().isBillable()) {
+                duration.add( matchedItem.getDuration() );
             }
-        });
+        }
         return duration.remove( this.getVacationDurations(rangeDates) );
     }
 
     getVacationDurations(rangeDates) {
         let duration = new Duration();
-        this.matchAllocations(rangeDates, (allocation, matchedRange) => {
-            if (allocation.isVacation()) {
-                duration.add( allocation.getDurationByRange(matchedRange) );
+        for (let matchedItem of this.getMatchedAllocation(rangeDates)) {
+            if (matchedItem.getAllocation().isVacation()) {
+                duration.add( matchedItem.getDuration() );
             }
-        });
+        }
         return duration;
     }
 
     /**
-     * @param {DateRange} selectedRange
-     * @param {Function} matchCallback
+     * @param selectedRange
+     * @return {Array<ForecastAllocationItemMatch>}
      */
-    matchAllocations(selectedRange, matchCallback) {
-        this.allocations.forEach((allocation) => {
+    getMatchedAllocation(selectedRange) {
+        let matchedAllocations = [];
+        for (let allocation of this.allocations) {
             let matchedRange = selectedRange.intersect(allocation.getRange());
             if (matchedRange) {
-                // TODO create new matched range object
-                matchCallback(allocation, matchedRange);
+                matchedAllocations.push(new ForecastAllocationItemMatch(allocation, matchedRange));
             }
-        });
+        }
+        return matchedAllocations;
     }
 
 }

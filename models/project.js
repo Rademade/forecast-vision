@@ -2,9 +2,8 @@ const mongoose = require('mongoose');
 
 const ProjectSchema = new mongoose.Schema({
     name: String,
-    nameOptions: Array,
     togglId: String,
-    forecastId: String
+    forecastCompanyId: String
 });
 
 const _self = ProjectSchema.statics;
@@ -20,11 +19,11 @@ _self.getByTogglProject = (togglProject) => {
             ]})
             .exec()
             .then((document) => {
-                if (!document) document = _self.createByTogglProject(togglProject);
-                resolve(document);
-            }).catch((e) => {
-                console.log('Error project find', e);
-                resolve( _self.createByTogglProject(togglProject) );
+                if (!document) {
+                    _self.createByTogglProject(togglProject).then((document) => { resolve(document) });
+                } else {
+                    resolve(document);
+                }
             });
     });
 };
@@ -35,10 +34,47 @@ _self.getByTogglProject = (togglProject) => {
  */
 _self.createByTogglProject = (togglProject) => {
     let member = new (mongoose.model('Project'));
-    member.set({
+    return member.set({
         name: togglProject.getName(),
     }).save();
-    return member;
+};
+
+/**
+ * @param {ForecastAllocationItem} forecastItem
+ */
+_self.getByForecastAllocation = (forecastItem) => {
+    return new Promise((resolve) => {
+        mongoose.model('Project')
+            .findOne({$or: [
+                    {forecastCompanyId: forecastItem.getProjectId()},
+                    {name: forecastItem.getProjectName()}
+                ]})
+            .exec()
+            .then((document) => {
+                if (!document) {
+                    _self.createByForecastAllocation(forecastItem).then((document) => { resolve(document) });
+                } else {
+                    resolve(document);
+                }
+            });
+    }).then((project) => {
+        if (!project.forecastCompanyId) {
+            project.set({forecastCompanyId: forecastItem.getProjectId()}).save();
+        }
+        return project;
+    });
+};
+
+/**
+ * @param {ForecastAllocationItem} forecastItem
+ * @return {Model}
+ */
+_self.createByForecastAllocation = (forecastItem) => {
+    let project = new (mongoose.model('Project'))
+    return project.set({
+        name: forecastItem.getProjectName(),
+        forecastCompanyId: forecastItem.getProjectId()
+    }).save();
 };
 
 
