@@ -1,0 +1,26 @@
+extends ../layouts/index
+
+block content
+    div.controll
+        a(href="/projects") Back to projects list
+
+    h1 Project form
+
+    form(action=submitUrl method="post")
+        div
+            label() Project name
+            input(type="input" name="name" value=project.name)
+
+        div
+            label() Toggl id
+            input(type="input" name="togglId" value=project.togglId)
+
+        div
+            label() Forecast id
+            input(type="input" name="forecastId" value=project.forecastId)
+
+        div
+            label() Project name options
+            textarea(name="nameOptions") #{project.nameOptions.join(',')}
+
+        input(type="submit" value="Save")

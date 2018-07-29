@@ -10,14 +10,16 @@ class ReportMember extends CollectionItem {
      * @param roleName
      * @param availableMinutes
      * @param {TogglReportUser} togglFactReport
+     * @param {Member} memberDocument
      */
-    constructor(name, roleName, availableMinutes = 0, togglFactReport) {
+    constructor(name, roleName, availableMinutes = 0, togglFactReport, memberDocument) {
         super();
         this.userName = (name + '').trim();
         this.roleName = (roleName + '').trim();
         this.availableDuration = new Duration(availableMinutes);
         this.matchedAllocations = [];
         this.togglFactReport = togglFactReport;
+        this.memberDocument = memberDocument;
     }
 
     getName() {
@@ -102,6 +104,10 @@ class ReportMember extends CollectionItem {
 
     getPlanningAccuracyPercent() {
         return this.getFactBillableDuration().getRatio( this.getBillableDuration() );
+    }
+
+    isSame(member) {
+        return member instanceof ReportMember && this.memberDocument.id === member.memberDocument.id;
     }
 
     groupWith(member) {

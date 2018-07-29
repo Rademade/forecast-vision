@@ -1,13 +1,10 @@
 const Moment = require('moment');
 const { extendMoment } = require('moment-range');
 
-const { ForecastAllocationList } = require('./forecast-allocation/list');
-const { ReportProject } = require('./report/project');
-const { ReportMember } = require('./report/member');
-const { ReportMembersList } = require('./report/members-list');
 const { ReportDepartment } = require('./report/department');
+const { ReportMembersList } = require('./report/members-list');
 const { ReportProjectList } = require('./report/project-list');
-const { TogglReportUser } = require('./toggl/report-user');
+const { ForecastAllocationList } = require('./forecast-allocation/list');
 
 const moment = extendMoment(Moment);
 
@@ -32,21 +29,21 @@ const moment = extendMoment(Moment);
 
 class ReportData {
 
+
     /**
      * @param {moment} startDate
      * @param {moment} endDate
-     * @param {Object} utilizationWeekData
+     * @param {ReportMembersList} memberList
+     * @param {ReportProjectList} projectList
      * @param {ForecastAllocationList} allocations
-     * @param {TogglReport} togglReport
      */
-    constructor(startDate, endDate, utilizationWeekData, allocations, togglReport) {
+    constructor(startDate, endDate, memberList, projectList, allocations) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.range = moment.range(startDate, endDate);
-        // TODO extract additional service
-        this.weekData = utilizationWeekData.data.viewer.component.unitilization;
+        this.projectList = projectList;
+        this.membersList = memberList;
         this.allocations = allocations;
-        this.togglReport = togglReport;
     }
 
     getWeekNumber() {
@@ -98,9 +95,6 @@ class ReportData {
      * @returns {ReportMembersList}
      */
     getMembersList() {
-        if (!this.membersList) {
-            this.membersList = this._initMembers();
-        }
         return this.membersList;
     }
 
@@ -118,9 +112,6 @@ class ReportData {
      * @returns {ReportProjectList}
      */
     getProjectList() {
-        if (!this.projectList) {
-            this.projectList = this._initProjects();
-        }
         return this.projectList;
     }
 
@@ -148,53 +139,6 @@ class ReportData {
         return this.getUnplannedDuration().getRatio( this.getTotalCapacityDuration() );
     }
 
-    // // //
-    // PRIVATE
-    // // //
-
-    _initMembers() {
-        let membersList = new ReportMembersList();
-
-        //Build members from toggl side
-        this.togglReport.getUsersList().getUsers().forEach((togglUser) => {
-            let member = new ReportMember(togglUser.getUserName(), '', 0, togglUser);
-            membersList.addMember(member);
-        });
-
-        // Build member from utilization report
-        this.weekData.utilizationListData.map((item) => {
-            let member = new ReportMember(item.name, item.roleName, item.availableMinutes, TogglReportUser.initNull());
-            membersList.addMember(member);
-        });
-
-        // Add allocations
-        this.allocations.matchAllocations(this.getRange(), (allocation, matchedRange) => {
-            membersList.addAllocation( allocation, matchedRange );
-        });
-
-        membersList.groupSimilar();
-
-        return membersList;
-    }
-
-    _initProjects() {
-        let projectsCollection = new ReportProjectList();
-
-        // Build projects from toggl side
-        this.togglReport.getProjectsList().getProjects().forEach((togglProject) => {
-            let project = new ReportProject(togglProject.getName(), true, togglProject);
-            projectsCollection.addProject( project );
-        });
-
-        // Add forecast allocations
-        this.allocations.matchAllocations(this.getRange(), (allocation, matchedRange) => {
-            projectsCollection.addAllocation( allocation, matchedRange );
-        });
-
-        projectsCollection.groupSimilar();
-
-        return projectsCollection;
-    }
 
 }
 

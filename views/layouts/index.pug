@@ -2,10 +2,10 @@ html
     head
         title() Rademade perspective
         link(href="/styles.css" media="all" rel="stylesheet")
+        script(src="https://code.jquery.com/jquery-3.3.1.min.js")
+        script(src="/common.js")
 
     body
-        h1 Rademade perspective
-
         ul.menu
             li
                 a(href="/") Forecast report
@@ -15,6 +15,12 @@ html
                 a(href="/month-report") Month report
             li
                 a(href="/custom-report") Custom project report
+            li
+                a(href="/members") Members
+            li
+                a(href="/projects") Projects
+
+        div.clear
 
         block content
 

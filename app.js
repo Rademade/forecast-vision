@@ -1,79 +1,56 @@
 const express = require('express');
-const moment = require('moment');
 const basicAuth = require('express-basic-auth')
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
-const { ForecastGrabberScrapingAuth } = require('./services/forecast-grabber/scraping-auth');
-const { ReportFactory } = require('./services/report-factory');
+
+// Database connection. // TODO Add config
+mongoose.connect('mongodb://localhost:27017/forecast');
+
+// Load controllers
+const MemberController = require('./controllers/members');
+const ProjectController = require('./controllers/projects');
+const ReportsController = require('./controllers/reports');
 
 const app = express();
 
+// Settings
+app.set('view engine', 'pug');
+app.set('views', './views');
 app.use(express.static('public'));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+
 app.use(basicAuth({
     users: { 'rademade':  process.env.AUTH_PASSWORD || '' },
     challenge: true
 }));
 
-app.set('view engine', 'pug');
-app.set('views', './views');
 
-app.get('/', (req, res) => {
-    ReportFactory.getWeeksRhythmReport().load((weeksData) => {
-        res.render('index', {
-            weeksData: weeksData
-        });
-    });
-});
+// Member CRUD
+app.get('/members', MemberController.index);
+app.get('/members/form', MemberController.form);
+app.get('/members/:id', MemberController.show);
+app.post('/members', MemberController.create);
+app.post('/members/:id', MemberController.update);
+app.delete('/members/:id', MemberController.delete);
 
-app.get('/plan-fact', (req, res) => {
-    ReportFactory.getWeeksFactReport().load((weeksData) => {
-        res.render('plan-fact', {
-            weeksData: weeksData
-        });
-    });
-});
 
-app.get('/month-report', (req, res) => {
-    ReportFactory.getMonthsReport().load((monthsReport) => {
-        res.render('month-report', {
-            monthsReport: monthsReport
-        });
-    });
-});
+// Project CRUD
+app.get('/projects', ProjectController.index);
+app.get('/projects/form', ProjectController.form);
+app.get('/projects/:id', ProjectController.show);
+app.post('/projects', ProjectController.create);
+app.post('/projects/:id', ProjectController.update);
+app.delete('/projects/:id', ProjectController.delete);
 
-app.get('/custom-report', (req, res) => {
-    new Promise((resolve) => {
-        // TODO extract service
-        (new ForecastGrabberScrapingAuth()).ready((api) => {
-            api.getProjects().then((projectData) => {
-                resolve({projects: projectData.data.viewer.projects.edges});
-            })
-        });
-    }).then((result) => {
-        // TODO extract service
 
-        return new Promise((resolve) => {
-            // TODO validation
-            if (!(req.query.dateFrom && req.query.dateTo)) {
-                resolve(result);
-                return ;
-            }
-
-            let dateFrom = moment(req.query.dateFrom);
-            let dateTo = moment(req.query.dateTo);
-            ReportFactory.getCustomFactReport(dateFrom, dateTo, req.query.projectId).load((factReports) => {
-                result.factReports = factReports;
-                resolve(result);
-            });
-        });
-
-    }).then((result) => {
-        res.render('custom-report-form', Object.assign({
-            dateFrom: req.query.dateFrom,
-            dateTo: req.query.dateTo,
-            projectId: req.query.projectId,
-        }, result));
-    });
-});
+// Reports routes
+app.get('/', ReportsController.weekReport);
+app.get('/plan-fact', ReportsController.factReport);
+app.get('/month-report', ReportsController.monthReport);
+app.get('/custom-report', ReportsController.customReport);
 
 app.listen(process.env.PORT || 3000, () =>
     console.log('App listening on port ' + (process.env.PORT || 3000))
