@@ -12,15 +12,15 @@ block content
             input(type="input" name="name" value=project.name)
 
         div
+            label() Toggl name
+            input(type="input" name="togglName" value=project.togglName)
+
+        div
             label() Toggl id
             input(type="input" name="togglId" value=project.togglId)
 
         div
             label() Forecast id
-            input(type="input" name="forecastId" value=project.forecastId)
-
-        div
-            label() Project name options
-            textarea(name="nameOptions") #{project.nameOptions.join(',')}
+            input(type="input" name="forecastCompanyId" value=project.forecastCompanyId)
 
         input(type="submit" value="Save")

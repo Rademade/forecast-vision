@@ -1,3 +1,5 @@
+const { TogglScrapingMethods } = require('./../services/toggl/scraping-methods');
+
 const Project = require('../models/project');
 
 class ProjectsController {
@@ -7,6 +9,15 @@ class ProjectsController {
             if (err) return console.error(err);
             res.render('projects/index', {projects: projects});
         });
+    }
+
+    static togglReload(req, res) {
+        (new TogglScrapingMethods()).getProjects((projects) => {
+            for (let projectData of projects) {
+                Project.buildByTogglProjectData( projectData );
+            }
+        });
+        res.redirect('/projects?toggl-reload=done');
     }
 
     static form(req, res) {
@@ -52,9 +63,9 @@ class ProjectsController {
         // TODO validate params
         document.set({
             name: body.name,
+            togglName: body.togglName,
             togglId: body.togglId,
-            forecastId: body.forecastId,
-            nameOptions: body.name.split(','),
+            forecastCompanyId: body.forecastCompanyId
         });
         return document;
     }

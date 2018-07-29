@@ -14,7 +14,16 @@ class TogglScrapingMethods {
         this.toggl = new TogglClient({apiToken: TOGGL_API_KEY});
     }
 
-    getReport(startDate, endDate, projectId, callback) {
+    /**
+     * Data loaded from Toggl API
+     *
+     * @param {Object} startDate
+     * @param {Object} endDate
+     *
+     * projectId – Toggl Project Id
+     * @param {Object} opt
+     */
+    getReport(startDate, endDate, opt, callback) {
 
         // Pass empty report for feature dates. Don't spend request for load empty data
         if (startDate > moment()) {
@@ -29,7 +38,7 @@ class TogglScrapingMethods {
             grouping: 'users',
             subgrouping: 'projects',
             billable: 'yes',
-            project_ids: projectId,
+            project_ids: opt.projectId ? opt.projectId : null,
         }, (err, data) => {
             let usersList = new TogglReportUserList( data.data.map((togglUserData) => {
                 return new TogglReportUser(togglUserData);

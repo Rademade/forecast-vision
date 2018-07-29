@@ -15,16 +15,21 @@ block content
             label(for="projectId") Project
             select(id="projectId" name="projectId")
                 each project in projects
-                    option(value=project.node.companyProjectId selected=project.node.companyProjectId == projectId) #{project.node.name}
+                    option(value=project.id selected=project.id == projectId) #{project.name}
 
         button Show report
 
 
     if factReports && factReports.length > 0
         h3 Plan/Fact report
-        // TODO add toggl link
-            // https://toggl.com/app/reports/summary/197313/from/2018-04-18/to/2018-04-22/projects/109313623/billable/yes
-        // TODO add forecast link
+
+        ul
+            li
+                a(href="https://toggl.com/app/reports/summary/197313/from/" + dateFrom + "/to/" + dateTo + "/projects/" + project.togglId + "/billable/yes" target="_blank") Toggl report link
+            li
+                // TODO add forecast link
+                span Forecast link
+
         table(border="1")
             thead
                 tr

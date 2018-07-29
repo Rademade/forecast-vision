@@ -3,26 +3,33 @@ const moment = require('moment');
 const { ForecastGrabberScrapingAuth } = require('./forecast-grabber/scraping-auth');
 const { TogglScrapingMethods } = require('./toggl/scraping-methods');
 const { ForecastAllocationList } = require('./forecast-allocation/list');
-const { ForecastToggl } = require('./forecast-toggl');
 const { ReportDataBuilder } = require('./report-data-builder');
 
-class Report {
+class ReportLoader {
 
     /**
      * @param dateStart
      * @param dateEnd
-     * @param projectId
+     * @param {Project} project
      * @param getIntervalEndDate
      */
-    constructor(dateStart, dateEnd, projectId, getIntervalEndDate) {
+    constructor(dateStart, dateEnd, project, getIntervalEndDate) {
         this.apiLoader = new ForecastGrabberScrapingAuth();
         this.togglLoader = new TogglScrapingMethods();
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
-        this.projectId = !isNaN(projectId) ? parseInt(projectId, 10) : 0;
+        this.project = project;
         this.getIntervalEndDate = getIntervalEndDate;
         this.reports = [];
         this.scrappingAPI = null;
+    }
+
+    getProjectTogglId() {
+        return this.project ? this.project.togglId : null;
+    }
+
+    getProjectForecastId() {
+        return this.project ? this.project.forecastCompanyId : null;
     }
 
     /**
@@ -42,11 +49,9 @@ class Report {
         }
 
         this.scrappingAPI.getUtilization(startDate, endDate).then((weekData) => {
-            // TODO request for all toggl project. Launch matching proccess
-            //  - by names and config file
-            // console.log(this.projectId);
-            let togglProjectId = ForecastToggl.getTogglProjectId(this.projectId);
-            this.togglLoader.getReport(startDate, endDate, togglProjectId, (togglReport) => {
+            this.togglLoader.getReport(startDate, endDate, {
+                projectId: this.getProjectTogglId()
+            }, (togglReport) => {
 
                 (new ReportDataBuilder(startDate, endDate, weekData, this.allocationReport, togglReport))
                     .getReport()
@@ -78,7 +83,7 @@ class Report {
             // Load Allocations
             api.getScheduleAllocations().then((allocationData) => {
                 this.allocationReport = new ForecastAllocationList(allocationData, {
-                    projectId: this.projectId
+                    projectId: this.getProjectForecastId()
                 });
                 this.startIntervalLoading(loadReadyCallback);
             });
@@ -88,4 +93,4 @@ class Report {
 
 }
 
-exports.Report = Report;
+exports.ReportLoader = ReportLoader;

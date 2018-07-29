@@ -1,57 +1,60 @@
-const { ForecastGrabberScrapingAuth } = require('./../services/forecast-grabber/scraping-auth');
-const { ReportFactory } = require('./../services/report-factory');
+const moment = require('moment');
+
+const { ReportLoaderFactory } = require('../services/report-loader-factory');
+
+const Project = require('../models/project');
+
 
 class ReportsController {
 
     static weekReport(req, res) {
-        ReportFactory.getWeeksRhythmReport().load((weeksData) => {
+        ReportLoaderFactory.getWeeksRhythmReport().load((weeksData) => {
             res.render('reports/index', {weeksData: weeksData});
         });
     }
 
     static factReport(req, res) {
-        ReportFactory.getWeeksFactReport().load((weeksData) => {
+        ReportLoaderFactory.getWeeksFactReport().load((weeksData) => {
             res.render('reports/plan-fact', {weeksData: weeksData});
         });
     }
 
     static monthReport(req, res) {
-        ReportFactory.getMonthsReport().load((monthsReport) => {
+        ReportLoaderFactory.getMonthsReport().load((monthsReport) => {
             res.render('reports/month-report', {monthsReport: monthsReport});
         });
     }
 
     static customReport(req, res) {
-        // TODO build via co*
-        new Promise((resolve) => {
-            // TODO extract service
-            (new ForecastGrabberScrapingAuth()).ready((api) => {
-                api.getProjects().then((projectData) => {
-                    resolve({projects: projectData.data.viewer.projects.edges});
-                })
-            });
-        }).then((result) => {
-            // TODO extract service
-            return new Promise((resolve) => {
-                // TODO validation
+        Project.findReportsReady().then((projects) => {
+
+            return new Promise(async (resolve) => {
+
+                // TODO validation && extract service
                 if (!(req.query.dateFrom && req.query.dateTo)) {
-                    resolve(result);
-                    return ;
+                    resolve({projects: projects});
+                    return;
                 }
 
                 let dateFrom = moment(req.query.dateFrom);
                 let dateTo = moment(req.query.dateTo);
-                ReportFactory.getCustomFactReport(dateFrom, dateTo, req.query.projectId).load((factReports) => {
-                    result.factReports = factReports;
-                    resolve(result);
+                let project = await Project.findById(req.query.projectId);
+
+                ReportLoaderFactory.getCustomFactReport(dateFrom, dateTo, project).load((factReports) => {
+                    resolve({
+                        project: project,
+                        projects: projects,
+                        factReports: factReports
+                    });
                 });
+
             });
 
         }).then((result) => {
             res.render('reports/custom-report-form', Object.assign({
                 dateFrom: req.query.dateFrom,
                 dateTo: req.query.dateTo,
-                projectId: req.query.projectId,
+                projectId: req.query.projectId
             }, result));
         });
     }

@@ -3,9 +3,14 @@ const basicAuth = require('express-basic-auth')
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
-
-// Database connection. // TODO Add config
-mongoose.connect('mongodb://localhost:27017/forecast');
+mongoose.connect([
+    'mongodb://',
+    process.env.MONGO_HOST || 'localhost',
+    ':',
+    process.env.MONGO_PORT || '27017',
+    '/',
+    process.env.MONGO_DATABASE || 'forecast'
+].join(''), { useNewUrlParser: true });
 
 // Load controllers
 const MemberController = require('./controllers/members');
@@ -40,6 +45,7 @@ app.delete('/members/:id', MemberController.delete);
 // Project CRUD
 app.get('/projects', ProjectController.index);
 app.get('/projects/form', ProjectController.form);
+app.get('/projects/toggl-reload', ProjectController.togglReload);
 app.get('/projects/:id', ProjectController.show);
 app.post('/projects', ProjectController.create);
 app.post('/projects/:id', ProjectController.update);

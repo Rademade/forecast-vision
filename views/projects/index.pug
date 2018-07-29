@@ -4,7 +4,11 @@ block content
 
     div
         div.actions
-            a(href="/projects/form") Add new project
+            ul
+                li
+                    a(href="/projects/form") Add new project
+                li
+                    a(href="/projects/toggl-reload") Reload toggl ids
 
         table(border="1")
             tr
@@ -16,7 +20,7 @@ block content
                 tr()
                     td() #{project.name}
                     td() #{project.togglId}
-                    td() #{project.forecastId}
+                    td() #{project.forecastCompanyId}
                     td()
                         a(href="/projects/" + project.id) Edit
                         span(class="item-delete" data-url="/projects/" + project.id) Delete
