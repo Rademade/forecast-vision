@@ -87,7 +87,6 @@ class ReportDataBuilder {
 
         // Build projects from toggl side
         for (let togglProject of this.togglReport.getProjectsList().getProjects()) {
-            // TODO toggl project id!
             let projectDocument = await ProjectModel.getByTogglProject(togglProject);
             let project = new ReportProject(togglProject.getName(), true, togglProject, projectDocument);
             projectsCollection.addProject( project );
@@ -96,7 +95,6 @@ class ReportDataBuilder {
         // Add allocations
         for (let matchedItem of this.allocationReport.getMatchedAllocation(this.range)) {
             let allocation = matchedItem.getAllocation();
-            // TODO was trouble on save!
             let projectDocument = await  ProjectModel.getByForecastAllocation( allocation );
             let project = new ReportProject(allocation.getProjectName(), allocation.isBillable(), TogglReportProject.initNull(), projectDocument);
             projectsCollection.addProject( project );
