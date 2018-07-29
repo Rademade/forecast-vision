@@ -1,22 +1,22 @@
 const { ForecastGrabberScrapingAuth } = require('./../services/forecast-grabber/scraping-auth');
-const { ReportFactory } = require('./../services/report-factory');
+const { ReportLoaderFactory } = require('../services/report-loader-factory');
 
 class ReportsController {
 
     static weekReport(req, res) {
-        ReportFactory.getWeeksRhythmReport().load((weeksData) => {
+        ReportLoaderFactory.getWeeksRhythmReport().load((weeksData) => {
             res.render('reports/index', {weeksData: weeksData});
         });
     }
 
     static factReport(req, res) {
-        ReportFactory.getWeeksFactReport().load((weeksData) => {
+        ReportLoaderFactory.getWeeksFactReport().load((weeksData) => {
             res.render('reports/plan-fact', {weeksData: weeksData});
         });
     }
 
     static monthReport(req, res) {
-        ReportFactory.getMonthsReport().load((monthsReport) => {
+        ReportLoaderFactory.getMonthsReport().load((monthsReport) => {
             res.render('reports/month-report', {monthsReport: monthsReport});
         });
     }
@@ -41,7 +41,7 @@ class ReportsController {
 
                 let dateFrom = moment(req.query.dateFrom);
                 let dateTo = moment(req.query.dateTo);
-                ReportFactory.getCustomFactReport(dateFrom, dateTo, req.query.projectId).load((factReports) => {
+                ReportLoaderFactory.getCustomFactReport(dateFrom, dateTo, req.query.projectId).load((factReports) => {
                     result.factReports = factReports;
                     resolve(result);
                 });

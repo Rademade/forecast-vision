@@ -6,7 +6,7 @@ const { ForecastAllocationList } = require('./forecast-allocation/list');
 const { ForecastToggl } = require('./forecast-toggl');
 const { ReportDataBuilder } = require('./report-data-builder');
 
-class Report {
+class ReportLoader {
 
     /**
      * @param dateStart
@@ -88,4 +88,4 @@ class Report {
 
 }
 
-exports.Report = Report;
+exports.ReportLoader = ReportLoader;
