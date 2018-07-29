@@ -1,6 +1,5 @@
 const moment = require('moment');
 
-const { ForecastGrabberScrapingAuth } = require('./../services/forecast-grabber/scraping-auth');
 const { ReportLoaderFactory } = require('../services/report-loader-factory');
 
 const Project = require('../models/project');
@@ -43,6 +42,7 @@ class ReportsController {
 
                 ReportLoaderFactory.getCustomFactReport(dateFrom, dateTo, project).load((factReports) => {
                     resolve({
+                        project: project,
                         projects: projects,
                         factReports: factReports
                     });
