@@ -95,6 +95,7 @@ class ForecastAllocationItem {
     }
 
     isUsefulProject() {
+        // TODO move to database
         return [
             PROJECT_ID_NEW_BIZ,
             // PROJECT_ID_PROCESSES,

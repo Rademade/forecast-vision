@@ -76,7 +76,7 @@ class ReportMember extends CollectionItem {
     getBenchDuration() {
         return this.getMatchedAllocationsItems().reduce((duration, item) => {
             return duration.add( item.getAllocation().isBenchProject() ? item.getDuration() : new Duration());
-        }, new Duration());
+        }, this.getUnplannedDuration().clone());
     }
 
     getUnplannedDuration() {
