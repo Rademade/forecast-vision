@@ -27,11 +27,16 @@ class ReportLoaderFactory {
         });
     }
 
-    static getCustomFactReport(dateStart, dateEnd, projectId) {
+    /**
+     * @param {moment} dateStart
+     * @param {moment} dateEnd
+     * @param {Project} projectDocument
+     * @return {ReportLoader}
+     */
+    static getCustomFactReport(dateStart, dateEnd, projectDocument) {
         let daysLength = dateEnd.diff(dateStart, 'days');
-        // TODO Days validation
 
-        return new ReportLoader(dateStart, dateEnd, projectId, (startIntervalDate) => {
+        return new ReportLoader(dateStart, dateEnd, projectDocument, (startIntervalDate) => {
             return startIntervalDate.clone().add(daysLength, 'day');
         });
     }

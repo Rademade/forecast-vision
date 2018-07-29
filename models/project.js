@@ -2,8 +2,9 @@ const mongoose = require('mongoose');
 
 const ProjectSchema = new mongoose.Schema({
     name: String,
-    togglId: String,
-    forecastCompanyId: String
+    togglName: String,
+    togglId: Number,
+    forecastCompanyId: Number
 });
 
 const _self = ProjectSchema.statics;
@@ -15,9 +16,9 @@ _self.getByTogglProject = (togglProject) => {
     return new Promise((resolve) => {
         mongoose.model('Project')
             .findOne({$or: [
-                {name: togglProject.getName()}
+                {name: togglProject.getName()},
+                {togglName: togglProject.getName()}
             ]})
-            .exec()
             .then((document) => {
                 if (!document) {
                     _self.createByTogglProject(togglProject).then((document) => { resolve(document) });
@@ -33,9 +34,9 @@ _self.getByTogglProject = (togglProject) => {
  * @return {Model}
  */
 _self.createByTogglProject = (togglProject) => {
-    let member = new (mongoose.model('Project'));
-    return member.set({
+    return (new (mongoose.model('Project'))).set({
         name: togglProject.getName(),
+        togglName: togglProject.getName(),
     }).save();
 };
 
@@ -46,10 +47,9 @@ _self.getByForecastAllocation = (forecastItem) => {
     return new Promise((resolve) => {
         mongoose.model('Project')
             .findOne({$or: [
-                    {forecastCompanyId: forecastItem.getProjectId()},
-                    {name: forecastItem.getProjectName()}
-                ]})
-            .exec()
+                {forecastCompanyId: forecastItem.getProjectId()},
+                {name: forecastItem.getProjectName()}
+            ]})
             .then((document) => {
                 if (!document) {
                     _self.createByForecastAllocation(forecastItem).then((document) => { resolve(document) });
@@ -70,12 +70,41 @@ _self.getByForecastAllocation = (forecastItem) => {
  * @return {Model}
  */
 _self.createByForecastAllocation = (forecastItem) => {
-    let project = new (mongoose.model('Project'))
-    return project.set({
+    return (new (mongoose.model('Project'))).set({
         name: forecastItem.getProjectName(),
         forecastCompanyId: forecastItem.getProjectId()
     }).save();
 };
 
+_self.buildByTogglProjectData = (data) => {
+    mongoose.model('Project')
+        .findOne({$or: [
+            {togglId: data.id},
+            {name: data.name},
+            {togglName: data.name}
+        ]})
+        .then((document) => {
+            if (!document) {
+                (new (mongoose.model('Project'))).set({
+                    togglId: data.id,
+                    name: data.name,
+                    togglName: data.name,
+                }).save();
+            } else {
+                document.set({
+                    togglId: data.id,
+                    togglName: data.name
+                }).save();
+            }
+        });
+};
+
+
+_self.findReportsReady = () => {
+    return mongoose.model('Project').find({
+        togglId: { $ne: null },
+        forecastCompanyId:{ $ne: null }
+    });
+};
 
 module.exports = mongoose.model('Project', ProjectSchema);

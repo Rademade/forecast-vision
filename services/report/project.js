@@ -56,7 +56,7 @@ class ReportProject extends CollectionItem {
     }
 
     isSame(project) {
-        return false;
+        return project instanceof ReportProject && this.projectDocument.id === project.projectDocument.id;
     }
 
     /**

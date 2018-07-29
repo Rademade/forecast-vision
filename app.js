@@ -40,6 +40,7 @@ app.delete('/members/:id', MemberController.delete);
 // Project CRUD
 app.get('/projects', ProjectController.index);
 app.get('/projects/form', ProjectController.form);
+app.get('/projects/toggl-reload', ProjectController.togglReload);
 app.get('/projects/:id', ProjectController.show);
 app.post('/projects', ProjectController.create);
 app.post('/projects/:id', ProjectController.update);
