@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 mongoose.connect([
-    process.env.MONGO_URI || 'mongodb://localhost:27017/forecast',
+    process.env.MONGODB_URI || 'mongodb://localhost:27017/forecast',
 ].join(''), { useNewUrlParser: true });
 
 // Load controllers
