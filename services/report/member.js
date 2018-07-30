@@ -29,7 +29,7 @@ class ReportMember extends CollectionItem {
         return this.getName();
     }
 
-    getRole() {
+    getDepartmentName() {
         return this.roleName;
     }
 
@@ -91,13 +91,42 @@ class ReportMember extends CollectionItem {
         return this.getFactBillableDuration().getRatio( this.getBillableDuration() );
     }
 
+    /**
+     * @TODO Move to other service
+     *
+     * @param {ReportProject} project
+     * @return boolean
+     */
+    hasWorkOnProject(project) {
+        let found = false;
+
+        for (let togglUserItem of this.getTogglReport().getItems()) {
+            if (found ||
+                togglUserItem.getProjectName() === project.getProjectDocument().name ||
+                togglUserItem.getProjectName() === project.getProjectDocument().togglName) {
+                found = true;
+                break;
+            }
+        }
+
+        for (let matchedItem of this.getMatchedAllocationsItems()) {
+            let allocationProjectId = matchedItem.getAllocation().getProjectId();
+            if (found || allocationProjectId === project.getProjectDocument().forecastCompanyId) {
+                found = true;
+                break;
+            }
+        }
+
+        return found;
+    }
+
     isSame(member) {
         return member instanceof ReportMember && this.memberDocument.id === member.memberDocument.id;
     }
 
     groupWith(member) {
         this.userName = this.getName() || member.getName();
-        this.roleName = this.getRole() || member.getRole();
+        this.roleName = this.getDepartmentName() || member.getDepartmentName();
         this.getAvailableDuration().add( member.getAvailableDuration() );
         this.getTogglReport().groupWith( member.getTogglReport() );
 

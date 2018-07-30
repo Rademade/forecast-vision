@@ -6,7 +6,6 @@ class TogglReportUserItem {
     }
 
     getProjectName() {
-
         return this.projectName;
     }
 

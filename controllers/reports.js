@@ -4,6 +4,7 @@ const { ReportLoaderFactory } = require('../services/report-loader-factory');
 
 const Project = require('../models/project');
 
+const MOMENT_FORMAT = 'YYYY-MM-DD';
 
 class ReportsController {
 
@@ -25,19 +26,39 @@ class ReportsController {
         });
     }
 
+    static matrixReport(req, res) {
+        let dateFrom = moment(req.query.dateFrom, MOMENT_FORMAT);
+        let dateTo = moment(req.query.dateTo, MOMENT_FORMAT);
+
+        if (dateTo.isValid() && dateTo.isValid()) {
+            ReportLoaderFactory.getMonthReport(dateFrom, dateTo).load((monthReport) => {
+                res.render('reports/matrix', {
+                    report: monthReport[0],
+                    dateFrom: req.query.dateFrom,
+                    dateTo: req.query.dateTo
+                });
+            });
+        } else {
+            res.render('reports/matrix', {
+                dateFrom: moment().subtract(14, 'days').format(MOMENT_FORMAT),
+                dateTo: moment().format(MOMENT_FORMAT)
+            });
+        }
+    }
+
     static customReport(req, res) {
         Project.findReportsReady().then((projects) => {
 
             return new Promise(async (resolve) => {
 
-                // TODO validation && extract service
-                if (!(req.query.dateFrom && req.query.dateTo)) {
+                let dateFrom = moment(req.query.dateFrom, MOMENT_FORMAT);
+                let dateTo = moment(req.query.dateTo, MOMENT_FORMAT);
+
+                if (!(dateFrom.isValid() && dateTo.isValid())) {
                     resolve({projects: projects});
                     return;
                 }
 
-                let dateFrom = moment(req.query.dateFrom);
-                let dateTo = moment(req.query.dateTo);
                 let project = await Project.findById(req.query.projectId);
 
                 ReportLoaderFactory.getCustomFactReport(dateFrom, dateTo, project).load((factReports) => {

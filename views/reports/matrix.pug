@@ -1,0 +1,30 @@
+extends ../layouts/index
+
+block content
+    h1 Matrix report
+
+    form(action="" method="get")
+        div
+            label(for="dateFrom") Date start
+            input(id="dateFrom" name="dateFrom" type="date" value=dateFrom)
+        div
+            label(for="dateTo") Date end
+            input(id="dateTo" name="dateTo" type="date" value=dateTo)
+        div
+        button(type="submit") Show matrix
+
+    if (report)
+        table(border="1")
+            tr
+                td Project name
+                each department in report.getDepartmentsList()
+                    td #{department.getName()}
+            each project in report.getProjectList().getAllProjects()
+                tr
+                    td #{project.getName()}
+                    each department in report.getDepartmentsList()
+                        td
+                            each member in report.getMembersList().getAllMembers()
+                                if department.isMemberThere(member) && member.hasWorkOnProject(project)
+                                    div #{member.getName()}
+

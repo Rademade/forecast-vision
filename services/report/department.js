@@ -11,9 +11,10 @@ class ReportDepartment {
     static buildDepartments(membersList) {
         let departments = {};
         membersList.getAllMembers().forEach(function(member) {
-            let key = member.getRole();
+            let key = member.getDepartmentName();
+            if (!key || key === 'null') return ;
             if (!departments[key]) {
-                departments[key] = new ReportDepartment( member.getRole() );
+                departments[key] = new ReportDepartment( member.getDepartmentName() );
             }
             departments[key].addMember( member );
         });
@@ -34,6 +35,14 @@ class ReportDepartment {
 
     getName() {
         return this.name;
+    }
+
+    /**
+     * @param {ReportMember} member
+     * @return {boolean}
+     */
+    isMemberThere(member) {
+        return member.getDepartmentName() === this.getName();
     }
 
     getAvailableDuration() {

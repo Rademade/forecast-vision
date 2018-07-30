@@ -52,6 +52,7 @@ app.get('/', ReportsController.weekReport);
 app.get('/plan-fact', ReportsController.factReport);
 app.get('/month-report', ReportsController.monthReport);
 app.get('/custom-report', ReportsController.customReport);
+app.get('/matrix', ReportsController.matrixReport);
 
 app.listen(process.env.PORT || 3000, () =>
     console.log('App listening on port ' + (process.env.PORT || 3000))

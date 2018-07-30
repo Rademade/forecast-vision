@@ -27,6 +27,10 @@ class ReportProject extends CollectionItem {
         return this.togglFactReport;
     }
 
+    getProjectDocument() {
+        return this.projectDocument;
+    }
+
     getName() {
         return this.name;
     }

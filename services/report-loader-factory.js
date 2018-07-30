@@ -41,6 +41,13 @@ class ReportLoaderFactory {
         });
     }
 
+    static getMonthReport(dateStart, dateEnd) {
+        let daysLength = dateEnd.diff(dateStart, 'days');
+        return new ReportLoader(dateStart, dateEnd, null, (startIntervalDate) => {
+            return startIntervalDate.clone().add(daysLength, 'day');
+        });
+    }
+
     static getMonthsReport() {
         let startDate = moment().subtract(1, 'months').startOf('month');
         // If we use endOf function we have 59 second
