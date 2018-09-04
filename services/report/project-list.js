@@ -74,7 +74,7 @@ class ReportProjectList extends CollectionList {
      */
     isExist(project) {
         return _.findIndex(this.getAllProjects(), (p) =>{
-            return p.getName() === project.getName();
+            return project.isSame(p);
         }) !== -1;
     }
 
