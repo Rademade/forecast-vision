@@ -69,6 +69,15 @@ class ReportProjectList extends CollectionList {
         })
     }
 
+    /**
+     * @param {ReportProject} project
+     */
+    isExist(project) {
+        return _.findIndex(this.getAllProjects(), (p) =>{
+            return p.getName() === project.getName();
+        }) !== -1;
+    }
+
 }
 
 exports.ReportProjectList = ReportProjectList;

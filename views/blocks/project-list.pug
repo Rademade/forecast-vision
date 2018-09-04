@@ -1,10 +1,16 @@
 mixin projectList(reports)
-    each report in reports
+    - var maxIndex = reports.length - 1
+    each report, index in reports
         td.week-info.departments
             span Projects. Billable – #{report.getProjectList().getBillableCount()}:
                 ul
                     each project in report.getProjectList().getSortedProjects()
                         li(class=project.isBillable() ? "is-billable" : "is-non-billable")
-                            span #{project.getName()}
+                            span
+                                span #{project.getName()}
+                                if index > 0 && !reports[index - 1].getProjectList().isExist(project)
+                                    sup.project-status.project-status-new New
+                                if index < maxIndex && !reports[index + 1].getProjectList().isExist(project)
+                                    sup.project-status.project-status-fell-off Fell off
                             span –
                             span #{project.getTotalDuration()}h.

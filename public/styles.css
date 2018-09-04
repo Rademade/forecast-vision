@@ -52,3 +52,16 @@ body, html {
 .simple-table td.wrong {
     color: #860000;
 }
+
+.project-status {
+    padding: 0 5px;
+    font-size: 10px;
+}
+
+.project-status-new {
+    color: #218133;
+}
+
+.project-status-fell-off {
+    color: #8e0620;
+}
