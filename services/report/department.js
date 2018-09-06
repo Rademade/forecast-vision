@@ -1,9 +1,9 @@
 const { Duration } = require('../duration');
+const { MembersCircle } = require('./collection/members-circle');
 
-class ReportDepartment {
+class ReportDepartment extends MembersCircle {
 
     /**
-     * @TODO Move department build
      *
      * @param {ReportMembersList} membersList
      * @return {ReportDepartment[]}
@@ -21,50 +21,12 @@ class ReportDepartment {
         return departments;
     }
 
-    constructor(name) {
-        this.name = name;
-        this.members = [];
-    }
-
-    /**
-     * @param {ReportMember} member
-     */
-    addMember(member) {
-        this.members.push(member);
-    }
-
-    getName() {
-        return this.name;
-    }
-
     /**
      * @param {ReportMember} member
      * @return {boolean}
      */
     isMemberThere(member) {
         return member.getDepartmentName() === this.getName();
-    }
-
-    getAvailableDuration() {
-        if (!this.avaliableHours) {
-            this.avaliableHours = this.members.reduce((duration, member) => {
-                return duration.add( member.getAvailableDuration() );
-            }, new Duration());
-        }
-        return this.avaliableHours;
-    }
-
-    getScheduledDuration() {
-        if (!this.loadHours) {
-            this.loadHours = this.members.reduce((duration, member) => {
-                return duration.add( member.getScheduledDuration() );
-            }, new Duration());
-        }
-        return this.loadHours;
-    }
-
-    getLoadPercent() {
-        return this.getScheduledDuration().getRatio( this.getAvailableDuration());
     }
 
 }

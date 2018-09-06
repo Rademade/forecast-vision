@@ -1,6 +1,7 @@
 const Moment = require('moment');
 const { extendMoment } = require('moment-range');
 
+const { ReportTeam } = require('./report/team');
 const { ReportDepartment } = require('./report/department');
 const { ReportMembersList } = require('./report/members-list');
 const { ReportProjectList } = require('./report/project-list');
@@ -106,6 +107,13 @@ class ReportData {
             this.departmentsList = ReportDepartment.buildDepartments(this.getMembersList());
         }
         return this.departmentsList;
+    }
+
+    getTeamsList() {
+        if (!this.teamsList) {
+            this.teamsList = ReportTeam.buildTeams(this.getMembersList());
+        }
+        return this.teamsList;
     }
 
     /**

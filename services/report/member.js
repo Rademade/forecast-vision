@@ -33,6 +33,14 @@ class ReportMember extends CollectionItem {
         return this.roleName;
     }
 
+    getTeamName() {
+        // TODO object type check
+        if (this.memberDocument.team) {
+            return this.memberDocument.team.name;
+        }
+        return null;
+    }
+
     /**
      * @param {ForecastAllocationItemMatch} matchedItem
      */

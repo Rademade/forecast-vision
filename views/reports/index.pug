@@ -12,6 +12,17 @@ block table_body
 
         tr
             each weekData in weeksData
+                td.week-info.teams
+                    span Teams plan:
+                        ul
+                            each team in weekData.getTeamsList()
+                                li()
+                                    span #{team.getName()}
+                                    span –
+                                    span #{team.getLoadPercent()}%
+
+        tr
+            each weekData in weeksData
                 td.week-info.departments
                     span Departments plan:
                         ul

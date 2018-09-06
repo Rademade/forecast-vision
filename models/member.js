@@ -19,6 +19,7 @@ _self.getByTogglUser = (togglMember) => {
                 {togglId: togglMember.getTogglId()},
                 {name: togglMember.getUserName()}
             ]})
+            .populate('team')
             .then((document) => {
                 if (!document) {
                     _self.createByTogglProject(togglMember).then((document) => { resolve(document) });
@@ -55,6 +56,7 @@ _self.getByForecastUser = (forecastItem) => {
                 {forecastId: forecastItem.id},
                 {name: forecastItem.name}
             ]})
+            .populate('team')
             .then((document) => {
                 if (!document) {
                     _self.createByForecastUser(forecastItem).then((document) => { resolve(document) });

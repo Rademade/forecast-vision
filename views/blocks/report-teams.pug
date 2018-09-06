@@ -1,0 +1,19 @@
+mixin reportTeams(reports)
+    each report in reports
+        td.week-info.rotation
+            table.simple-table
+                tr.table-head
+                    td Team name
+                    td Utilization
+                    td Planned h.
+                    td Fact h.
+                    td Accuracy %
+                each team in report.getTeamsList()
+                    tr
+                        td #{team.getName()}
+                        td(class=team.getLoadPercent() > 80 ? "good" : "wrong")
+                            span #{team.getLoadPercent()}%
+                        td #{team.getBillableDuration()}
+                        td #{team.getFactBillableDuration()}
+                        td(class=team.getPlanningAccuracyPercent() > 95 ? "good" : "wrong")
+                            span #{team.getPlanningAccuracyPercent()}%
