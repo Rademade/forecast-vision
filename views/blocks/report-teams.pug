@@ -3,17 +3,16 @@ mixin reportTeams(reports)
         td.week-info.rotation
             table.simple-table
                 tr.table-head
-                    td Team name
-                    td Utilization
-                    td Planned h.
-                    td Fact h.
-                    td Accuracy %
+                    td
+                        span() Team name
+                    td
+                        span(title="Planned billable capacity from forecast.it") Planned %
+                    td
+                        span(title="Fact billable capacity from toggl.com") Fact %
                 each team in report.getTeamsList()
                     tr
                         td #{team.getName()}
                         td(class=team.getLoadPercent() > 80 ? "good" : "wrong")
-                            span #{team.getLoadPercent()}%
-                        td #{team.getBillableDuration()}
-                        td #{team.getFactBillableDuration()}
-                        td(class=team.getPlanningAccuracyPercent() > 95 ? "good" : "wrong")
-                            span #{team.getPlanningAccuracyPercent()}%
+                            span(title=team.getBillableDuration() + " hours") #{team.getLoadPercent()}
+                        td(class=team.getFactLoadPercent() > 80 ? "good" : "wrong")
+                            span(title=team.getFactBillableDuration() + " hours") #{team.getFactLoadPercent()}
