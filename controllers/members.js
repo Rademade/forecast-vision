@@ -1,29 +1,39 @@
 const Member = require('../models/member');
+const Team = require('../models/team');
 
 class MembersController {
 
-    static index(req, res) {
-        Member.find(function (err, members) {
-            if (err) return console.error(err);
+    static async index(req, res) {
+        try {
+            let members = await Member.find({}).populate('team').exec();
             res.render('members/index', {members: members});
-        });
+        } catch (e) {
+            console.error(e);
+        }
     }
 
-    static form(req, res) {
+    static async form(req, res) {
+        let teams = await Team.find();
         res.render('members/form', {
             submitUrl: '/members',
-            member: new Member()
+            member: new Member(),
+            teams: teams
         });
     }
 
-    static show(req, res) {
-        Member.findById(req.params.id, function (err, member) {
-            if (err) return res.redirect('/members');
+    static async show(req, res) {
+        try {
+            let member = await Member.findById(req.params.id);
+            let teams = await Team.find({});
+            console.log(member, member.team)
             res.render('members/form', {
                 submitUrl: '/members/' + member.id,
-                member: member
+                member: member,
+                teams: teams
             });
-        });
+        } catch (e) {
+            res.redirect('/members');
+        }
     }
 
     static create(req, res) {
@@ -32,21 +42,24 @@ class MembersController {
         MembersController._sendResult(member, res);
     }
 
-    static update(req, res) {
-        Member.findById(req.params.id, (err, member) => {
-            if (err) return res.redirect('/members');
+    static async update(req, res) {
+        try {
+            let member = await Member.findById(req.params.id);
             MembersController._setParams(member, req.body).save();
             MembersController._sendResult(member, res);
-        });
+        } catch (e) {
+            res.redirect('/members');
+        }
     }
 
-    static delete(req, res) {
-        Member.findById(req.params.id, (err, member) => {
-            if (err) return res.json({'status': 0});
+    static async delete(req, res) {
+        try {
+            let member = await Member.findById(req.params.id);
             member.remove();
             res.json({'status': 1});
-        });
-
+        } catch (e) {
+            res.json({'status': 0});
+        }
     }
 
     static _setParams(document, body) {
@@ -55,6 +68,7 @@ class MembersController {
             name: body.name,
             togglId: body.togglId,
             forecastId: body.forecastId,
+            team: body.team
         });
         return document;
     }

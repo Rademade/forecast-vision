@@ -19,4 +19,11 @@ block content
             label() Forecast id
             input(type="input" name="forecastId" value=member.forecastId)
 
+        div
+            label() Team
+            select(name="team")
+                option(value="") No team
+                each team in teams
+                    option(value=team.id selected=(member.team == team.id)) #{team.name}
+
         input(type="submit" value="Save")

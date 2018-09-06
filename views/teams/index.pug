@@ -1,0 +1,18 @@
+extends ../layouts/index
+
+block content
+
+    div
+        div.actions
+            a(href="/teams/form") Add new team
+
+        table(border="1")
+            tr
+                td Team name
+                td Actions
+            each team in teams
+                tr()
+                    td() #{team.name}
+                    td()
+                        a(href="/teams/" + team.id) Edit
+                        span(class="item-delete" data-url="/teams/" + team.id) Delete

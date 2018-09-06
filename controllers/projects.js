@@ -4,20 +4,24 @@ const Project = require('../models/project');
 
 class ProjectsController {
 
-    static index(req, res) {
-        Project.find(function (err, projects) {
-            if (err) return console.error(err);
+    static async index(req, res) {
+        try {
+            let projects = await Project.find();
             res.render('projects/index', {projects: projects});
-        });
-    }
+        } catch (e) {
+            console.error(e);
+        }
+   }
 
-    static togglReload(req, res) {
-        (new TogglScrapingMethods()).getProjects((projects) => {
+    static async togglReload(req, res) {
+        try {
+            let projects = await (new TogglScrapingMethods()).getProjects();
             for (let projectData of projects) {
                 Project.buildByTogglProjectData( projectData );
             }
-        });
-        res.redirect('/projects?toggl-reload=done');
+        } catch (e) {
+            res.redirect('/projects?toggl-reload=done');
+        }
     }
 
     static form(req, res) {
@@ -27,14 +31,16 @@ class ProjectsController {
         });
     }
 
-    static show(req, res) {
-        Project.findById(req.params.id, function (err, project) {
-            if (err) return res.redirect('/projects');
+    static async show(req, res) {
+        try {
+            let project = await Project.findById(req.params.id)
             res.render('projects/form', {
                 submitUrl: '/projects/' + project.id,
                 project: project
             });
-        });
+        } catch (e) {
+            res.redirect('/projects');
+        }
     }
 
     static create(req, res) {
@@ -43,20 +49,24 @@ class ProjectsController {
         ProjectsController._sendResult(project, res);
     }
 
-    static update(req, res) {
-        Project.findById(req.params.id, (err, project) => {
-            if (err) return res.redirect('/projects');
+    static async update(req, res) {
+        try {
+            let project = Project.findById(req.params.id);
             ProjectsController._setParams(project, req.body).save();
             ProjectsController._sendResult(project, res);
-        });
+        } catch (e) {
+            res.redirect('/projects');
+        }
     }
 
-    static delete(req, res) {
-        Project.findById(req.params.id, (err, project) => {
-            if (err) return res.json({'status': 0});
+    static async delete(req, res) {
+        try {
+            let project = await Project.findById(req.params.id)
             project.remove();
             res.json({'status': 1});
-        });
+        } catch (e) {
+            res.json({'status': 0});
+        }
     }
 
     static _setParams(document, body) {

@@ -1,0 +1,14 @@
+extends ../layouts/index
+
+block content
+    div.controll
+        a(href="/members") Back to teams list
+
+    h1 Team form
+
+    form(action=submitUrl method="post")
+        div
+            label() Team name
+            input(type="input" name="name" value=team.name)
+
+        input(type="submit" value="Save")

@@ -9,12 +9,14 @@ block content
         table(border="1")
             tr
                 td Member name
+                td Team
                 td Toggl id
                 td Forecast id
                 td Actions
             each member in members
                 tr()
                     td() #{member.name}
+                    td() #{member.team ? member.team.name : ""}
                     td() #{member.togglId}
                     td() #{member.forecastId}
                     td()

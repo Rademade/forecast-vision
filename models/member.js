@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const MemberSchema = new mongoose.Schema({
     name: String,
     togglId: String,
-    forecastId: String
+    forecastId: String,
+    team: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' }
 });
 
 const _self = MemberSchema.statics;

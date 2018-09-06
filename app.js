@@ -10,6 +10,7 @@ mongoose.connect([
 // Load controllers
 const MemberController = require('./controllers/members');
 const ProjectController = require('./controllers/projects');
+const TeamsController = require('./controllers/teams');
 const ReportsController = require('./controllers/reports');
 
 const app = express();
@@ -46,6 +47,13 @@ app.post('/projects', ProjectController.create);
 app.post('/projects/:id', ProjectController.update);
 app.delete('/projects/:id', ProjectController.delete);
 
+// Teams CRUD
+app.get('/teams', TeamsController.index);
+app.get('/teams/form', TeamsController.form);
+app.get('/teams/:id', TeamsController.show);
+app.post('/teams', TeamsController.create);
+app.post('/teams/:id', TeamsController.update);
+app.delete('/teams/:id', TeamsController.delete);
 
 // Reports routes
 app.get('/', ReportsController.weekReport);
