@@ -7,7 +7,7 @@ mixin projectList(reports)
                     each project in report.getProjectList().getSortedProjects()
                         li(class=project.isBillable() ? "is-billable" : "is-non-billable")
                             span
-                                span #{project.getName()}
+                                span.project-name #{project.getName()}
                                 if index > 0 && !reports[index - 1].getProjectList().isExist(project)
                                     sup.project-status.project-status-new New
                                 if index < maxIndex && !reports[index + 1].getProjectList().isExist(project)
