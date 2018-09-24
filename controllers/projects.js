@@ -51,7 +51,7 @@ class ProjectsController {
 
     static async update(req, res) {
         try {
-            let project = Project.findById(req.params.id);
+            let project = await Project.findById(req.params.id);
             ProjectsController._setParams(project, req.body).save();
             ProjectsController._sendResult(project, res);
         } catch (e) {
