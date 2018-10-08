@@ -5,6 +5,7 @@ include ../blocks/report-projects
 include ../blocks/report-members
 include ../blocks/bench-members
 include ../blocks/project-list
+include ../blocks/report-teams
 
 block content
 
@@ -21,6 +22,9 @@ block content
 
             tr
                 +companyHealth(monthsReport)
+
+            tr
+                +reportTeams(monthsReport)
 
             tr
                 +reportProjects(monthsReport)

@@ -11,7 +11,8 @@ block table_body
         tr
             +companyHealth(weeksData)
 
-        +reportTeams(weeksData)
+        tr
+            +reportTeams(weeksData)
 
         tr
             each weekData in weeksData
