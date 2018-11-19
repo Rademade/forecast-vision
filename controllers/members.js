@@ -5,7 +5,13 @@ class MembersController {
 
     static async index(req, res) {
         try {
-            let members = await Member.find({}).populate('team').exec();
+            let members = await Member.find()
+                .populate('team')
+                .sort([
+                    ['actualUtilization', 1],
+                    ['name', 1]
+                ])
+                .exec();
             res.render('members/index', {members: members});
         } catch (e) {
             console.error(e);
