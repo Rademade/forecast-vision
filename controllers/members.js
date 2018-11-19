@@ -8,7 +8,7 @@ class MembersController {
             let members = await Member.find()
                 .populate('team')
                 .sort([
-                    ['actualUtilization', 1],
+                    ['actualUtilization', -1],
                     ['name', 1]
                 ])
                 .exec();
