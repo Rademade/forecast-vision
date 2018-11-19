@@ -10,9 +10,11 @@ mixin reportTeams(reports)
                     td
                         span(title="Fact billable capacity from toggl.com") Fact %
                 each team in report.getTeamsList()
+                    - var planStatusClass = team.getLoadPercent() > 80 ? "good" : (team.getLoadPercent() > 71.2 ? "normal" : "wrong")
+                    - var factStatusClass = team.getFactLoadPercent() > 80 ? "good" : (team.getFactLoadPercent() > 71.2 ? "normal" : "wrong")
                     tr
                         td #{team.getName()}
-                        td(class=team.getLoadPercent() > 80 ? "good" : "wrong")
+                        td(class=planStatusClass)
                             span(title=team.getBillableDuration() + " hours") #{team.getLoadPercent()}
-                        td(class=team.getFactLoadPercent() > 80 ? "good" : "wrong")
+                        td(class=factStatusClass)
                             span(title=team.getFactBillableDuration() + " hours") #{team.getFactLoadPercent()}

@@ -4,7 +4,7 @@ block content
     div.controll
         a(href="/members") Back to teams list
 
-    h1 Team form
+    h1 Team edit
 
     form(action=submitUrl method="post")
         div
@@ -12,3 +12,10 @@ block content
             input(type="input" name="name" value=team.name)
 
         input(type="submit" value="Save")
+
+    h3 Members
+    ul
+        each member in members
+            li()
+                span #{member.name}
+                a(href="/members/" + member.id) Edit

@@ -7,15 +7,15 @@ class ReportMember extends CollectionItem {
     /**
      * @param name
      * @param roleName
-     * @param availableMinutes
+     * @param forcastAvailableMinutes
      * @param {TogglReportUser} togglFactReport
      * @param {Member} memberDocument
      */
-    constructor(name, roleName, availableMinutes = 0, togglFactReport, memberDocument) {
+    constructor(name, roleName, forcastAvailableMinutes = 0, togglFactReport, memberDocument) {
         super();
         this.userName = (name + '').trim();
         this.roleName = (roleName + '').trim();
-        this.availableDuration = new Duration(availableMinutes);
+        this.forecastAvailableDuration = new Duration(forcastAvailableMinutes);
         this.matchedAllocations = [];
         this.togglFactReport = togglFactReport;
         this.memberDocument = memberDocument;
@@ -65,7 +65,15 @@ class ReportMember extends CollectionItem {
             this.getBillableDuration().getMinutes() > 0;
     }
 
+    getForecastAvailableDuration() {
+        return this.forecastAvailableDuration;
+    }
+
     getAvailableDuration() {
+        if (!this.availableDuration) {
+            let percent = this.memberDocument.actualUtilization / 100;
+            this.availableDuration = new Duration( this.getForecastAvailableDuration().getMinutes() * percent );
+        }
         return this.availableDuration;
     }
 

@@ -4,7 +4,15 @@ const MemberSchema = new mongoose.Schema({
     name: String,
     togglId: String,
     forecastId: String,
-    team: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' }
+    actualUtilization: {
+        type: Number,
+        default: 100
+    },
+    team: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Team',
+        default: null
+    }
 });
 
 const _self = MemberSchema.statics;

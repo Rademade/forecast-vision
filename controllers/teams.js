@@ -21,11 +21,14 @@ class TeamsController {
     static async show(req, res) {
         try {
             let team = await Team.findById(req.params.id);
+            let members = await team.getMembers();
             res.render('teams/form', {
                 submitUrl: '/teams/' + team.id,
-                team: team
+                team: team,
+                members: members
             });
         } catch (e) {
+            console.log(e);
             return res.redirect('/teams');
         }
     }
@@ -59,7 +62,7 @@ class TeamsController {
     static _setParams(document, body) {
         // TODO validate params
         document.set({
-            name: body.name,
+            name: body.name
         });
         return document;
     }

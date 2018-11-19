@@ -57,6 +57,10 @@ body, html {
     color: #00811c;
 }
 
+.simple-table td.normal {
+    color: #ea8312;
+}
+
 .simple-table td.wrong {
     color: #860000;
 }

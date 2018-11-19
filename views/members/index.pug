@@ -12,6 +12,7 @@ block content
                 td Team
                 td Toggl id
                 td Forecast id
+                td Actual utilization
                 td Actions
             each member in members
                 tr()
@@ -19,6 +20,7 @@ block content
                     td() #{member.team ? member.team.name : ""}
                     td() #{member.togglId}
                     td() #{member.forecastId}
+                    td() #{member.actualUtilization} %
                     td()
                         a(href="/members/" + member.id) Edit
                         span(class="item-delete" data-url="/members/" + member.id) Delete

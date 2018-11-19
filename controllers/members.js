@@ -25,7 +25,6 @@ class MembersController {
         try {
             let member = await Member.findById(req.params.id);
             let teams = await Team.find({});
-            console.log(member, member.team)
             res.render('members/form', {
                 submitUrl: '/members/' + member.id,
                 member: member,
@@ -48,6 +47,7 @@ class MembersController {
             MembersController._setParams(member, req.body).save();
             MembersController._sendResult(member, res);
         } catch (e) {
+            console.error(e);
             res.redirect('/members');
         }
     }
@@ -64,10 +64,12 @@ class MembersController {
 
     static _setParams(document, body) {
         // TODO validate params
+        if (!body.team) body.team = null;
         document.set({
             name: body.name,
             togglId: body.togglId,
             forecastId: body.forecastId,
+            actualUtilization: body.actualUtilization,
             team: body.team
         });
         return document;
