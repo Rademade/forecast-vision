@@ -14,7 +14,8 @@ class TeamsController {
     static form(req, res) {
         res.render('teams/form', {
             submitUrl: '/teams',
-            team: new Team()
+            team: new Team(),
+            members: []
         });
     }
 

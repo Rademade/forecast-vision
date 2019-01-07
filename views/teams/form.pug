@@ -13,9 +13,10 @@ block content
 
         input(type="submit" value="Save")
 
-    h3 Members
-    ul
-        each member in members
-            li()
-                span #{member.name}
-                a(href="/members/" + member.id) Edit
+    if members && members.length > 1
+        h3 Members
+        ul
+            each member in members
+                li()
+                    span #{member.name}
+                    a(href="/members/" + member.id) Edit

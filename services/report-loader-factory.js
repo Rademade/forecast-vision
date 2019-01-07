@@ -18,7 +18,7 @@ class ReportLoaderFactory {
     }
 
     static getWeeksFactReport() {
-        let startDate = moment().subtract(3, 'weeks').startOf('week');
+        let startDate = moment().subtract(4, 'weeks').startOf('week');
         // If we use endOf function we have 59 second
         let endDate = moment().add(1, 'week').startOf('week').subtract(1, 'day');
 
