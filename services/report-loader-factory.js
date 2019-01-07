@@ -48,6 +48,19 @@ class ReportLoaderFactory {
         });
     }
 
+    static getReportByPrevMonthCount(monthCount) {
+      if (monthCount < 6 || monthCount > 60) {
+          return 'Invalid month count'
+      }
+
+      const dateEnd = moment().startOf('isoWeek'),
+            dateStart = moment(dateEnd).subtract(monthCount, 'month');
+
+      return new ReportLoader(dateStart, dateEnd, null, (startIntervalDate) => {
+        return startIntervalDate.clone().add(1, 'week');
+      });
+    }
+
     static getMonthsReport() {
         let startDate = moment().subtract(1, 'months').startOf('month');
         // If we use endOf function we have 59 second

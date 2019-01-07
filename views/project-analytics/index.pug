@@ -1,0 +1,76 @@
+extends ../layouts/index
+
+block content
+
+    div
+        h1 Please wait, while i am loading data
+        canvas(id='chart')
+
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.core.min.js")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js")
+        script.
+            const MOMENT_FORMAT = 'YYYY-MM-DD';
+            const chartData = !{JSON.stringify(chartData).replace(/<\//g, '<\\/')};
+            let labels = chartData.labels.filter(function(item, pos) {
+                return chartData.labels.indexOf(item) === pos;
+            });
+            let chartDatasets = [];
+
+            labels = labels.map(function(item) {
+              return moment(item).format(MOMENT_FORMAT)
+            });
+
+            function isBillable (project) {
+              return project.billable
+            };
+
+            function mapProjects (project) {
+              return {
+                label: project.label,
+                borderColor: project.borderColor
+              }
+            };
+
+            let projects = _.filter(chartData.projects, isBillable);
+
+            _.forEach(projects, function(value, key) {
+              value.dates = value.dates.filter(function (item, pos) {
+                return value.dates.indexOf(item) === pos;
+              })
+
+              value.dates.map(function (item) {
+                return moment(item).format(MOMENT_FORMAT)
+              })
+
+              let data = []
+
+              value.dates.forEach(function(date, index) {
+                data.push({
+                  x: date,
+                  y: value.duration[index]
+                })
+              })
+
+              chartDatasets.push({
+                label: value.label,
+                borderColor: value.borderColor,
+                data: data,
+                fill: false
+              })
+            });
+            console.log(chartDatasets)
+
+            new Chart(document.getElementById("chart"), {
+              type: 'line',
+              data: {
+                labels: labels,
+                datasets: chartDatasets
+              },
+              options: {
+                title: {
+                  display: true,
+                  text: 'World population per region (in millions)'
+                }
+              }
+            });
