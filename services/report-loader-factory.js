@@ -57,7 +57,7 @@ class ReportLoaderFactory {
             dateStart = moment(dateEnd).subtract(monthCount, 'month');
 
       return new ReportLoader(dateStart, dateEnd, null, (startIntervalDate) => {
-        return startIntervalDate.clone().add(1, 'week');
+        return startIntervalDate.clone().add(1, 'month');
       });
     }
 

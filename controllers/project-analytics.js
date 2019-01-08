@@ -9,9 +9,6 @@ class projectAnalyticsController {
         chartData.labels = projectAnalyticsController.createChartInterval(intervalReport);
         chartData.projects = projectAnalyticsController.mapProjectInfo(intervalReport);
 
-        console.log('PROJECTS!!!')
-        console.log(chartData.projects);
-
         res.render('project-analytics/index', {chartData: chartData});
       });
     } catch (e) {
@@ -48,7 +45,7 @@ class projectAnalyticsController {
   }
 
   static createChartInterval (intervalReport) {
-    let labels = []
+    let labels = [];
 
     intervalReport.forEach(interval => {
       let start = new Date(interval.startDate),
