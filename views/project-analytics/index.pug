@@ -5,12 +5,12 @@ block content
     div
         canvas(id='chart')
 
-        script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.core.min.js")
         script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js")
-        script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js")
         script(src="/analyzer-chart.js")
         script.
             const chartData = !{JSON.stringify(chartData).replace(/<\//g, '<\\/')};
+
+            console.log(chartData)
 
             initChart(chartData)
 
