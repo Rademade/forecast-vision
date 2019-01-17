@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const moment = require('moment');
 
 class AnalyzerMap {
   constructor (intervalReport) {
@@ -20,19 +19,11 @@ class AnalyzerMap {
           projects[key].duration = []
         }
 
-        // projects[key].dates.push(new Date(interval.startDate));
+        projects[key].dates.push(new Date(interval.startDate));
         projects[key].dates.push(new Date(interval.endDate));
         projects[key].label = value.name;
         projects[key].billable = value.billable;
         projects[key].borderColor = this.createProjectRandomColor();
-
-        // if (value.name === 'OneReach') {
-        //   console.log('interval start date', interval.startDate)
-        //
-        //   console.log(value.duration)
-        //
-        //   console.log('interval end date date', interval.endDate)
-        // }
 
         if (value.duration) {
           projects[key].duration.push(value.duration.minutes)
@@ -89,34 +80,14 @@ class AnalyzerMap {
     projects = _.filter(projects, this.isBillable);
 
     _.forEach(projects, (value, key) => {
-      value.dates = _.uniq(value.dates.map(item => item.toString()));
       value.dates = value.dates.map(label => new Date(label));
 
-      let sortedLabels = this.labels.sort(function (a, b) {
-        return a - b
-      });
-
-      sortedLabels = sortedLabels.map(label => label.toString());
-
-      let outputData = []
+      let outputData = [];
       let dates = value.dates.map(date => date.toString());
-      let differences = _.difference(sortedLabels, dates);
-      let emptyIndexes = []
-
-      differences.forEach(dif => {
-        emptyIndexes.push(sortedLabels.findIndex(label => label === dif))
-      });
-
-      emptyIndexes.forEach(date => {
-        outputData.push({
-          y: 0,
-          x: new Date(date)
-        })
-      });
 
       dates.forEach((date, index) => {
         outputData.push({
-          y: value.duration[index],
+          y: value.duration[index] / 60,
           x: new Date(date)
         })
       });
@@ -131,8 +102,8 @@ class AnalyzerMap {
       })
     });
 
-    this.outputChartData.chartDatasets = chartDatasets
-    this.outputChartData.labels = labels
+    this.outputChartData.chartDatasets = chartDatasets;
+    this.outputChartData.labels = labels;
 
     return this.outputChartData;
   }
