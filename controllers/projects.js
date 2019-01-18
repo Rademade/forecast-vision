@@ -3,7 +3,6 @@ const { TogglScrapingMethods } = require('./../services/toggl/scraping-methods')
 const Project = require('../models/project');
 
 class ProjectsController {
-
     static async index(req, res) {
         try {
             let projects = await Project.find();

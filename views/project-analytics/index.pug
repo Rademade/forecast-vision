@@ -1,0 +1,14 @@
+extends ../layouts/index
+
+block content
+
+    div
+        canvas(id='chart')
+
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js")
+        script(src="/analyzer-chart.js")
+        script.
+            const chartData = !{JSON.stringify(chartData).replace(/<\//g, '<\\/')};
+
+            initChart(chartData)
+
