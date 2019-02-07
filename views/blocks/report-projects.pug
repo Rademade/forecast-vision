@@ -20,3 +20,12 @@ mixin reportProjects(reports)
                         td #{project.getFactBillableDuration()}
                         td(class=project.getPlanningAccuracyPercent() > 95 ? "good" : "wrong")
                             span #{project.getPlanningAccuracyPercent()}
+
+                // Total members summary
+                tr
+                    td
+                        b Total
+                    td #{report.getMembersList().getBillableDuration()}
+                    td #{report.getMembersList().getFactBillableDuration()}
+                    td(class=report.getMembersList().getPlanningAccuracyPercent() > 95 ? "good" : "wrong")
+                        span #{report.getMembersList().getPlanningAccuracyPercent()}

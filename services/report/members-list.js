@@ -5,7 +5,7 @@ const { CollectionList } = require('./collection/list');
 const { Duration } = require('../duration');
 
 const MIN_HOURS = 1;
-const BENCH_MIN_HOURS = 9;
+const BENCH_MIN_HOURS = 5;
 
 class ReportMembersList extends CollectionList {
 
@@ -52,7 +52,7 @@ class ReportMembersList extends CollectionList {
      */
     getBenchMembers() {
         return this.getAllMembers().filter((member) => {
-            return BENCH_MIN_HOURS < member.getBenchDuration().getHours();
+            return BENCH_MIN_HOURS <= member.getBenchDuration().getHours();
         }).sort((a, b) => {
             return a.getBenchDuration().compare( b.getBenchDuration() );
         });

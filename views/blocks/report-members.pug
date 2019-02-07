@@ -15,10 +15,3 @@ mixin reportMembers(reports)
                             td #{member.getFactBillableDuration()}
                             td(class=member.getPlanningAccuracyPercent() > 95 ? "good" : "wrong")
                                 span #{member.getPlanningAccuracyPercent()}
-                tr
-                    td
-                        b Total
-                    td #{report.getMembersList().getBillableDuration()}
-                    td #{report.getMembersList().getFactBillableDuration()}
-                    td(class=report.getMembersList().getPlanningAccuracyPercent() > 95 ? "good" : "wrong")
-                        span #{report.getMembersList().getPlanningAccuracyPercent()}

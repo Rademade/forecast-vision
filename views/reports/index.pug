@@ -28,15 +28,6 @@ block table_body
                                     span #{department.getLoadPercent()}%
 
         tr
-            each weekData in weeksData
-                td.week-info.rotation
-                    span Unplanned members.
-                    span Total – #{weekData.getMembersList().getUnplannedDuration()}h.
-                    ul
-                        each member in weekData.getMembersList().getUnplannedMembers()
-                            li #{member.getName()} – #{member.getUnplannedDuration()} h.
-
-        tr
             +benchMembers(weeksData)
 
         tr
