@@ -11,6 +11,7 @@ class ForecastGrabberScrapingMethods {
     }
 
     getUtilization(startDate, endDate) {
+        // TODO fix. API changed
         return this.client.query({
             query: utilizationQuery,
             variables: {
@@ -18,7 +19,7 @@ class ForecastGrabberScrapingMethods {
             }
         }).catch(function(error){
             console.error(error)
-        });
+        })
     }
 
     getProjects() {
@@ -34,7 +35,7 @@ class ForecastGrabberScrapingMethods {
             query: scheduleQuery
         }).catch(function(error){
             console.error(error)
-        });
+        })
     }
 
 }

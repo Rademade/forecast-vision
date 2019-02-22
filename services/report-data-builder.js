@@ -31,7 +31,8 @@ class ReportDataBuilder {
         this.range = moment.range(startDate, endDate);
         this.allocationReport = allocationReport;
         this.togglReport = togglReport;
-        this.weekData = utilizationWeekData.data.viewer.component.unitilization;
+        // this.weekData = utilizationWeekData.data.viewer.component.unitilization;
+        this.weekData = {utilizationListData: []}
     }
 
     /**

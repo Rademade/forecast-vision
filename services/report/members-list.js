@@ -22,10 +22,11 @@ class ReportMembersList extends CollectionList {
     addMatchedAllocationItem(matchedItem) {
         let slug = matchedItem.getAllocation().getMemberName();
         let member = this.items[ slug ];
-        if (!member) {
+        if (member) {
+            member.addMatchedAllocationItem( matchedItem );
+        } else {
             console.log('Member ' + slug + ' not founded');
         }
-        member.addMatchedAllocationItem( matchedItem );
     }
 
 
