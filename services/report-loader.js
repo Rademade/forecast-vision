@@ -48,6 +48,7 @@ class ReportLoader {
             return ;
         }
 
+        // TODO. Store locally or cache. It's the same for all reports
         this.scrappingAPI.getMembers().then((membersReport) => {
             this.togglLoader.getReport(startDate, endDate, {
                 projectId: this.getProjectTogglId()
@@ -80,6 +81,7 @@ class ReportLoader {
             // Init ForecastScrapingMethods API
             this.scrappingAPI = api;
 
+            // TODO. Store locally or cache. It's the same for all reports
             // Load Allocations
             api.getScheduleAllocations().then((allocationData) => {
                 this.allocationReport = new ForecastAllocationList(allocationData, {
