@@ -10,6 +10,10 @@ class ForecastReportMember {
         this.data  = data;
     }
 
+    isActive() {
+        return this.data.active;
+    }
+
     getId() {
         return this.data.id;
     }

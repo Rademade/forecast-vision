@@ -20,7 +20,9 @@ class ForecastScrapingMethods {
         }).then(function (data) {
             return data.data.viewer.company.persons.edges.map(function(item){
                 return new ForecastReportMember(item.node);
-            })
+            }).filter(function(reportMember){
+                return reportMember.isActive();
+            });
         });
     }
 
@@ -44,6 +46,7 @@ query Viewer_queries {
             edges {
             node {
               id
+              active
               firstName
               lastName
               monday

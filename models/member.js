@@ -74,7 +74,7 @@ _self.getByForecastUser = (forecastMember) => {
             });
     }).then((member) => {
         if (!member.forecastId) {
-            member.set({forecastId: forecastMember.id}).save();
+            member.set({forecastId: forecastMember.getId()}).save();
         }
         return member;
     });
