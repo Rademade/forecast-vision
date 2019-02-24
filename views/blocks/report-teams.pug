@@ -30,6 +30,7 @@ mixin reportTeams(reports)
                                     td Fact h.
                                     td Accuracy %
                                 each member in team.getAllMembers()
+                                    //TODO Add styles for numbers
                                     tr
                                         td #{member.getName()}
                                         td #{member.getBillableDuration()}

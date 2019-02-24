@@ -1,8 +1,8 @@
 const moment = require('moment');
 
-const { ForecastGrabberScrapingAuth } = require('./forecast-grabber/scraping-auth');
+const { ForecastScrapingAuth } = require('./forecast/scraping-auth');
 const { TogglScrapingMethods } = require('./toggl/scraping-methods');
-const { ForecastAllocationList } = require('./forecast-allocation/list');
+const { ForecastAllocationList } = require('./forecast/allocation/list');
 const { ReportDataBuilder } = require('./report-data-builder');
 
 class ReportLoader {
@@ -14,7 +14,7 @@ class ReportLoader {
      * @param getIntervalEndDate
      */
     constructor(dateStart, dateEnd, project, getIntervalEndDate) {
-        this.apiLoader = new ForecastGrabberScrapingAuth();
+        this.apiLoader = new ForecastScrapingAuth();
         this.togglLoader = new TogglScrapingMethods();
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
@@ -48,12 +48,12 @@ class ReportLoader {
             return ;
         }
 
-        this.scrappingAPI.getUtilization(startDate, endDate).then((weekData) => {
+        this.scrappingAPI.getMembers().then((membersReport) => {
             this.togglLoader.getReport(startDate, endDate, {
                 projectId: this.getProjectTogglId()
             }, (togglReport) => {
 
-                (new ReportDataBuilder(startDate, endDate, weekData, this.allocationReport, togglReport))
+                (new ReportDataBuilder(startDate, endDate, membersReport, this.allocationReport, togglReport))
                     .getReport()
                     .then((report) => {
                         this.reports.push(report);
@@ -77,7 +77,7 @@ class ReportLoader {
     load(loadReadyCallback) {
         this.apiLoader.ready((api) => {
 
-            // Init ForecastGrabberScrapingMethods API
+            // Init ForecastScrapingMethods API
             this.scrappingAPI = api;
 
             // Load Allocations

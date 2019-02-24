@@ -55,39 +55,40 @@ _self.createByTogglProject = (togglMember) => {
 };
 
 /**
- * @param forecastItem
+ * @param {ForecastReportMember} forecastMember
  */
-_self.getByForecastUser = (forecastItem) => {
+_self.getByForecastUser = (forecastMember) => {
     return new Promise((resolve) => {
         mongoose.model('Member')
             .findOne({$or: [
-                {forecastId: forecastItem.id},
-                {name: forecastItem.name}
+                {forecastId: forecastMember.getId()},
+                {name: forecastMember.getName()}
             ]})
             .populate('team')
             .then((document) => {
                 if (!document) {
-                    _self.createByForecastUser(forecastItem).then((document) => { resolve(document) });
+                    _self.createByForecastUser(forecastMember).then((document) => { resolve(document) });
                 } else {
                     resolve(document);
                 }
             });
     }).then((member) => {
         if (!member.forecastId) {
-            member.set({forecastId: forecastItem.id}).save();
+            member.set({forecastId: forecastMember.getId()}).save();
         }
         return member;
     });
 };
 
 /**
- * @param forecastItem
+ * @param {ForecastReportMember} forecastMember
  * @return {Model}
  */
-_self.createByForecastUser = (forecastItem) => {
+_self.createByForecastUser = (forecastMember) => {
+    console.log('create')
     return (new (mongoose.model('Member'))).set({
-        name: forecastItem.name,
-        forecastId: forecastItem.id
+        name: forecastMember.getName(),
+        forecastId: forecastMember.getId()
     }).save();
 };
 

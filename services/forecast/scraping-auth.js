@@ -1,14 +1,14 @@
 const gql = require('graphql-tag');
-const { ForecastGrabberInitialize } = require('./initialize');
-const { ForecastGrabberScrapingMethods } = require('./scraping-methods');
+const { ForecastInitialize } = require('./initialize');
+const { ForecastScrapingMethods } = require('./scraping-methods');
 
 const FORECAST_LOGIN = process.env.FORECAST_LOGIN || '';
 const FORECAST_PASSWORD = process.env.FORECAST_PASSWORD || '';
 
-class ForecastGrabberScrapingAuth {
+class ForecastScrapingAuth {
     constructor() {
-        this.client = (new ForecastGrabberInitialize()).client;
-        this.scrapingMethods = new ForecastGrabberScrapingMethods(this.client);
+        this.client = (new ForecastInitialize()).client;
+        this.scrapingMethods = new ForecastScrapingMethods(this.client);
     }
     auth() {
         let loginQuery = gql`mutation Login_mutation($input: LoginInput!) {
@@ -45,4 +45,4 @@ class ForecastGrabberScrapingAuth {
 
 }
 
-exports.ForecastGrabberScrapingAuth = ForecastGrabberScrapingAuth;
+exports.ForecastScrapingAuth = ForecastScrapingAuth;

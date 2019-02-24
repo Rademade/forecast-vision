@@ -5,28 +5,9 @@ const { ReportTeam } = require('./report/team');
 const { ReportDepartment } = require('./report/department');
 const { ReportMembersList } = require('./report/members-list');
 const { ReportProjectList } = require('./report/project-list');
-const { ForecastAllocationList } = require('./forecast-allocation/list');
+const { ForecastAllocationList } = require('./forecast/allocation/list');
 
 const moment = extendMoment(Moment);
-
-
-/**
- * User store data
- * UnitilizationData / weekData
- *
- * {
- *  id: '',
- *  name: '',
- *  profilePictureId: null,
- *  profilePictureDefaultId: 5,
- *  roleName: '',
- *  availableMinutes: 2100,
- *  scheduledMinutes: 2100,
- *  scheduledNonProjectTimeMinutes: 0,
- *  scheduledProjectTimeMinutes: 2100,
- *  reported: 0
- *  }
- */
 
 class ReportData {
 

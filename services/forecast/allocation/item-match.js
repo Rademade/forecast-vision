@@ -1,4 +1,4 @@
-const { Duration } = require('../duration');
+const { Duration } = require('../../duration');
 
 class ForecastAllocationItemMatch {
 
