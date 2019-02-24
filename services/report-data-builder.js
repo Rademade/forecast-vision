@@ -61,13 +61,13 @@ class ReportDataBuilder {
         //Build members from toggl side
         for (let togglUser of this.togglReport.getUsersList().getUsers()) {
             let memberDocument = await MemberModel.getByTogglUser(togglUser);
-            let member = new ReportMember(togglUser.getUserName(), '', 0, togglUser, memberDocument);
+            let member = new ReportMember(memberDocument.name, '', 0, togglUser, memberDocument);
             membersList.addMember(member);
         }
 
         for (let forecastMember of this.forecastMembers) {
             let memberDocument = await MemberModel.getByForecastUser(forecastMember);
-            let member = new ReportMember(forecastMember.getName(), forecastMember.getRoleName(), forecastMember.getAvailableMinutes(), TogglReportUser.null(), memberDocument);
+            let member = new ReportMember(memberDocument.name, forecastMember.getRoleName(), forecastMember.getAvailableMinutes(), TogglReportUser.null(), memberDocument);
             membersList.addMember(member);
         }
 
