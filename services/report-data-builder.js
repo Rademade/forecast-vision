@@ -11,7 +11,9 @@ const { ReportProjectList } = require('./report/project-list');
 const { TogglReport } = require('./toggl/report');
 const { TogglReportUser } = require('./toggl/report-user');
 const { TogglReportProject } = require('./toggl/report-project');
-const { ForecastAllocationList } = require('./forecast-allocation/list');
+
+const { ForecastReportMember } = require('./forecast/report-member');
+const { ForecastAllocationList } = require('./forecast/allocation/list');
 
 const MemberModel = require('./../models/member');
 const ProjectModel = require('./../models/project');
@@ -21,18 +23,17 @@ class ReportDataBuilder {
     /**
      * @param startDate
      * @param endDate
-     * @param utilizationWeekData
+     * @param {Array<ForecastReportMember>} forecastMembers
      * @param {ForecastAllocationList} allocationReport
      * @param {TogglReport} togglReport
      */
-    constructor(startDate, endDate, utilizationWeekData, allocationReport, togglReport) {
+    constructor(startDate, endDate, forecastMembers, allocationReport, togglReport) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.range = moment.range(startDate, endDate);
         this.allocationReport = allocationReport;
         this.togglReport = togglReport;
-        // this.weekData = utilizationWeekData.data.viewer.component.unitilization;
-        this.weekData = {utilizationListData: []}
+        this.forecastMembers = forecastMembers;
     }
 
     /**
@@ -64,9 +65,9 @@ class ReportDataBuilder {
             membersList.addMember(member);
         }
 
-        for (let item of this.weekData.utilizationListData) {
-            let memberDocument = await MemberModel.getByForecastUser(item);
-            let member = new ReportMember(item.name, item.roleName, item.availableMinutes, TogglReportUser.null(), memberDocument);
+        for (let forecastMember of this.forecastMembers) {
+            let memberDocument = await MemberModel.getByForecastUser(forecastMember);
+            let member = new ReportMember(forecastMember.getName(), forecastMember.getRoleName(), forecastMember.getAvailableMinutes(), TogglReportUser.null(), memberDocument);
             membersList.addMember(member);
         }
 

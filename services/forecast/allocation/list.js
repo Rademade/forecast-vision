@@ -1,6 +1,6 @@
 const { ForecastAllocationItem } = require('./item');
 const { ForecastAllocationItemMatch } = require('./item-match');
-const { Duration } = require('../duration');
+const { Duration } = require('../../duration');
 
 class ForecastAllocationList {
 
