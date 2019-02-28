@@ -43,9 +43,13 @@ class TeamsController {
     static async update(req, res) {
         try {
             let team = await Team.findById(req.params.id);
-            TeamsController._setParams(team, req.body).save();
+            let updatedTeam = await TeamsController._setParams(team, req.body);
+
+            await updatedTeam.save();
             TeamsController._sendResult(team, res);
         } catch (e) {
+            console.error(e);
+
             res.redirect('/teams');
         }
     }
@@ -60,11 +64,22 @@ class TeamsController {
         }
     }
 
-    static _setParams(document, body) {
-        // TODO validate params
+    static async _setParams(document, body) {
+        // // TODO validate params
         document.set({
-            name: body.name
+            name: body.name,
         });
+
+        if (body.representative && body.representative !== '') {
+            let representativeMember = await document.getMemberById(body.representative);
+
+            document.set({
+                representative: representativeMember
+            });
+        } else {
+            document.representative = undefined
+        }
+
         return document;
     }
 
@@ -73,6 +88,9 @@ class TeamsController {
         res.redirect('/teams');
     }
 
+    static validateBody (body) {
+        // FIXME here should be validation
+    }
 }
 
 module.exports = TeamsController;

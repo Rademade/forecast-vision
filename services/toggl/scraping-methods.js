@@ -47,6 +47,26 @@ class TogglScrapingMethods {
         });
     }
 
+    getUserToggleReport (startDate, endDate, opt) {
+        return new Promise((resolve, reject) => {
+            this.toggl.summaryReport({
+                workspace_id: WORKSPACE_ID,
+                since: startDate.format('YYYY-MM-DD'),
+                until: endDate.format('YYYY-MM-DD'),
+                grouping: 'users',
+                subgrouping: 'projects',
+                user_ids: opt.userId.toString(),
+                billable: opt.billable ? opt.billable : 'yes',
+            }, (err, data) => {
+                if (err) {
+                    reject(err)
+                }
+
+                resolve(data.data[0])
+            });
+        })
+    }
+
     getProjects(callback) {
         this.toggl.getWorkspaceProjects(WORKSPACE_ID, {}, (err, data) => {
             callback( data );

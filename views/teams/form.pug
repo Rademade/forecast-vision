@@ -11,6 +11,14 @@ block content
             label() Team name
             input(type="input" name="name" value=team.name)
 
+
+        div
+            label() Representative
+            select(name="representative")
+                option(value="") No representative
+                each member in members
+                    option(value=member._id selected=(team.representative && member.id === team.representative.id)) #{member.name}
+
         input(type="submit" value="Save")
 
     if members && members.length > 1

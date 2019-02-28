@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "check-report": "REPORT_NOTIFICATION=true  node app.js"
   },
   "author": "",
   "license": "ISC",
@@ -21,9 +22,11 @@
     "graphql-request": "^1.5.1",
     "graphql-tag": "^2.8.0",
     "lodash": "^4.17.5",
+    "mailgun-js": "^0.22.0",
     "moment": "^2.21.0",
     "moment-range": "^3.1.1",
     "mongoose": "^5.2.5",
+    "node-cron": "^2.0.3",
     "node-fetch": "^2.1.2",
     "pug": "^2.0.3",
     "request": "^2.85.0",
