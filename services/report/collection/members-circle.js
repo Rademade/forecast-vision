@@ -59,11 +59,11 @@ class MembersCircle {
     }
 
     getLoadPercent() {
-        return this.getBillableDuration().getRatio( this.getAvailableDuration());
+        return this.getBillableDuration().getRatio( this.getScheduledDuration());
     }
 
     getFactLoadPercent() {
-        return this.getFactBillableDuration().getRatio( this.getAvailableDuration());
+        return this.getFactBillableDuration().getRatio( this.getScheduledDuration());
     }
 
     getPlanningAccuracyPercent() {
