@@ -1,5 +1,5 @@
-const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY;
-const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN;
+const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY || 'key-5174fa2d2e241d0e3f18163789c3b680';
+const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN || 'mg.demo-rademade.com';
 const MAILGUN_FROM = 'vision@demo-rademade.com';
 
 const Mailgun = require('mailgun-js');

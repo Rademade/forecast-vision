@@ -11,6 +11,7 @@ class MembersCircle {
      * @param {ReportMember} member
      */
     addMember(member) {
+        // console.log(member)
         this.members.push(member);
     }
 

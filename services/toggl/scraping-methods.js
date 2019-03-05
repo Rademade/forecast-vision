@@ -37,34 +37,26 @@ class TogglScrapingMethods {
             until: endDate.format('YYYY-MM-DD'),
             grouping: 'users',
             subgrouping: 'projects',
-            billable: 'yes',
+            billable: 'both',
             project_ids: opt.projectId ? opt.projectId : null,
         }, (err, data) => {
             let usersList = new TogglReportUserList( data.data.map((togglUserData) => {
+                let withoutProject = []
+
+                togglUserData.items.forEach(item => {
+                    if (!item.title.project) {
+                        withoutProject.push(item)
+                    }
+                });
+
+                togglUserData.withoutProject = withoutProject;
+
+                togglUserData.items = togglUserData.items.filter(item => item.sum > 0 && item.title.project);
+
                 return new TogglReportUser(togglUserData);
             }) );
             callback( new TogglReport( usersList ) );
         });
-    }
-
-    getUserToggleReport (startDate, endDate, opt) {
-        return new Promise((resolve, reject) => {
-            this.toggl.summaryReport({
-                workspace_id: WORKSPACE_ID,
-                since: startDate.format('YYYY-MM-DD'),
-                until: endDate.format('YYYY-MM-DD'),
-                grouping: 'users',
-                subgrouping: 'projects',
-                user_ids: opt.userId.toString(),
-                billable: opt.billable ? opt.billable : 'yes',
-            }, (err, data) => {
-                if (err) {
-                    reject(err)
-                }
-
-                resolve(data.data[0])
-            });
-        })
     }
 
     getProjects(callback) {

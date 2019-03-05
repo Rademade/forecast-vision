@@ -79,11 +79,14 @@ app.listen(process.env.PORT || 3000, () => {
   console.log('App listening on port ' + (process.env.PORT || 3000))
 });
 
-if (process.env.REPORT_NOTIFICATION) {
-  reportNotification();
-}
+reportNotification()
 
-cron.schedule('* * * * Tuesday', () => {
-  reportNotification();
-});
+// if (process.env.REPORT_NOTIFICATION) {
+//   reportNotification();
+// }
+
+// cron.schedule('* * * * Tuesday', () => {
+//   reportNotification();
+// });
+
 

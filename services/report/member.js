@@ -1,6 +1,8 @@
 const { Duration } = require('../duration');
 const { CollectionItem } = require('./collection/item');
 
+const NORMAL_BILLABLE_PERCENTAGE = 80;
+
 class ReportMember extends CollectionItem {
 
 
@@ -11,18 +13,33 @@ class ReportMember extends CollectionItem {
      * @param {TogglReportUser} togglFactReport
      * @param {Member} memberDocument
      */
-    constructor(name, roleName, forcastAvailableMinutes = 0, togglFactReport, memberDocument) {
+    constructor(name, roleName, forcastAvailableMinutes = 0, togglFactReport, memberDocument, planned, fact) {
         super();
         this.userName = (name + '').trim();
+        this.email = memberDocument.email || null;
         this.roleName = (roleName + '').trim();
         this.forecastAvailableDuration = new Duration(forcastAvailableMinutes);
         this.matchedAllocations = [];
         this.togglFactReport = togglFactReport;
         this.memberDocument = memberDocument;
+        this.planned = planned;
+        this.fact = fact
+    }
+
+    isNormalBillableHours () {
+        return this.planned > NORMAL_BILLABLE_PERCENTAGE
+    }
+
+    togglTasksWithoutProject () {
+        return this.togglFactReport.data.withoutProject.length > 0
     }
 
     getName() {
         return this.userName
+    }
+
+    getEmail () {
+        return this.email
     }
 
     getSlug() {

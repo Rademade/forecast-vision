@@ -1,66 +1,98 @@
-const { MemberReport } = require('../services/member-report');
+const { ReportMember } = require('../services/report/member');
+const { MembersCircle } = require('../services/report/collection/members-circle');
+
 const { Mailer } = require('../services/mailer');
 const pug = require('pug');
 const moment = require('moment');
 const _ = require('lodash');
 
-const NORMAL_BILLABLE_PERCENTAGE = 80;
-
-let userMails = {};
+const { ReportLoaderFactory } = require('../services/report-loader-factory');
 
 
+
+let notifications = {};
+
+const getMembersWeeklyReport = async (startDate, endDate) => {
+  let membersList = [];
+
+  return new Promise((resolve, reject) => {
+    try {
+      ReportLoaderFactory.getMonthReport(startDate, endDate).load((intervalReport) => {
+        _.forEach(intervalReport[0].membersList.items, (value, key) => {
+          let circle = new MembersCircle();
+
+          circle.addMember(value);
+
+          let member = new ReportMember(
+            value.memberDocument.name,
+            value.roleName,
+            value.forecastAvailableDuration,
+            value.togglFactReport,
+            value.memberDocument,
+            circle.getLoadPercent(),
+            circle.getFactLoadPercent()
+          );
+
+          membersList.push(member)
+        });
+
+        resolve(membersList);
+      })
+    } catch (error) {
+      console.log(error);
+      reject(error)
+    }
+  })
+};
 
 const reportNotification = async () => {
   /**
-   * Proccess last week
+   * Process last week
+   * last week should check if planned is no bigger than fact
+   * last week should check if togglEmpty project
    */
-  let members = await new MemberReport().getMembersWeeklyReport(
+  let members = await getMembersWeeklyReport(
     moment().subtract(1, 'week').startOf('week'),
     moment().subtract(1, 'week').endOf('week')
   );
 
   for (const member of members) {
-    let email = member.memberDocument.email;
+    if (member.getEmail()) {
+      if (!notifications[member.getEmail()]) notifications[member.getEmail()] = { name: member.getName() };
 
-    if (email) {
-      if (!userMails[email]) userMails[email] = { name: member.memberDocument.name };
+      notifications[member.getEmail()].lastWeek = {};
+      notifications[member.getEmail()].lastWeek.planned = member.planned;
+      notifications[member.getEmail()].lastWeek.fact = member.fact;
 
-      userMails[email].lastWeek = {};
-
-      userMails[email].lastWeek.planned = await memberLoadPlan(member);
-      userMails[email].lastWeek.fact = await memberLoadFact(member);
-
-      if (userMails[email].lastWeek.planned > userMails[email].lastWeek.fact) {
-        userMails[email].isBillableNotification = true
+      if (notifications[member.getEmail()].lastWeek.planned > notifications[member.getEmail()].lastWeek.fact) {
+        notifications[member.getEmail()].isBillableNotification = true
       }
 
-      if (isTogglEmptyProject(member)) {
-        userMails[email].isToggleEmptyProject = true
+      if (member.togglTasksWithoutProject) {
+        notifications[member.getEmail()].isToggleEmptyProject = true
       }
     }
   }
 
   /**
    * Proccess this week
+   * should check if week planned is lower than NORMAL_BILLABLE_PERCENTAGE
    */
-  members = await new MemberReport().getMembersWeeklyReport(
+  members = await getMembersWeeklyReport(
     moment().startOf('week'),
     moment().endOf('week')
   );
 
   for (const member of members) {
-    let email = member.memberDocument.email;
+    if (member.getEmail()) {
+      if (!notifications[member.getEmail()]) notifications[member.getEmail()] = { name: member.getName() };
 
-    if (email) {
-      if (!userMails[email]) userMails[email] = { name: member.memberDocument.name };
+      notifications[member.getEmail()].thisWeek = {};
+      notifications[member.getEmail()].thisWeek.planned = member.planned;
+      notifications[member.getEmail()].thisWeek.fact = member.fact;
 
-      userMails[email].thisWeek = {};
-
-      userMails[email].thisWeek.planned = await memberLoadPlan(member);
-      userMails[email].thisWeek.fact = await memberLoadFact(member);
-
-      if (userMails[email].thisWeek.planned < NORMAL_BILLABLE_PERCENTAGE) {
-        userMails[email].isForecastEmpty = true
+      if (!member.isNormalBillableHours()) {
+        notifications[member.getEmail()].isForecastEmpty = true
       }
     }
   }
@@ -68,26 +100,8 @@ const reportNotification = async () => {
   await sendEmailToMember()
 };
 
-const memberLoadFact = async (member) => {
-  let percentage = await new MemberReport().getBillablePercentFact(member);
-
-  return percentage
-};
-
-const memberLoadPlan = async (member) => {
-  let percentage = await new MemberReport().getBillablePercentPlan(member);
-
-  return percentage
-};
-
-const isTogglEmptyProject = async (member) => {
-  const isEmpty = await new MemberReport().isTaskWithoutProject(member);
-
-  return isEmpty
-};
-
 const sendEmailToMember = async () => {
-  _.forEach(userMails, async (value, key) => {
+  _.forEach(notifications, async (value, key) => {
     if (value.isBillableNotification || value.isToggleEmptyProject || value.isForecastEmpty) {
       let compiledTemplate = pug.compileFile('views/emails/member-notification.pug');
 
