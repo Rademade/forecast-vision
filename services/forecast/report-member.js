@@ -29,27 +29,35 @@ class ForecastReportMember {
   }
 
   getDaysInMonth(start, end, dayOfWeek) {
+    if (!start && !end) {
+      return 1
+    }
+
     let days = moment(start).weekdaysInBetween(end, dayOfWeek);
 
     return days.length
   }
 
   getAvailableMinutes(startDate, endDate) {
-    const isDateRange = startDate && endDate
-    // FIXME here build months matrix
-    if (startDate && endDate) {
-      let mondays = this.getDaysInMonth(startDate, endDate, 'Sunday');
+    console.log(this.getName())
+    // console.log(this.data.monday * this.getDaysInMonth(startDate, endDate, 'Monday'));
 
-      console.log(mondays.length)
-    }
+    console.log((this.data.monday * this.getDaysInMonth(startDate, endDate, 'Monday')) +
+      (this.data.tuesday * this.getDaysInMonth(startDate, endDate, 'Tuesday')) +
+      (this.data.wednesday * this.getDaysInMonth(startDate, endDate, 'Wednesday')) +
+      (this.data.thursday * this.getDaysInMonth(startDate, endDate, 'Thursday')) +
+      (this.data.friday * this.getDaysInMonth(startDate, endDate, 'Friday')) +
+      (this.data.saturday * this.getDaysInMonth(startDate, endDate, 'Saturday')) +
+      (this.data.sunday * this.getDaysInMonth(startDate, endDate, 'Sunday')))
 
-    return (this.data.monday * isDateRange ? this.getDaysInMonth(startDate, endDate, 'Monday') : 1) +
-      (this.data.tuesday * isDateRange ? this.getDaysInMonth(startDate, endDate, 'Monday') : 1) +
-      (this.data.wednesday * isDateRange ? this.getDaysInMonth(startDate, endDate, 'Monday') : 1) +
-      (this.data.thursday * isDateRange ? this.getDaysInMonth(startDate, endDate, 'Monday') : 1) +
-      (this.data.friday * isDateRange ? this.getDaysInMonth(startDate, endDate, 'Monday') : 1) +
-      (this.data.saturday * isDateRange ? this.getDaysInMonth(startDate, endDate, 'Monday') : 1) +
-      (this.data.sunday * isDateRange ? this.getDaysInMonth(startDate, endDate, 'Monday') : 1)
+
+    return (this.data.monday * this.getDaysInMonth(startDate, endDate, 'Monday')) +
+      (this.data.tuesday * this.getDaysInMonth(startDate, endDate, 'Tuesday')) +
+      (this.data.wednesday * this.getDaysInMonth(startDate, endDate, 'Wednesday')) +
+      (this.data.thursday * this.getDaysInMonth(startDate, endDate, 'Thursday')) +
+      (this.data.friday * this.getDaysInMonth(startDate, endDate, 'Friday')) +
+      (this.data.saturday * this.getDaysInMonth(startDate, endDate, 'Saturday')) +
+      (this.data.sunday * this.getDaysInMonth(startDate, endDate, 'Sunday'))
   }
 
 }
