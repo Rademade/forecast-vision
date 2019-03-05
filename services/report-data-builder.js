@@ -65,9 +65,18 @@ class ReportDataBuilder {
             membersList.addMember(member);
         }
 
+        console.log(this.startDate)
+        console.log(this.endDate)
+
         for (let forecastMember of this.forecastMembers) {
             let memberDocument = await MemberModel.getByForecastUser(forecastMember);
-            let member = new ReportMember(memberDocument.name, forecastMember.getRoleName(), forecastMember.getAvailableMinutes(), TogglReportUser.null(), memberDocument);
+            let member = new ReportMember(
+              memberDocument.name,
+              forecastMember.getRoleName(),
+              forecastMember.getAvailableMinutes(this.startDate, this.endDate),
+              TogglReportUser.null(),
+              memberDocument);
+
             membersList.addMember(member);
         }
 
