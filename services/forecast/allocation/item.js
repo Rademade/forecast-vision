@@ -97,10 +97,10 @@ class ForecastAllocationItem {
     isUsefulProject() {
         // TODO move to database
         return [
-            PROJECT_ID_NEW_BIZ,
+            // PROJECT_ID_NEW_BIZ,
             // PROJECT_ID_PROCESSES,
-            PROJECT_ID_RECRUITMENT,
-            PROJECT_ID_TEAM_LEADING,
+            // PROJECT_ID_RECRUITMENT,
+            // PROJECT_ID_TEAM_LEADING,
             PROJECT_ID_HOLIDAY
         ].indexOf( this.allocationData.project.companyProjectId ) !== -1;
     }

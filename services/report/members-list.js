@@ -5,7 +5,7 @@ const { CollectionList } = require('./collection/list');
 const { Duration } = require('../duration');
 
 const MIN_HOURS = 1;
-const BENCH_MIN_HOURS = 5;
+const BENCH_MIN_HOURS = 8;
 
 class ReportMembersList extends CollectionList {
 
