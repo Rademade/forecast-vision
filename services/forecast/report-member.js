@@ -1,40 +1,52 @@
+const moment = require('moment-weekdaysin');
+
 class ForecastReportMember {
 
-    /**
-     * Data from GraphQL query – membersQuery
-     * File scraping methods
-     *
-     * @param {Object} data
-     */
-    constructor(data) {
-        this.data  = data;
+  /**
+   * Data from GraphQL query – membersQuery
+   * File scraping methods
+   *
+   * @param {Object} data
+   */
+  constructor(data) {
+    this.data = data;
+  }
+
+  isActive() {
+    return this.data.active;
+  }
+
+  getId() {
+    return this.data.id;
+  }
+
+  getName() {
+    return [this.data.firstName, this.data.lastName].join(' ');
+  }
+
+  getRoleName() {
+    return this.data.role ? this.data.role.name : null;
+  }
+
+  getDaysInMonth(start, end, dayOfWeek) {
+    if (!start || !end) {
+      return 1
     }
 
-    isActive() {
-        return this.data.active;
-    }
+    let days = moment(start).weekdaysInBetween(end, dayOfWeek);
 
-    getId() {
-        return this.data.id;
-    }
+    return days.length > 0 ? days.length : 1
+  }
 
-    getName() {
-        return [this.data.firstName, this.data.lastName].join(' ');
-    }
-
-    getRoleName() {
-        return this.data.role ? this.data.role.name : null;
-    }
-
-    getAvailableMinutes() {
-        return this.data.monday +
-            this.data.tuesday +
-            this.data.wednesday +
-            this.data.thursday +
-            this.data.friday +
-            this.data.saturday +
-            this.data.sunday;
-    }
+  getAvailableMinutes(startDate, endDate) {
+    return (this.data.monday * this.getDaysInMonth(startDate, endDate, 'Monday')) +
+      (this.data.tuesday * this.getDaysInMonth(startDate, endDate, 'Tuesday')) +
+      (this.data.wednesday * this.getDaysInMonth(startDate, endDate, 'Wednesday')) +
+      (this.data.thursday * this.getDaysInMonth(startDate, endDate, 'Thursday')) +
+      (this.data.friday * this.getDaysInMonth(startDate, endDate, 'Friday')) +
+      (this.data.saturday * this.getDaysInMonth(startDate, endDate, 'Saturday')) +
+      (this.data.sunday * this.getDaysInMonth(startDate, endDate, 'Sunday'))
+  }
 
 }
 
