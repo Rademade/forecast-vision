@@ -34,6 +34,8 @@ const reportNotification = async () => {
   );
 
   for (const member of members) {
+    // console.log(member.togglFactReport.items)
+
     if (member.getEmail()) {
       if (!notifications[member.getEmail()]) notifications[member.getEmail()] = { name: member.getName() };
 
@@ -75,7 +77,9 @@ const reportNotification = async () => {
     }
   }
 
-  await sendEmailToMember()
+  console.log(notifications)
+
+  // await sendEmailToMember()
 };
 
 const sendEmailToMember = async () => {

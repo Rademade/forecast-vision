@@ -28,48 +28,38 @@ class TogglReportUser {
     }
 
     isTasksWithoutProjects () {
-        return this.data.withoutProject.length > 0
+        return this.getTasksWithoutProject().length > 0
     }
 
     /**
      * @description Filter tasks without project
      */
-    setTasksWithoutProject () {
-        let withoutProject = [];
+    getTasksWithoutProject () {
+        if (this.tasksWithoutProject) return this.tasksWithoutProject;
+
+        this.tasksWithoutProject = [];
 
         this.getItems().forEach(item => {
             if (!item.data.title.project) {
-                withoutProject.push(item.data)
+                this.tasksWithoutProject.push(item.data)
             }
         });
 
-        this.data.withoutProject = withoutProject;
+        return this.tasksWithoutProject;
     }
 
-    /**
-     * @return {TogglReportUser}
-     * @description filtered toogleUserReport by billable projects
-     */
-    getUserBillableReport () {
-        this.setTasksWithoutProject();
+    getBillableItems () {
+        if (this.billableTasks) return this.billableTasks;
 
-        let userReport = {...this};
-
-        userReport.data.items = userReport.data.items.filter(item => {
-            return item.sum > 0 && item.title.project
+        return this.billableTasks = this.getItems().filter(item => {
+            return item.data.sum > 0 && item.data.title.project
         });
-
-        return new TogglReportUser(userReport.data)
     }
 
     /**
      * @return {TogglReportUserItem[]}
      */
     getItems() {
-        if (this.items) {
-            return this.items;
-        }
-
         // Broken data params
         if (!(this.data && this.data.items)) {
             return this.items = [];
@@ -82,7 +72,7 @@ class TogglReportUser {
 
     getBillableDuration() {
         if (!this.billableDuration) {
-            this.billableDuration = this.getItems().reduce((a, item) => {
+            this.billableDuration = this.getBillableItems().reduce((a, item) => {
                 return a.addMinutes( item.getTrackingMinutes() );
             }, new Duration());
         }
@@ -100,7 +90,7 @@ class TogglReportUser {
         this.userName = this.getUserName() || togglReport.getUserName();
 
         // TODO add unique item validation
-        this.items = this.getItems().concat( togglReport.getItems() );
+        this.items = this.getBillableItems().concat( togglReport.getBillableItems() );
     }
 
 }

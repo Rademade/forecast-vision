@@ -47,7 +47,7 @@ class TogglScrapingMethods {
             project_ids: opt.projectId ? opt.projectId : null,
         }, (err, data) => {
             let usersList = new TogglReportUserList( data.data.map((togglUserData) => {
-                return new TogglReportUser(togglUserData).getUserBillableReport();
+                return new TogglReportUser(togglUserData);
             }) );
 
             callback( new TogglReport( usersList ) );
