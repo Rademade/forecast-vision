@@ -40,7 +40,7 @@ const reportNotification = async () => {
   );
 
   for (const member of members) {
-    if (member) {
+    if (member.getEmail()) {
       if (!notifications[member.getEmail()]) notifications[member.getEmail()] = { name: member.getName() };
 
       notifications[member.getEmail()].lastWeek = {};
@@ -67,7 +67,7 @@ const reportNotification = async () => {
   );
 
   for (const member of members) {
-    if (member) {
+    if (member.getEmail()) {
       if (!notifications[member.getEmail()]) notifications[member.getEmail()] = { name: member.getName() };
 
       notifications[member.getEmail()].thisWeek = {};
