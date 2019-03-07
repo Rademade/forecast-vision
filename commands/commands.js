@@ -1,6 +1,3 @@
-const { ReportMember } = require('../services/report/member');
-const { MembersCircle } = require('../services/report/collection/members-circle');
-
 const { Mailer } = require('../services/mailer');
 const pug = require('pug');
 const moment = require('moment');
@@ -19,21 +16,7 @@ const getMembersWeeklyReport = async (startDate, endDate) => {
     try {
       ReportLoaderFactory.getMonthReport(startDate, endDate).load((intervalReport) => {
         _.forEach(intervalReport[0].membersList.items, (value, key) => {
-          let circle = new MembersCircle();
-
-          circle.addMember(value);
-
-          let member = new ReportMember(
-            value.memberDocument.name,
-            value.roleName,
-            value.forecastAvailableDuration,
-            value.togglFactReport,
-            value.memberDocument,
-            circle.getLoadPercent(),
-            circle.getFactLoadPercent()
-          );
-
-          membersList.push(member)
+          membersList.push(value)
         });
 
         resolve(membersList);
@@ -57,18 +40,18 @@ const reportNotification = async () => {
   );
 
   for (const member of members) {
-    if (member.getEmail()) {
+    if (member) {
       if (!notifications[member.getEmail()]) notifications[member.getEmail()] = { name: member.getName() };
 
       notifications[member.getEmail()].lastWeek = {};
-      notifications[member.getEmail()].lastWeek.planned = member.planned;
-      notifications[member.getEmail()].lastWeek.fact = member.fact;
+      notifications[member.getEmail()].lastWeek.planned = member.getBillableDuration().minutes;
+      notifications[member.getEmail()].lastWeek.fact = member.getFactBillableDuration().minutes;
 
       if (notifications[member.getEmail()].lastWeek.planned > notifications[member.getEmail()].lastWeek.fact) {
         notifications[member.getEmail()].isBillableNotification = true
       }
 
-      if (member.togglTasksWithoutProject) {
+      if (member.isTasksWithoutProjects()) {
         notifications[member.getEmail()].isToggleEmptyProject = true
       }
     }
@@ -84,12 +67,13 @@ const reportNotification = async () => {
   );
 
   for (const member of members) {
-    if (member.getEmail()) {
+    if (member) {
       if (!notifications[member.getEmail()]) notifications[member.getEmail()] = { name: member.getName() };
 
       notifications[member.getEmail()].thisWeek = {};
-      notifications[member.getEmail()].thisWeek.planned = member.planned;
-      notifications[member.getEmail()].thisWeek.fact = member.fact;
+      notifications[member.getEmail()].thisWeek.planned = member.getBillableDuration().minutes;
+      notifications[member.getEmail()].thisWeek.fact = member.getFactBillableDuration().minutes;
+
 
       if (!member.isNormalBillableHours()) {
         notifications[member.getEmail()].isForecastEmpty = true

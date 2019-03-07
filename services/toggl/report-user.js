@@ -1,5 +1,5 @@
 const { Duration } = require('../duration');
-const {TogglReportUserItem} = require('./report-user-item')
+const {TogglReportUserItem} = require('./report-user-item');
 
 class TogglReportUser {
 
@@ -14,6 +14,10 @@ class TogglReportUser {
 
     constructor(data) {
         this.data = data;
+
+        this.setWTasksWithoutProject();
+
+        this.filterToggleItems();
     }
 
     getUserName() {
@@ -25,6 +29,32 @@ class TogglReportUser {
 
     getTogglId() {
         return this.data.id;
+    }
+
+    isTasksWithoutProjects () {
+        return this.data.withoutProject.length > 0
+    }
+
+    /**
+     * @description Filter tasks without project
+     */
+    setWTasksWithoutProject () {
+        let withoutProject = [];
+
+        this.data.items.forEach(item => {
+            if (!item.title.project) {
+                withoutProject.push(item)
+            }
+        });
+
+        this.data.withoutProject = withoutProject;
+    }
+
+    /**
+     * @return filtered user toggleInfo
+     */
+    filterToggleItems () {
+        this.data.items = this.data.items.filter(item => item.sum > 0 && item.title.project);
     }
 
     /**

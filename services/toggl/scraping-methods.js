@@ -31,6 +31,12 @@ class TogglScrapingMethods {
             return ;
         }
 
+        /**
+         * Влад, тут все будет ок, userList создается по итерации каждого TogglReportUser, отчистка от billable both
+         * происходит внутри TogglReportUser. После прочтения/обсуждения коммент можно снести
+         *
+         */
+
         this.toggl.summaryReport({
             workspace_id: WORKSPACE_ID,
             since: startDate.format('YYYY-MM-DD'),
@@ -41,18 +47,6 @@ class TogglScrapingMethods {
             project_ids: opt.projectId ? opt.projectId : null,
         }, (err, data) => {
             let usersList = new TogglReportUserList( data.data.map((togglUserData) => {
-                let withoutProject = []
-
-                togglUserData.items.forEach(item => {
-                    if (!item.title.project) {
-                        withoutProject.push(item)
-                    }
-                });
-
-                togglUserData.withoutProject = withoutProject;
-
-                togglUserData.items = togglUserData.items.filter(item => item.sum > 0 && item.title.project);
-
                 return new TogglReportUser(togglUserData);
             }) );
             callback( new TogglReport( usersList ) );

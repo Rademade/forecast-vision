@@ -13,7 +13,7 @@ class ReportMember extends CollectionItem {
      * @param {TogglReportUser} togglFactReport
      * @param {Member} memberDocument
      */
-    constructor(name, roleName, forcastAvailableMinutes = 0, togglFactReport, memberDocument, planned, fact) {
+    constructor(name, roleName, forcastAvailableMinutes = 0, togglFactReport, memberDocument) {
         super();
         this.userName = (name + '').trim();
         this.email = memberDocument.email || null;
@@ -22,16 +22,14 @@ class ReportMember extends CollectionItem {
         this.matchedAllocations = [];
         this.togglFactReport = togglFactReport;
         this.memberDocument = memberDocument;
-        this.planned = planned;
-        this.fact = fact
     }
 
     isNormalBillableHours () {
-        return this.planned > NORMAL_BILLABLE_PERCENTAGE
+        return this.getPlanningBillablePercent() >= NORMAL_BILLABLE_PERCENTAGE
     }
 
-    togglTasksWithoutProject () {
-        return this.togglFactReport.data.withoutProject.length > 0
+    isTasksWithoutProjects () {
+        return this.togglFactReport.isTasksWithoutProjects()
     }
 
     getName() {
@@ -122,6 +120,10 @@ class ReportMember extends CollectionItem {
 
     getPlanningAccuracyPercent() {
         return this.getFactBillableDuration().getRatio( this.getBillableDuration() );
+    }
+
+    getPlanningBillablePercent () {
+        return this.getBillableDuration().getRatio( this.getAvailableDuration() );
     }
 
     /**
