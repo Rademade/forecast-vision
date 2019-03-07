@@ -10,16 +10,10 @@ const { ReportLoaderFactory } = require('../services/report-loader-factory');
 let notifications = {};
 
 const getMembersWeeklyReport = async (startDate, endDate) => {
-  let membersList = [];
-
   return new Promise((resolve, reject) => {
     try {
       ReportLoaderFactory.getMonthReport(startDate, endDate).load((intervalReport) => {
-        _.forEach(intervalReport[0].membersList.items, (value, key) => {
-          membersList.push(value)
-        });
-
-        resolve(membersList);
+        resolve(intervalReport[0].membersList.getAllMembers());
       })
     } catch (error) {
       console.log(error);
@@ -44,8 +38,8 @@ const reportNotification = async () => {
       if (!notifications[member.getEmail()]) notifications[member.getEmail()] = { name: member.getName() };
 
       notifications[member.getEmail()].lastWeek = {};
-      notifications[member.getEmail()].lastWeek.planned = member.getBillableDuration().minutes;
-      notifications[member.getEmail()].lastWeek.fact = member.getFactBillableDuration().minutes;
+      notifications[member.getEmail()].lastWeek.planned = member.getBillableDuration().getMinutes();
+      notifications[member.getEmail()].lastWeek.fact = member.getFactBillableDuration().getMinutes();
 
       if (notifications[member.getEmail()].lastWeek.planned > notifications[member.getEmail()].lastWeek.fact) {
         notifications[member.getEmail()].isBillableNotification = true
@@ -71,8 +65,8 @@ const reportNotification = async () => {
       if (!notifications[member.getEmail()]) notifications[member.getEmail()] = { name: member.getName() };
 
       notifications[member.getEmail()].thisWeek = {};
-      notifications[member.getEmail()].thisWeek.planned = member.getBillableDuration().minutes;
-      notifications[member.getEmail()].thisWeek.fact = member.getFactBillableDuration().minutes;
+      notifications[member.getEmail()].thisWeek.planned = member.getBillableDuration().getMinutes();
+      notifications[member.getEmail()].thisWeek.fact = member.getFactBillableDuration().getMinutes();
 
 
       if (!member.isNormalBillableHours()) {

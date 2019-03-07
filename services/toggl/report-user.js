@@ -14,10 +14,6 @@ class TogglReportUser {
 
     constructor(data) {
         this.data = data;
-
-        this.setWTasksWithoutProject();
-
-        this.filterToggleItems();
     }
 
     getUserName() {
@@ -38,12 +34,12 @@ class TogglReportUser {
     /**
      * @description Filter tasks without project
      */
-    setWTasksWithoutProject () {
+    setTasksWithoutProject () {
         let withoutProject = [];
 
-        this.data.items.forEach(item => {
-            if (!item.title.project) {
-                withoutProject.push(item)
+        this.getItems().forEach(item => {
+            if (!item.data.title.project) {
+                withoutProject.push(item.data)
             }
         });
 
@@ -51,10 +47,19 @@ class TogglReportUser {
     }
 
     /**
-     * @return filtered user toggleInfo
+     * @return {TogglReportUser}
+     * @description filtered toogleUserReport by billable projects
      */
-    filterToggleItems () {
-        this.data.items = this.data.items.filter(item => item.sum > 0 && item.title.project);
+    getUserBillableReport () {
+        this.setTasksWithoutProject();
+
+        let userReport = {...this};
+
+        userReport.data.items = userReport.data.items.filter(item => {
+            return item.sum > 0 && item.title.project
+        });
+
+        return new TogglReportUser(userReport.data)
     }
 
     /**
