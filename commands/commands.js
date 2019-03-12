@@ -1,19 +1,13 @@
-const { Mailer } = require('../services/mailer');
 const pug = require('pug');
-const moment = require('moment');
-const _ = require('lodash');
 
 const { ReportLoaderFactory } = require('../services/report-loader-factory');
-
-
-
-let notifications = {};
+const { Mailer } = require('../services/mailer');
 
 const getMembersWeeklyReport = async (startDate, endDate) => {
   return new Promise((resolve, reject) => {
     try {
-      ReportLoaderFactory.getMonthReport(startDate, endDate).load((intervalReport) => {
-        resolve(intervalReport[0].membersList.getAllMembers());
+      ReportLoaderFactory.getCustomNotificationReport(startDate, endDate).load((intervalReport) => {
+        resolve(intervalReport);
       })
     } catch (error) {
       console.log(error);
@@ -28,74 +22,60 @@ const reportNotification = async () => {
    * last week should check if planned is no bigger than fact
    * last week should check if togglEmpty project
    */
-  let members = await getMembersWeeklyReport(
-    moment().subtract(1, 'week').startOf('week'),
-    moment().subtract(1, 'week').endOf('week')
-  );
+  let intervals = await getMembersWeeklyReport();
 
-  for (const member of members) {
-    // console.log(member.togglFactReport.items)
+  let firstCircle = intervals[0].membersList.getAllMembers();
+  let secondCircle = intervals[1].membersList.getAllMembers();
 
+
+  for (const member of firstCircle) {
     if (member.getEmail()) {
-      if (!notifications[member.getEmail()]) notifications[member.getEmail()] = { name: member.getName() };
+      let emailData = {
+        name: member.getName(),
+        email: member.getEmail()
+      };
 
-      notifications[member.getEmail()].lastWeek = {};
-      notifications[member.getEmail()].lastWeek.planned = member.getBillableDuration().getMinutes();
-      notifications[member.getEmail()].lastWeek.fact = member.getFactBillableDuration().getMinutes();
+      if (member.getBillableDuration().getMinutes() > member.getFactBillableDuration().getMinutes()) {
+        emailData.isBillableNotification = true;
 
-      if (notifications[member.getEmail()].lastWeek.planned > notifications[member.getEmail()].lastWeek.fact) {
-        notifications[member.getEmail()].isBillableNotification = true
+        emailData.lastWeek = {
+          planned: member.getBillableDuration().getMinutes(),
+          fact: member.getFactBillableDuration().getMinutes()
+        }
       }
 
       if (member.isTasksWithoutProjects()) {
-        notifications[member.getEmail()].isToggleEmptyProject = true
+        emailData.isToggleEmptyProject = true
       }
+
+      let currentWeekMember = secondCircle.find(secondCircleMember => secondCircleMember.memberDocument.id === member.memberDocument.id);
+
+      if (currentWeekMember && !currentWeekMember.isNormalBillableHours()) {
+        emailData.isForecastEmpty = true;
+
+        emailData.thisWeek = {
+          planned: member.getBillableDuration().getMinutes(),
+          fact: member.getFactBillableDuration().getMinutes()
+        }
+      }
+
+      await sendEmailToMember(emailData)
     }
   }
-
-  /**
-   * Proccess this week
-   * should check if week planned is lower than NORMAL_BILLABLE_PERCENTAGE
-   */
-  members = await getMembersWeeklyReport(
-    moment().startOf('week'),
-    moment().endOf('week')
-  );
-
-  for (const member of members) {
-    if (member.getEmail()) {
-      if (!notifications[member.getEmail()]) notifications[member.getEmail()] = { name: member.getName() };
-
-      notifications[member.getEmail()].thisWeek = {};
-      notifications[member.getEmail()].thisWeek.planned = member.getBillableDuration().getMinutes();
-      notifications[member.getEmail()].thisWeek.fact = member.getFactBillableDuration().getMinutes();
-
-
-      if (!member.isNormalBillableHours()) {
-        notifications[member.getEmail()].isForecastEmpty = true
-      }
-    }
-  }
-
-  console.log(notifications)
-
-  // await sendEmailToMember()
 };
 
-const sendEmailToMember = async () => {
-  _.forEach(notifications, async (value, key) => {
-    if (value.isBillableNotification || value.isToggleEmptyProject || value.isForecastEmpty) {
-      let compiledTemplate = pug.compileFile('views/emails/member-notification.pug');
+const sendEmailToMember = async (emailData) => {
+  if (emailData.isBillableNotification || emailData.isToggleEmptyProject || emailData.isForecastEmpty) {
+    let compiledTemplate = pug.compileFile('views/emails/member-notification.pug');
 
-      compiledTemplate = compiledTemplate({
-        emailData: value
-      });
+    compiledTemplate = compiledTemplate({
+      emailData: emailData
+    });
 
-      let mailToUser = new Mailer(key, compiledTemplate);
+    let mailToUser = new Mailer(emailData.email, compiledTemplate);
 
-      await mailToUser.sendEmail();
-    }
-  });
+    await mailToUser.sendEmail();
+  }
 };
 
 module.exports.reportNotification = reportNotification;
