@@ -41,9 +41,7 @@ class TogglReportUser {
     getBillableItems () {
         if (this.billableTasks) return this.billableTasks;
 
-        return this.billableTasks = this.getItems().filter(item => {
-            return item.data.sum > 0 && item.data.title.project
-        });
+        return this.billableTasks = this.getItems()
     }
 
     /**
