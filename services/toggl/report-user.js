@@ -35,17 +35,7 @@ class TogglReportUser {
      * @description Filter tasks without project
      */
     getTasksWithoutProject () {
-        if (this.tasksWithoutProject) return this.tasksWithoutProject;
-
-        this.tasksWithoutProject = [];
-
-        this.getItems().forEach(item => {
-            if (!item.data.title.project) {
-                this.tasksWithoutProject.push(item.data)
-            }
-        });
-
-        return this.tasksWithoutProject;
+        return this.data.emptyProjects
     }
 
     getBillableItems () {
@@ -60,6 +50,10 @@ class TogglReportUser {
      * @return {TogglReportUserItem[]}
      */
     getItems() {
+        if (this.items) {
+            return this.items;
+        }
+
         // Broken data params
         if (!(this.data && this.data.items)) {
             return this.items = [];

@@ -86,7 +86,6 @@ _self.getByForecastUser = (forecastMember) => {
  * @return {Model}
  */
 _self.createByForecastUser = (forecastMember) => {
-    console.log('create')
     return (new (mongoose.model('Member'))).set({
         name: forecastMember.getName(),
         forecastId: forecastMember.getId()

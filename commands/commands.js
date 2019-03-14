@@ -29,7 +29,7 @@ const reportNotification = async () => {
 
 
   for (const member of firstCircle) {
-    if (member.getEmail()) {
+    if (member) {
       let emailData = {
         name: member.getName(),
         email: member.getEmail()
