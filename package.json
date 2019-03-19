@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js --start-server",
+    "start": "node app.js --start",
     "send-reports": "node app.js --send-reports"
   },
   "author": "",
