@@ -30,6 +30,7 @@ const reportNotification = async () => {
 
   for (const member of firstCircle) {
     if (member.getEmail()) {
+      // TODO avoid additional var. Use currentWeekMemberReport and lastWeekMember report
       let emailData = {
         name: member.getName(),
         email: member.getEmail()
@@ -37,6 +38,7 @@ const reportNotification = async () => {
 
       // 95 is good planing accuracy
       // TODO move to constant
+      // TODO extract method isGoodAccuracy() and isGoodFactReport()
       if (member.getPlanningAccuracyPercent() > 95 && member.getFactBillablePercent() < 80) {
         emailData.isBillableNotification = true;
 
@@ -54,6 +56,7 @@ const reportNotification = async () => {
         return secondCircleMember.memberDocument.id === member.memberDocument.id
       });
 
+      // TODO extract method isForecastFilled
       if (currentWeekMember && !currentWeekMember.isNormalBillableHours()) {
         emailData.isForecastEmpty = true;
 
