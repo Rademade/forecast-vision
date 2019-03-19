@@ -15,7 +15,7 @@ const { TogglReportProject } = require('./toggl/report-project');
 const { ForecastReportMember } = require('./forecast/report-member');
 const { ForecastAllocationList } = require('./forecast/allocation/list');
 
-const {Member} = require('./../models/member');
+const { Member } = require('./../models/member');
 const ProjectModel = require('./../models/project');
 
 class ReportDataBuilder {
@@ -71,7 +71,13 @@ class ReportDataBuilder {
 
         for (let forecastMember of this.forecastMembers) {
             let memberDocument = await Member.getByForecastUser(forecastMember);
-            let member = new ReportMember(memberDocument.name, forecastMember.getRoleName(), forecastMember.getAvailableMinutes(), TogglReportUser.null(), memberDocument);
+            let member = new ReportMember(
+              memberDocument.name,
+              forecastMember.getRoleName(),
+              forecastMember.getAvailableMinutes(this.startDate, this.endDate),
+              TogglReportUser.null(),
+              memberDocument);
+
             membersList.addMember(member);
         }
 
