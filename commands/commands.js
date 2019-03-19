@@ -35,12 +35,14 @@ const reportNotification = async () => {
         email: member.getEmail()
       };
 
-      if (member.getBillableDuration().getMinutes() > member.getFactBillableDuration().getMinutes()) {
+      // 95 is good planing accuracy
+      // TODO move to constant
+      if (member.getPlanningAccuracyPercent() > 95 && member.getFactBillablePercent() < 80) {
         emailData.isBillableNotification = true;
 
         emailData.lastWeek = {
-          planned: member.getBillableDuration().getMinutes(),
-          fact: member.getFactBillableDuration().getMinutes()
+          planned: member.getPlanningBillablePercent(),
+          fact: member.getFactBillablePercent()
         }
       }
 
@@ -48,14 +50,15 @@ const reportNotification = async () => {
         emailData.isToggleEmptyProject = true
       }
 
-      let currentWeekMember = secondCircle.find(secondCircleMember => secondCircleMember.memberDocument.id === member.memberDocument.id);
+      let currentWeekMember = secondCircle.find((secondCircleMember) => {
+        return secondCircleMember.memberDocument.id === member.memberDocument.id
+      });
 
       if (currentWeekMember && !currentWeekMember.isNormalBillableHours()) {
         emailData.isForecastEmpty = true;
 
         emailData.thisWeek = {
-          planned: member.getBillableDuration().getMinutes(),
-          fact: member.getFactBillableDuration().getMinutes()
+          planned: currentWeekMember.getPlanningBillablePercent()
         }
       }
 

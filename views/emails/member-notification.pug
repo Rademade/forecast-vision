@@ -17,22 +17,24 @@ html
         p #{emailData.billableNotification}
 
         if emailData.isBillableNotification
-            p Есть трабла, процент billable часов на прошлой неделе составил #{emailData.lastWeek.fact}%, а загрузка планировалась #{emailData.lastWeek.planned}%
+            p Есть проблемка, процент billable часов на прошлой неделе составил #{emailData.lastWeek.fact}%, а загрузка планировалась #{emailData.lastWeek.planned}%
             p Будет круто, елси ты:
             ul
                 li Пересмотришь свот <a href="https://toggl.com/app/timer">toggl отчет</a>
                 li Скажешь, если тебе нужна помощь в этом вопросе
 
         if emailData.isForecastEmpty
-            p(style={'margin-top': '16px'}) Есть нюанс, на эту неделю у тебя планируеться #{emailData.thisWeek.planned || 0}% загрузки. Минимальный показатель должен быть 80% если не считать отпуск/больничный.
+            // TODO use const 80%
+            p(style={'margin-top': '16px'}) Есть нюанс, На эту неделю у тебя планируеться #{emailData.thisWeek.planned || 0}% загрузки. Минимальный показатель должен быть 80% если не считать отпуск/больничный.
             p Будет круто, елси ты:
             ul
                 li Заполнишь свой <a href="https://app.forecast.it/">forecast</a>
-                li Или поговоришь с командой о необходимости проекта. Представитель подымит этот вопрос на TeamsWeekly
+                li Или поговоришь с командой о необходимости проекта. Представитель подымит этот вопрос на RTeamsWeekly
 
         if emailData.isToggleEmptyProject
-            p У тебя есть задачи в Toggl без прикрепленного проекта
-            p Просмотри пожалуйста свой <a href="https://toggl.com/app/timer">toggl за прошлую и текущую неделю</a> и прикрепи задачи к проектам
+            p Важный момент, у тебя есть задачи в Toggl без прикрепленного проекта
+            ul
+                li Просмотри пожалуйста свой <a href="https://toggl.com/app/timer">toggl за прошлую и текущую неделю</a> и прикрепи задачи к проектам
 
-        p  Желаю тебе офигенной неделе
+        p  Желаю тебе офигенной недели
         p  С любовью, Rademade Vision
