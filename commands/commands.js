@@ -1,9 +1,11 @@
 const pug = require('pug');
+const moment =require('moment');
 
 const { ReportLoaderFactory } = require('../services/report-loader-factory');
 const { Mailer } = require('../services/mailer');
 
 const { Member } = require('../models/member');
+const { PeopleHRMember } = require('../services/people-hr/member')
 
 
 const getMembersWeeklyReport = async (startDate, endDate) => {
@@ -82,6 +84,8 @@ const sendEmailToMember = async (emailData) => {
 };
 
 const collectDataPeopleHR = async () => {
+  const startDate = moment().subtract(2, 'week').startOf('week');
+  const endDate = moment().add(5, 'weeks').startOf('week').subtract(1, 'day');
   /**
    loop through memberList
    */
@@ -89,7 +93,9 @@ const collectDataPeopleHR = async () => {
 
   for (const member of allUsers) {
     if (member.peopleHRId) {
+      let peopleHrMember = new PeopleHRMember(startDate, endDate, member)
 
+      let absenceDays = await peopleHrMember.getAbsenceData()
     }
   }
 };

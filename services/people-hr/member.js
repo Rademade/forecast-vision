@@ -2,7 +2,7 @@ const axios = require('axios');
 
 const APIKey = process.env.PEOPLEHR_API_KEY || '8603977c-3378-4ec4-b6b7-b6fe7913fd1f';
 
-export class PeopleHRMember {
+class PeopleHRMember {
   constructor(startDate, endDdate, memberDocument) {
     this.startDate = startDate;
     this.endDdate = endDdate;
@@ -26,3 +26,5 @@ export class PeopleHRMember {
     }
   }
 }
+
+module.exports.PeopleHRMember = PeopleHRMember
