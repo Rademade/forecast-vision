@@ -13,31 +13,30 @@ html
           height: '36px'
         } src="https://avatars0.githubusercontent.com/u/6436057?s=200&v=4" alt="Rademade Logo")
 
-        p(style={'margin-top': '16px'}) #{emailData.name}, привет.
-        p #{emailData.billableNotification}
+        p(style={'margin-top': '16px'}) #{member.getName()}, привет.
+        p #{member.billableNotification}
 
-        if emailData.isBillableNotification
-            p Есть проблемка, процент billable часов на прошлой неделе составил #{emailData.lastWeek.fact}%, а загрузка планировалась #{emailData.lastWeek.planned}%
+        if member.getEmailNotifications().isBillableNotification
+            p Есть проблемка, процент billable часов на прошлой неделе составил #{member.getLastWeekReport().fact}%, а загрузка планировалась #{member.getLastWeekReport().planned}%
             p Будет круто, елси ты:
             ul
                 li Пересмотришь свот <a href="https://toggl.com/app/timer">toggl отчет</a>
                 li Скажешь, если тебе нужна помощь в этом вопросе
 
-        if emailData.isForecastEmpty
+        if member.getEmailNotifications().isForecastEmpty
             // TODO use const 80%
-            p(style={'margin-top': '16px'}) Есть нюанс, На эту неделю у тебя планируеться #{emailData.thisWeek.planned || 0}% загрузки. Минимальный показатель должен быть 80% если не считать отпуск/больничный.
+            p(style={'margin-top': '16px'}) Есть нюанс, На эту неделю у тебя планируеться #{member.getCurrentWeekReport().planned || 0}% загрузки. Минимальный показатель должен быть 80% если не считать отпуск/больничный.
             p Будет круто, елси ты:
             ul
                 li Заполнишь свой <a href="https://app.forecast.it/">forecast</a>
                 li Или поговоришь с командой о необходимости проекта. Представитель подымит этот вопрос на RTeamsWeekly
 
-        if emailData.isToggleEmptyProject
+        if member.getEmailNotifications().isToggleEmptyProject
             p Важный момент, у тебя есть задачи в Toggl без прикрепленного проекта
             ul
                 li Просмотри пожалуйста свой <a href="https://toggl.com/app/timer">toggl за прошлую и текущую неделю</a> и прикрепи задачи к проектам
 
-        p  Желаю тебе офигенной недели
-        if !emailData.isBillableNotification && !emailData.isForecastEmpty && !emailData.isToggleEmptyProject
+        if !member.getEmailNotifications().isBillableNotification && !member.getEmailNotifications().isForecastEmpty && !member.getEmailNotifications().isToggleEmptyProject
            p Спасибо, что клево ведешь forecast, toggl. Ты красавчик ❤
 
         p  Желаю тебе офигенной неделе

@@ -2,6 +2,7 @@ const { Duration } = require('../duration');
 const { CollectionItem } = require('./collection/item');
 
 const NORMAL_BILLABLE_PERCENTAGE = 80;
+const GODD_ACCURACY = 95;
 
 class ReportMember extends CollectionItem {
 
@@ -22,6 +23,33 @@ class ReportMember extends CollectionItem {
         this.matchedAllocations = [];
         this.togglFactReport = togglFactReport;
         this.memberDocument = memberDocument;
+        this.currentWeekReport = {}
+        this.lastWeekReport = {}
+        this.emailNotifications = {}
+    }
+
+    setEmailNotificaions (key, value) {
+        this.emailNotifications[key] = value
+    }
+
+    getEmailNotifications () {
+        return this.emailNotifications
+    }
+
+    setLastWeekReport (report) {
+        this.lastWeekReport = report
+    }
+
+    getLastWeekReport () {
+        return this.lastWeekReport
+    }
+
+    setCurrentWeekReport (report) {
+        this.currentWeekReport = report
+    }
+
+    getCurrentWeekReport () {
+        return this.currentWeekReport
     }
 
     isNormalBillableHours () {
@@ -30,6 +58,14 @@ class ReportMember extends CollectionItem {
 
     isTasksWithoutProjects () {
         return this.togglFactReport.isTasksWithoutProjects()
+    }
+
+    isGoodAccuracy () {
+        return this.getPlanningAccuracyPercent() > GODD_ACCURACY
+    }
+
+    isGoodFactReport () {
+        return this.getFactBillablePercent() < NORMAL_BILLABLE_PERCENTAGE
     }
 
     getName() {
