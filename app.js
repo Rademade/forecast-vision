@@ -14,9 +14,9 @@ mongoose.connect([
 
 program
     .version('0.1.0')
-    .option('--start-server', 'Start application')
+    .option('--start', 'Start application')
     .option('--send-report', 'Send reports')
     .parse(process.argv);
 
-if (program.startServer) startServer();
+if (program.start) startServer();
 if (program.sendReport) reportNotification();

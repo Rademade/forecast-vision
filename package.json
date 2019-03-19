@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "send-reports": "node app.js --send-reports",
-    "start-server": "node app.js --start-server"
+    "start": "node app.js --start-server",
+    "send-reports": "node app.js --send-reports"
   },
   "author": "",
   "license": "ISC",
