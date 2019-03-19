@@ -126,6 +126,10 @@ class ReportMember extends CollectionItem {
         return this.getBillableDuration().getRatio( this.getAvailableDuration() );
     }
 
+    getFactBillablePercent () {
+        return this.getFactBillableDuration().getRatio( this.getAvailableDuration() );
+    }
+
     /**
      * @TODO Move to other service
      *

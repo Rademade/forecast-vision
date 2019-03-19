@@ -12,36 +12,31 @@ html
           'width': '36px',
           height: '36px'
         } src="https://avatars0.githubusercontent.com/u/6436057?s=200&v=4" alt="Rademade Logo")
+
         p(style={'margin-top': '16px'}) #{emailData.name}, привет.
         p #{emailData.billableNotification}
 
         if emailData.isBillableNotification
-            p Есть трабла, процент billable часов на прошлой неделе составил #{emailData.lastWeek.fact}% и загрузка планировалась #{emailData.lastWeek.planned}%
+            p Есть проблемка, процент billable часов на прошлой неделе составил #{emailData.lastWeek.fact}%, а загрузка планировалась #{emailData.lastWeek.planned}%
             p Будет круто, елси ты:
             ul
-                li Пересмотришь свот toggl отчет
+                li Пересмотришь свот <a href="https://toggl.com/app/timer">toggl отчет</a>
                 li Скажешь, если тебе нужна помощь в этом вопросе
 
         if emailData.isForecastEmpty
-            p(style={'margin-top': '16px'}) Есть нюанс, на эту неделю у тебя планируеться #{emailData.thisWeek.planned || 0}% загрузки. Минимальный показатель должен быть 80% если не считать отпуск/больничный.
+            // TODO use const 80%
+            p(style={'margin-top': '16px'}) Есть нюанс, На эту неделю у тебя планируеться #{emailData.thisWeek.planned || 0}% загрузки. Минимальный показатель должен быть 80% если не считать отпуск/больничный.
             p Будет круто, елси ты:
             ul
-                li Заполнишь свой forecast
-                li Или поговоришь с командой о необходимости проекта. Представитель подымит этот вопрос на встрече с BD
+                li Заполнишь свой <a href="https://app.forecast.it/">forecast</a>
+                li Или поговоришь с командой о необходимости проекта. Представитель подымит этот вопрос на RTeamsWeekly
 
         if emailData.isToggleEmptyProject
-            p Просмотри пожалуйста свой toggl за прошлую и текущую неделю и прикрепи задачи к проектам
-            a(style={
-               'display': 'inline-block',
-               'padding': '8px 16px',
-               'color': 'white',
-               'font-weight': '600',
-               'text-decoration': 'none',
-               'background': 'red',
-               'text-transform': 'uppercase',
-               'border-radius': '8px'
-             } href="https://toggl.com/app/timer") Toggl
+            p Важный момент, у тебя есть задачи в Toggl без прикрепленного проекта
+            ul
+                li Просмотри пожалуйста свой <a href="https://toggl.com/app/timer">toggl за прошлую и текущую неделю</a> и прикрепи задачи к проектам
 
+        p  Желаю тебе офигенной недели
         if !emailData.isBillableNotification && !emailData.isForecastEmpty && !emailData.isToggleEmptyProject
            p Спасибо, что клево ведешь forecast, toggl. Ты красавчик ❤
 

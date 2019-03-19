@@ -29,18 +29,22 @@ const reportNotification = async () => {
 
 
   for (const member of firstCircle) {
-    if (member) {
+    if (member.getEmail()) {
+      // TODO avoid additional var. Use currentWeekMemberReport and lastWeekMember report
       let emailData = {
         name: member.getName(),
         email: 'el@rademade.com'
       };
 
-      if (member.getBillableDuration().getMinutes() > member.getFactBillableDuration().getMinutes()) {
+      // 95 is good planing accuracy
+      // TODO move to constant
+      // TODO extract method isGoodAccuracy() and isGoodFactReport()
+      if (member.getPlanningAccuracyPercent() > 95 && member.getFactBillablePercent() < 80) {
         emailData.isBillableNotification = true;
 
         emailData.lastWeek = {
-          planned: member.getBillableDuration().getMinutes(),
-          fact: member.getFactBillableDuration().getMinutes()
+          planned: member.getPlanningBillablePercent(),
+          fact: member.getFactBillablePercent()
         }
       }
 
@@ -48,17 +52,20 @@ const reportNotification = async () => {
         emailData.isToggleEmptyProject = true
       }
 
-      let currentWeekMember = secondCircle.find(secondCircleMember => secondCircleMember.memberDocument.id === member.memberDocument.id);
+      let currentWeekMember = secondCircle.find((secondCircleMember) => {
+        return secondCircleMember.memberDocument.id === member.memberDocument.id
+      });
 
+      // TODO extract method isForecastFilled
       if (currentWeekMember && !currentWeekMember.isNormalBillableHours()) {
         emailData.isForecastEmpty = true;
 
         emailData.thisWeek = {
-          planned: member.getBillableDuration().getMinutes(),
-          fact: member.getFactBillableDuration().getMinutes()
+          planned: currentWeekMember.getPlanningBillablePercent()
         }
       }
 
+      // TODO pass member directly to this method
       await sendEmailToMember(emailData)
     }
   }
