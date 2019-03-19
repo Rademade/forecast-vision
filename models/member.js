@@ -4,6 +4,7 @@ const MemberSchema = new mongoose.Schema({
     name: String,
     togglId: String,
     forecastId: String,
+    email: String,
     actualUtilization: {
         type: Number,
         default: 100
@@ -85,12 +86,11 @@ _self.getByForecastUser = (forecastMember) => {
  * @return {Model}
  */
 _self.createByForecastUser = (forecastMember) => {
-    console.log('create')
     return (new (mongoose.model('Member'))).set({
         name: forecastMember.getName(),
         forecastId: forecastMember.getId()
     }).save();
 };
 
-
-module.exports = mongoose.model('Member', MemberSchema);
+module.exports.MemberSchema = MemberSchema;
+module.exports.Member = mongoose.model('Member', MemberSchema);

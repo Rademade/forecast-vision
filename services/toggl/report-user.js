@@ -1,5 +1,5 @@
 const { Duration } = require('../duration');
-const {TogglReportUserItem} = require('./report-user-item')
+const {TogglReportUserItem} = require('./report-user-item');
 
 class TogglReportUser {
 
@@ -27,6 +27,23 @@ class TogglReportUser {
         return this.data.id;
     }
 
+    isTasksWithoutProjects () {
+        return this.getTasksWithoutProject().length > 0
+    }
+
+    /**
+     * @description Filter tasks without project
+     */
+    getTasksWithoutProject () {
+        return this.data.emptyProjects
+    }
+
+    getBillableItems () {
+        if (this.billableTasks) return this.billableTasks;
+
+        return this.billableTasks = this.getItems()
+    }
+
     /**
      * @return {TogglReportUserItem[]}
      */
@@ -47,7 +64,7 @@ class TogglReportUser {
 
     getBillableDuration() {
         if (!this.billableDuration) {
-            this.billableDuration = this.getItems().reduce((a, item) => {
+            this.billableDuration = this.getBillableItems().reduce((a, item) => {
                 return a.addMinutes( item.getTrackingMinutes() );
             }, new Duration());
         }
@@ -65,7 +82,7 @@ class TogglReportUser {
         this.userName = this.getUserName() || togglReport.getUserName();
 
         // TODO add unique item validation
-        this.items = this.getItems().concat( togglReport.getItems() );
+        this.items = this.getBillableItems().concat( togglReport.getBillableItems() );
     }
 
 }

@@ -1,3 +1,6 @@
+const { reportNotification } = require('./commands/commands');
+const cron = require('node-cron');
+
 const express = require('express');
 const basicAuth = require('express-basic-auth')
 const mongoose = require('mongoose');
@@ -70,8 +73,15 @@ app.get('/custom-report', ReportsController.customReport);
 app.get('/matrix', ReportsController.matrixReport);
 
 // Project Analytics routes
-app.get('/project-analytics', ProjectAnalyticsController.index)
+app.get('/project-analytics', ProjectAnalyticsController.index);
 
-app.listen(process.env.PORT || 3000, () =>
-    console.log('App listening on port ' + (process.env.PORT || 3000))
-);
+app.listen(process.env.PORT || 3000, () => {
+  console.log('App listening on port ' + (process.env.PORT || 3000))
+});
+
+
+/**
+ * Command for run report email notifications
+ *
+ */
+// reportNotification()

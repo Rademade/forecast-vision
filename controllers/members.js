@@ -1,4 +1,4 @@
-const Member = require('../models/member');
+const { Member } = require('../models/member');
 const Team = require('../models/team');
 
 class MembersController {
@@ -20,6 +20,7 @@ class MembersController {
 
     static async form(req, res) {
         let teams = await Team.find();
+
         res.render('members/form', {
             submitUrl: '/members',
             member: new Member(),
@@ -50,6 +51,7 @@ class MembersController {
     static async update(req, res) {
         try {
             let member = await Member.findById(req.params.id);
+
             MembersController._setParams(member, req.body).save();
             MembersController._sendResult(member, res);
         } catch (e) {
@@ -73,6 +75,7 @@ class MembersController {
         if (!body.team) body.team = null;
         document.set({
             name: body.name,
+            email: body.email,
             togglId: body.togglId,
             forecastId: body.forecastId,
             actualUtilization: body.actualUtilization,
