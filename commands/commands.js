@@ -64,7 +64,7 @@ const reportNotification = async () => {
         }
       }
 
-      await sendEmailToMember(emailData)
+      // await sendEmailToMember(emailData)
     }
   }
 };

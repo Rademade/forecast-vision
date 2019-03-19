@@ -1,6 +1,7 @@
 const axios = require('axios');
+const moment = require('moment')
 
-const APIKey = process.env.PEOPLEHR_API_KEY || '8603977c-3378-4ec4-b6b7-b6fe7913fd1f';
+const APIKey = process.env.PEOPLEHR_API_KEY || '4a64d971-0c41-4669-937e-c335239f5ed0';
 
 class PeopleHRMember {
   constructor(startDate, endDdate, memberDocument) {
@@ -11,7 +12,13 @@ class PeopleHRMember {
 
   async getAbsenceData () {
     try {
-      const abscenceData = await axios.post('https://api.peoplehr.net/Absence')
+      const abscenceData = await axios.post('https://api.peoplehr.net/Absence', {
+        APIKey: APIKey,
+        Action: 'GetAbsenceDetail',
+        EmployeeId: this.memberDocument.peopleHRId,
+        StartDate: moment(this.startDate).format('YYYY-MM-DD'),
+        EndDate: moment(this.endDdate).format('YYYY-MM-DD')
+      })
     } catch (error) {
       console.log(error)
     }
