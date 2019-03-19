@@ -29,10 +29,10 @@ const reportNotification = async () => {
 
 
   for (const member of firstCircle) {
-    if (member.getEmail()) {
+    if (member) {
       let emailData = {
         name: member.getName(),
-        email: member.getEmail()
+        email: 'el@rademade.com'
       };
 
       if (member.getBillableDuration().getMinutes() > member.getFactBillableDuration().getMinutes()) {
@@ -65,17 +65,15 @@ const reportNotification = async () => {
 };
 
 const sendEmailToMember = async (emailData) => {
-  if (emailData.isBillableNotification || emailData.isToggleEmptyProject || emailData.isForecastEmpty) {
-    let compiledTemplate = pug.compileFile('views/emails/member-notification.pug');
+  let compiledTemplate = pug.compileFile('views/emails/member-notification.pug');
 
-    compiledTemplate = compiledTemplate({
-      emailData: emailData
-    });
+  compiledTemplate = compiledTemplate({
+    emailData: emailData
+  });
 
-    let mailToUser = new Mailer(emailData.email, compiledTemplate);
+  let mailToUser = new Mailer(emailData.email, compiledTemplate);
 
-    await mailToUser.sendEmail();
-  }
+  await mailToUser.sendEmail();
 };
 
 module.exports.reportNotification = reportNotification;
