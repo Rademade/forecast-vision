@@ -41,6 +41,15 @@ class ReportLoaderFactory {
         });
     }
 
+    static getCustomNotificationReport() {
+        let startDate = moment().subtract(1, 'week').startOf('week');
+        let endDate =   moment().add(2, 'weeks').startOf('week').subtract(1, 'day')
+
+        return new ReportLoader(startDate, endDate, null, (startIntervalDate) => {
+            return startIntervalDate.clone().add(1, 'week');
+        });
+    }
+
     static getMonthReport(dateStart, dateEnd) {
         let daysLength = dateEnd.diff(dateStart, 'days');
         return new ReportLoader(dateStart, dateEnd, null, (startIntervalDate) => {

@@ -24,7 +24,6 @@ class TogglScrapingMethods {
      * @param {Object} opt
      */
     getReport(startDate, endDate, opt, callback) {
-
         // Pass empty report for feature dates. Don't spend request for load empty data
         if (startDate > moment()) {
             callback(new TogglReport(new TogglReportUserList()));
@@ -39,12 +38,64 @@ class TogglScrapingMethods {
             subgrouping: 'projects',
             billable: 'yes',
             project_ids: opt.projectId ? opt.projectId : null,
-        }, (err, data) => {
-            let usersList = new TogglReportUserList( data.data.map((togglUserData) => {
+        }, async (err, data) => {
+            let billableReports = data.data.map((togglUserData) => {
+                togglUserData.emptyProjects = [];
+
+                return togglUserData
+            });
+
+            let reportsWithoutProject = await this.getEmptyProjectsReport(startDate, endDate, opt);
+
+            let mergedReports = this.mergeReports(billableReports, reportsWithoutProject);
+
+            mergedReports = new TogglReportUserList( mergedReports.map((togglUserData) => {
                 return new TogglReportUser(togglUserData);
             }) );
-            callback( new TogglReport( usersList ) );
+
+            callback( new TogglReport( mergedReports ) );
         });
+    }
+
+    getEmptyProjectsReport (startDate, endDate, opt) {
+        return new Promise((resolve, reject) => {
+            this.toggl.summaryReport({
+                workspace_id: WORKSPACE_ID,
+                since: startDate.format('YYYY-MM-DD'),
+                until: endDate.format('YYYY-MM-DD'),
+                grouping: 'users',
+                subgrouping: 'projects',
+                billable: 'both',
+                project_ids: opt.projectId ? opt.projectId : null,
+            }, (err, data) => {
+                let outputResult = data.data.filter(userReport => {
+                    return userReport.items.some(report => !report.title.project)
+                }).map(userReport => {
+                    userReport.emptyProjects = userReport.items.filter(report => !report.title.project);
+                    userReport.items = [];
+
+                    return userReport
+                });
+
+                resolve(outputResult)
+            });
+        })
+    }
+
+    mergeReports (billableReports, emptyReports) {
+        let mergedReports = billableReports;
+
+        emptyReports.forEach(emptyReport => {
+            let excistedUser = billableReports.find(billableReport => billableReport.id === emptyReport.id)
+
+            if (excistedUser) {
+                excistedUser.emptyProjects = emptyReport.emptyProjects
+            } else {
+                mergedReports.push(emptyReport)
+            }
+        });
+
+        return mergedReports
     }
 
     getProjects(callback) {

@@ -36,7 +36,7 @@ class TogglReport {
     _createProjectsList() {
         let projectsList = new TogglReportProjectList();
         this.usersList.getUsers().forEach((userReport) => {
-            userReport.getItems().forEach((projectItem) => {
+            userReport.getBillableItems().forEach((projectItem) => {
                 let projectReport = projectsList.findOrCreate(projectItem.getProjectName());
                 projectReport.addItem(projectItem);
             });

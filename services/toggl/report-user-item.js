@@ -20,7 +20,6 @@ class TogglReportUserItem {
             this.projectName = '';
         }
     }
-
 }
 
 exports.TogglReportUserItem = TogglReportUserItem;
