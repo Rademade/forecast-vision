@@ -3,6 +3,9 @@ const pug = require('pug');
 const { ReportLoaderFactory } = require('../services/report-loader-factory');
 const { Mailer } = require('../services/mailer');
 
+const { Member } = require('../models/member');
+
+
 const getMembersWeeklyReport = async (startDate, endDate) => {
   return new Promise((resolve, reject) => {
     try {
@@ -78,7 +81,21 @@ const sendEmailToMember = async (emailData) => {
   }
 };
 
+const collectDataPeopleHR = async () => {
+  /**
+   loop through memberList
+   */
+  let allUsers = await Member.getUserList();
+
+  for (const member of allUsers) {
+    if (member.peopleHRId) {
+
+    }
+  }
+};
+
 module.exports.reportNotification = reportNotification;
+module.exports.collectDataPeopleHR = collectDataPeopleHR;
 
 
 

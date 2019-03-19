@@ -27,6 +27,8 @@ class ForecastReportMember {
     }
 
     getAvailableMinutes() {
+        console.log(this.data)
+
         return this.data.monday +
             this.data.tuesday +
             this.data.wednesday +

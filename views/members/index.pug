@@ -12,6 +12,7 @@ block content
                 td Team
                 td Toggl id
                 td Forecast id
+                td peopleHR id
                 td Actual utilization
                 td Actions
             each member in members
@@ -20,6 +21,7 @@ block content
                     td() #{member.team ? member.team.name : ""}
                     td() #{member.togglId}
                     td() #{member.forecastId}
+                    td() #{member.peopleHRId}
                     td() #{member.actualUtilization} %
                     td()
                         a(href="/members/" + member.id) Edit

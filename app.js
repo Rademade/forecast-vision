@@ -1,4 +1,4 @@
-const { reportNotification } = require('./commands/commands');
+const { reportNotification, collectDataPeopleHR } = require('./commands/commands');
 const cron = require('node-cron');
 
 const express = require('express');
@@ -85,3 +85,8 @@ app.listen(process.env.PORT || 3000, () => {
  *
  */
 // reportNotification()
+
+/**
+ * Command for setting to DB peopleHR data
+ */
+collectDataPeopleHR()

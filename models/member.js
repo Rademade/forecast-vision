@@ -5,6 +5,7 @@ const MemberSchema = new mongoose.Schema({
     togglId: String,
     forecastId: String,
     email: String,
+    peopleHRId: String,
     actualUtilization: {
         type: Number,
         default: 100
@@ -43,6 +44,15 @@ _self.getByTogglUser = (togglMember) => {
         return member;
     });
 };
+
+/**
+ * @desc get all users from DB
+ */
+_self.getUserList = async () => {
+    const userList = await mongoose.model('Member').find({})
+
+    return userList
+}
 
 /**
  * @param togglMember
