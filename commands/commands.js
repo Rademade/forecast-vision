@@ -59,6 +59,7 @@ const reportNotification = async () => {
         }
       }
 
+      // TODO pass member directly to this method
       await sendEmailToMember(emailData)
     }
   }
