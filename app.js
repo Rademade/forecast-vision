@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const { reportNotification } = require('./commands/commands');
 const cron = require('node-cron');
 
@@ -5,7 +7,6 @@ const express = require('express');
 const basicAuth = require('express-basic-auth')
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-require('dotenv').config()
 
 mongoose.connect([
     process.env.MONGODB_URI || 'mongodb://localhost:27017/forecast',
@@ -84,4 +85,4 @@ app.listen(process.env.PORT || 3000, () => {
  * Command for run report email notifications
  *
  */
-// reportNotification()
+reportNotification()
