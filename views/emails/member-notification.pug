@@ -37,7 +37,7 @@ html
         if isToggleEmptyProject
             p Важный момент, у тебя есть задачи в Toggl без прикрепленного проекта
             ul
-                li Просмотри пожалуйста свой <a href="https://toggl.com/app/timer">toggl за прошлую и текущую неделю</a> и прикрепи задачи к проектам
+                li Просмотри пожалуйста свой <a href="https://toggl.com/app/reports/summary/197313/period/prevWeek/projects/0/users/#{currentWeekReport.getMemberTogglId()}">toggl за прошлую и текущую неделю</a> и прикрепи задачи к проектам
 
         if !isBillableNotification && !isForecastEmpty && !isToggleEmptyProject
            p Спасибо, что клево ведешь forecast, toggl. Ты красавчик ❤

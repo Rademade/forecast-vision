@@ -65,6 +65,10 @@ class ReportMember extends CollectionItem {
         return null;
     }
 
+    getMemberTogglId() {
+        return this.memberDocument.togglId;
+    }
+
     /**
      * @param {ForecastAllocationItemMatch} matchedItem
      */
