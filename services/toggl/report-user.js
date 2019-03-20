@@ -28,7 +28,7 @@ class TogglReportUser {
     }
 
     isTasksWithoutProjects () {
-        return this.getTasksWithoutProject().length > 0
+        return this.getTasksWithoutProject() && this.getTasksWithoutProject().length > 0
     }
 
     /**

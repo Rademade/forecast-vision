@@ -33,54 +33,37 @@ const reportNotification = async () => {
   let secondCircle = intervals[1].membersList.getAllMembers();
 
 
-  for (const member of firstCircle) {
-    if (member.getEmail()) {
-      let emailData = {
-        name: member.getName(),
-        email: member.getEmail()
-      };
+  for (const lastWeekMember of firstCircle) {
+    // FIXME pass only LastWeekMember: member, CurrentWeekMember: currentWeekMember and make all checks inside template, remove from report/memebr methods
 
-      if (member.getBillableDuration().getMinutes() > member.getFactBillableDuration().getMinutes()) {
-        emailData.isBillableNotification = true;
 
-        emailData.lastWeek = {
-          planned: member.getBillableDuration().getMinutes(),
-          fact: member.getFactBillableDuration().getMinutes()
-        }
-      }
+    if (lastWeekMember.getEmail()) {
+      // TODO avoid additional var. Use currentWeekMemberReport and lastWeekMember report
+      // 95 is good planing accuracy
+      // TODO move to constant
+      // TODO extract method isGoodAccuracy() and isGoodFactReport()
+      let currentWeekMember = secondCircle.find((secondCircleMember) => {
+        return secondCircleMember.memberDocument.id === lastWeekMember.memberDocument.id
+      });
 
-      if (member.isTasksWithoutProjects()) {
-        emailData.isToggleEmptyProject = true
-      }
-
-      let currentWeekMember = secondCircle.find(secondCircleMember => secondCircleMember.memberDocument.id === member.memberDocument.id);
-
-      if (currentWeekMember && !currentWeekMember.isNormalBillableHours()) {
-        emailData.isForecastEmpty = true;
-
-        emailData.thisWeek = {
-          planned: member.getBillableDuration().getMinutes(),
-          fact: member.getFactBillableDuration().getMinutes()
-        }
-      }
-
-      // await sendEmailToMember(emailData)
+      // TODO extract method isForecastFilled
+      // TODO pass member directly to this method
+      await sendEmailToMember(lastWeekMember, currentWeekMember)
     }
   }
 };
 
-const sendEmailToMember = async (emailData) => {
-  if (emailData.isBillableNotification || emailData.isToggleEmptyProject || emailData.isForecastEmpty) {
-    let compiledTemplate = pug.compileFile('views/emails/member-notification.pug');
+const sendEmailToMember = async (lastWeekReport, currentWeekReport) => {
+  let compiledTemplate = pug.compileFile('views/emails/member-notification.pug');
 
-    compiledTemplate = compiledTemplate({
-      emailData: emailData
-    });
+  compiledTemplate = compiledTemplate({
+    lastWeekReport,
+    currentWeekReport
+  });
 
-    let mailToUser = new Mailer(emailData.email, compiledTemplate);
+  let mailToUser = new Mailer(lastWeekReport.getEmail(), compiledTemplate);
 
-    await mailToUser.sendEmail();
-  }
+  await mailToUser.sendEmail();
 };
 
 const collectDataPeopleHR = async () => {

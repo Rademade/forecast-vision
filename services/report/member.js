@@ -2,6 +2,7 @@ const { Duration } = require('../duration');
 const { CollectionItem } = require('./collection/item');
 
 const NORMAL_BILLABLE_PERCENTAGE = 80;
+const GODD_ACCURACY = 95;
 
 class ReportMember extends CollectionItem {
 
@@ -30,6 +31,14 @@ class ReportMember extends CollectionItem {
 
     isTasksWithoutProjects () {
         return this.togglFactReport.isTasksWithoutProjects()
+    }
+
+    isGoodAccuracy () {
+        return this.getPlanningAccuracyPercent() > GODD_ACCURACY
+    }
+
+    isGoodFactReport () {
+        return this.getFactBillablePercent() < NORMAL_BILLABLE_PERCENTAGE
     }
 
     getName() {
@@ -124,6 +133,10 @@ class ReportMember extends CollectionItem {
 
     getPlanningBillablePercent () {
         return this.getBillableDuration().getRatio( this.getAvailableDuration() );
+    }
+
+    getFactBillablePercent () {
+        return this.getFactBillableDuration().getRatio( this.getAvailableDuration() );
     }
 
     /**

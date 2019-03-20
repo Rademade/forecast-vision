@@ -39,6 +39,7 @@ class TogglScrapingMethods {
             billable: 'yes',
             project_ids: opt.projectId ? opt.projectId : null,
         }, async (err, data) => {
+            // TODO return report raw data
             let billableReports = data.data.map((togglUserData) => {
                 togglUserData.emptyProjects = [];
 
@@ -68,6 +69,7 @@ class TogglScrapingMethods {
                 billable: 'both',
                 project_ids: opt.projectId ? opt.projectId : null,
             }, (err, data) => {
+                // TODO return raw data
                 let outputResult = data.data.filter(userReport => {
                     return userReport.items.some(report => !report.title.project)
                 }).map(userReport => {
@@ -81,6 +83,8 @@ class TogglScrapingMethods {
             });
         })
     }
+
+    // TODO extract method with data mapping and initialize TogglReportUserList
 
     mergeReports (billableReports, emptyReports) {
         let mergedReports = billableReports;
