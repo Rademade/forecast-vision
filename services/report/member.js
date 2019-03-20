@@ -23,33 +23,6 @@ class ReportMember extends CollectionItem {
         this.matchedAllocations = [];
         this.togglFactReport = togglFactReport;
         this.memberDocument = memberDocument;
-        this.currentWeekReport = {}
-        this.lastWeekReport = {}
-        this.emailNotifications = {}
-    }
-
-    setEmailNotificaions (key, value) {
-        this.emailNotifications[key] = value
-    }
-
-    getEmailNotifications () {
-        return this.emailNotifications
-    }
-
-    setLastWeekReport (report) {
-        this.lastWeekReport = report
-    }
-
-    getLastWeekReport () {
-        return this.lastWeekReport
-    }
-
-    setCurrentWeekReport (report) {
-        this.currentWeekReport = report
-    }
-
-    getCurrentWeekReport () {
-        return this.currentWeekReport
     }
 
     isNormalBillableHours () {

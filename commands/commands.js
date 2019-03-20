@@ -28,52 +28,35 @@ const reportNotification = async () => {
   let secondCircle = intervals[1].membersList.getAllMembers();
 
 
-  for (const member of firstCircle) {
-    if (member.getEmail()) {
+  for (const lastWeekMember of firstCircle) {
+    // FIXME pass only LastWeekMember: member, CurrentWeekMember: currentWeekMember and make all checks inside template, remove from report/memebr methods
+
+
+    if (lastWeekMember.getEmail()) {
       // TODO avoid additional var. Use currentWeekMemberReport and lastWeekMember report
       // 95 is good planing accuracy
       // TODO move to constant
       // TODO extract method isGoodAccuracy() and isGoodFactReport()
-      if (member.isGoodAccuracy() && member.isGoodFactReport()) {
-        member.setEmailNotificaions('isBillableNotification', true)
-
-        member.setLastWeekReport({
-          planned: member.getPlanningBillablePercent(),
-          fact: member.getFactBillablePercent()
-        })
-      }
-
-      if (member.isTasksWithoutProjects()) {
-        member.setEmailNotificaions('isToggleEmptyProject', true)
-      }
-
       let currentWeekMember = secondCircle.find((secondCircleMember) => {
-        return secondCircleMember.memberDocument.id === member.memberDocument.id
+        return secondCircleMember.memberDocument.id === lastWeekMember.memberDocument.id
       });
 
       // TODO extract method isForecastFilled
-      if (currentWeekMember && !currentWeekMember.isNormalBillableHours()) {
-        member.setEmailNotificaions('isForecastEmpty', true)
-
-        member.setCurrentWeekReport({
-          planned: currentWeekMember.getPlanningBillablePercent()
-        })
-      }
-
       // TODO pass member directly to this method
-      await sendEmailToMember(member)
+      await sendEmailToMember(lastWeekMember, currentWeekMember)
     }
   }
 };
 
-const sendEmailToMember = async (member) => {
+const sendEmailToMember = async (lastWeekReport, currentWeekReport) => {
   let compiledTemplate = pug.compileFile('views/emails/member-notification.pug');
 
   compiledTemplate = compiledTemplate({
-    member: member
+    lastWeekReport,
+    currentWeekReport
   });
 
-  let mailToUser = new Mailer(member.getEmail(), compiledTemplate);
+  let mailToUser = new Mailer(lastWeekReport.getEmail(), compiledTemplate);
 
   await mailToUser.sendEmail();
 };
