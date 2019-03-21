@@ -28,11 +28,11 @@ html
 
         if isForecastEmpty
             // TODO use const 80%
-            p(style={'margin-top': '16px'}) Есть нюанс, На эту неделю у тебя планируеться #{currentWeekReport.getPlanningBillablePercent() || 0}% загрузки. Минимальный показатель должен быть 80% если не считать отпуск/больничный.
+            p(style={'margin-top': '16px'}) Есть нюанс - на эту неделю у тебя планируется #{currentWeekReport.getPlanningBillablePercent() || 0}% загрузки. Минимальный показатель должен быть 80%, если не считать отпуск/больничный.
             p Будет круто, елси ты:
             ul
-                li Заполнишь свой <a href="https://app.forecast.it/">forecast</a>
-                li Или поговоришь с командой о необходимости проекта. Представитель подымит этот вопрос на RTeamsWeekly
+                li Заполнишь свой <a href="https://app.forecast.it/">Forecast.it</a>
+                li Или поговоришь с командой о необходимости проекта. Представитель поднимет этот вопрос на RTeamsWeekly.
 
         if isToggleEmptyProject
             p Важный момент, у тебя есть задачи в Toggl без прикрепленного проекта
@@ -42,5 +42,6 @@ html
         if !isBillableNotification && !isForecastEmpty && !isToggleEmptyProject
            p Спасибо, что клево ведешь forecast, toggl. Ты красавчик ❤
 
+        br
         p  Желаю тебе офигенной неделе
         p  С любовью, Rademade Vision
