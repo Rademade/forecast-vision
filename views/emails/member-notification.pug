@@ -23,7 +23,7 @@ html
             p Есть проблемка, процент billable часов на прошлой неделе составил #{lastWeekReport.getFactBillablePercent()}%, а загрузка планировалась #{lastWeekReport.getPlanningBillablePercent()}%
             p Будет круто, если ты:
             ul
-                li Пересмотришь свот <a href="https://toggl.com/app/timer">toggl отчет</a>
+                li Пересмотришь свот <a href="https://toggl.com/app/reports/summary/197313/period/prevWeek/users/#{currentWeekReport.getMemberTogglId()}">toggl отчет</a>
                 li Скажешь, если тебе нужна помощь в этом вопросе
 
         if isForecastEmpty
@@ -31,7 +31,7 @@ html
             p(style={'margin-top': '16px'}) Есть нюанс - на эту неделю у тебя планируется #{currentWeekReport.getPlanningBillablePercent() || 0}% загрузки. Минимальный показатель должен быть 80%, если не считать отпуск/больничный.
             p Будет круто, если ты:
             ul
-                li Заполнишь свой <a href="https://app.forecast.it/">Forecast.it</a>
+                li Заполнишь свой <a href="https://app.forecast.it/scheduling">Forecast.it</a>
                 li Или поговоришь с командой о необходимости проекта. Представитель поднимет этот вопрос на RTeamsWeekly.
 
         if isToggleEmptyProject
