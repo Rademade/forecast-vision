@@ -4,9 +4,10 @@ const { CollectionItem } = require('./collection/item');
 const NORMAL_BILLABLE_PERCENTAGE = 80;
 const GODD_ACCURACY = 95;
 
+const FORECAST_HOLIDAY_PROJECT_ID = 55;
+const FORECAST_ABSENCE_PROJECT_ID = 105;
+
 class ReportMember extends CollectionItem {
-
-
     /**
      * @param name
      * @param roleName
@@ -65,6 +66,7 @@ class ReportMember extends CollectionItem {
         return null;
     }
 
+
     /**
      * @param {ForecastAllocationItemMatch} matchedItem
      */
@@ -90,14 +92,21 @@ class ReportMember extends CollectionItem {
     }
 
     getForecastAvailableDuration() {
-        return this.forecastAvailableDuration;
+        return this.forecastAvailableDuration
     }
 
     getAvailableDuration() {
+        let leaveDays = this.getHolidaysDuration().add(this.getAbsenceDuration());
+
         if (!this.availableDuration) {
             let percent = this.memberDocument.actualUtilization / 100;
+
             this.availableDuration = new Duration( this.getForecastAvailableDuration().getMinutes() * percent );
+            if (leaveDays.getMinutes() > 0) {
+                this.availableDuration = this.availableDuration.remove(leaveDays)
+            }
         }
+
         return this.availableDuration;
     }
 
@@ -113,7 +122,36 @@ class ReportMember extends CollectionItem {
         }, new Duration());
     }
 
+    getAbsenceDuration () {
+        let absenceData = this.getMatchedAllocationsItems().filter(item => {
+            return item.allocation.allocationData.project.companyProjectId === FORECAST_ABSENCE_PROJECT_ID
+        })
+
+        if (absenceData.length > 0) {
+            return absenceData.reduce((duration, item) => {
+                return duration.add( item.getDuration() );
+            }, new Duration());
+        } else {
+            return new Duration()
+        }
+    }
+
+    getHolidaysDuration() {
+        let holidayData = this.getMatchedAllocationsItems().filter(item => {
+            return item.allocation.allocationData.project.companyProjectId === FORECAST_HOLIDAY_PROJECT_ID
+        })
+
+        if (holidayData.length > 0) {
+            return holidayData.reduce((duration, item) => {
+                return duration.add( item.getDuration() );
+            }, new Duration());
+        } else {
+            return new Duration()
+        }
+    }
+
     getBenchDuration() {
+        //FIXME getAvailableDuration - getScheduledDuration + useLessProject()
         return this.getMatchedAllocationsItems().reduce((duration, item) => {
             return duration.add( item.getAllocation().isBenchProject() ? item.getDuration() : new Duration());
         }, this.getUnplannedDuration().clone());

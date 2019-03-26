@@ -1,4 +1,5 @@
 const moment = require('moment-weekdaysin');
+const momentFormat = require('moment')
 
 class ForecastReportMember {
 
@@ -39,13 +40,13 @@ class ForecastReportMember {
   }
 
   getAvailableMinutes(startDate, endDate) {
-    return (this.data.monday * this.getDaysInMonth(startDate, endDate, 'Monday')) +
+    return ((this.data.monday * this.getDaysInMonth(startDate, endDate, 'Monday')) +
       (this.data.tuesday * this.getDaysInMonth(startDate, endDate, 'Tuesday')) +
       (this.data.wednesday * this.getDaysInMonth(startDate, endDate, 'Wednesday')) +
       (this.data.thursday * this.getDaysInMonth(startDate, endDate, 'Thursday')) +
       (this.data.friday * this.getDaysInMonth(startDate, endDate, 'Friday')) +
       (this.data.saturday * this.getDaysInMonth(startDate, endDate, 'Saturday')) +
-      (this.data.sunday * this.getDaysInMonth(startDate, endDate, 'Sunday'))
+      (this.data.sunday * this.getDaysInMonth(startDate, endDate, 'Sunday')))
   }
 
 }

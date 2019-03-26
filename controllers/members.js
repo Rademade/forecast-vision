@@ -47,8 +47,6 @@ class MembersController {
 
         MembersController._setParams(member, req.body).save();
         MembersController._sendResult(member, res);
-
-        console.log(member)
     }
 
     static async update(req, res) {
