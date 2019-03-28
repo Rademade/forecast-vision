@@ -1,6 +1,5 @@
 const axios = require('axios');
 const moment = require('moment')
-const { LeaveDay } = require('../../models/leave-days');
 
 const APIKey = process.env.PEOPLEHR_API_KEY;
 
@@ -8,9 +7,13 @@ class PeopleHRMember {
   constructor(startDate, endDdate, memberDocument) {
     this.startDate = startDate;
     this.endDdate = endDdate;
-    this.memberDocument = memberDocument
-    this.holidayData = null
+    this.memberDocument = memberDocument;
+    this.holidayData = null;
     this.abscenceData = null
+  }
+
+  getMemberForecastId () {
+    return this.memberDocument.forecastId
   }
 
   async fetchAbsenceData () {
@@ -23,7 +26,7 @@ class PeopleHRMember {
         EndDate: moment(this.endDdate).format('YYYY-MM-DD')
       })
 
-      this.abscenceData = abscenceData.data.Result
+      return abscenceData.data.Result;
     } catch (error) {
       console.log(error)
     }
@@ -40,39 +43,29 @@ class PeopleHRMember {
         EndDate: moment(this.endDdate).format('YYYY-MM-DD')
       })
 
-      this.holidayData = holidayData.data.Result
+      return holidayData.data.Result
     } catch (error) {
       console.log(error)
     }
   }
 
-  getHolidaysDays () {
-    return this.holidayData
+  async getHolidaysDays () {
+    if (this.holidayData) {
+      return this.holidayData
+    } else {
+      this.holidayData = await this.fetchHolidayData()
+
+      return this.holidayData
+    }
   }
 
-  getAbsenceDays () {
-    return this.abscenceData
-  }
+  async getAbsenceDays () {
+    if (this.abscenceData) {
+      return this.abscenceData
+    } else {
+      this.abscenceData = await this.fetchAbsenceData()
 
-
-
-  async updateLeaveDay (leaveDay, projectID) {
-    try {
-      let leaveDayObject = new LeaveDay({
-        item: leaveDay,
-        forecastMemberId: this.memberDocument.forecastId,
-        forecastProjectId: projectID
-      });
-
-      let exists = await LeaveDay.find({'item.AbsenceLeaveTxnId': leaveDayObject.item.AbsenceLeaveTxnId});
-
-      if (exists.length < 1) {
-        leaveDayObject.set('isNewAllocation', true)
-
-        return await leaveDayObject.save()
-      }
-    } catch (error) {
-      console.log(error)
+      return this.abscenceData
     }
   }
 }

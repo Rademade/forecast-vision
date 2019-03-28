@@ -65,6 +65,45 @@ class ForecastScrapingMethods {
         })
     }
 
+    updateAllocation (allocation) {
+        return new Promise((resolve, reject) => {
+            let variables = {
+                input: {
+                    id: allocation.id,
+                    csrfToken: allocation.csrfToken,
+                    endDay: allocation.endDay,
+                    endMonth: allocation.endMonth,
+                    endYear: allocation.endYear,
+                    friday: allocation.friday,
+                    idleTimeId: null,
+                    monday: allocation.monday,
+                    personId: allocation.personId,
+                    projectGroupId: null,
+                    projectId: allocation.projectId,
+                    saturday: allocation.saturday,
+                    startDay: allocation.startDay,
+                    startMonth: allocation.startMonth,
+                    startYear: allocation.startYear,
+                    sunday: allocation.sunday,
+                    tuesday: allocation.tuesday,
+                    wednesday: allocation.wednesday,
+                    thursday: allocation.thursday,
+                }
+            };
+
+            return this.client.mutate({
+                variables: variables,
+                mutation: updateQuery,
+            }).catch((error) =>{
+                console.error(error);
+                reject(error)
+            }).then(data => {
+                resolve(data);
+                return data
+            })
+        })
+    }
+
     getScheduleAllocations() {
         return this.client.query({
             query: scheduleQuery
@@ -181,53 +220,102 @@ query Viewer_queries {
   }
 }`;
 
-let createQuery = gql`mutation CreateAllocation($input: CreateAllocationInput!) {
-				createAllocation(input: $input) {
-   	 				allocation {
-   	 					node {
-	   	 					id
-	   	 					monday
-	   	 					tuesday
-	   	 					wednesday
-	   	 					thursday
-	   	 					friday
-	   	 					saturday
-	   	 					sunday
-	   	 					projectGroupId
-	   	 					projectGroupColor
-	   	 					description
-	   	 					startYear
-	   	 					startMonth
-	   	 					startDay
-	   	 					endYear
-	   	 					endMonth
-	   	 					endDay
-	   	 					project {
-	   	 						id
-	   	 						projectPersons (first: 10000) {
-	   	 							edges {
-	   	 								node {
-	   	 									person {
-	   	 										id
-	   	 									}
-	   	 								}
-	   	 							}
-	   	 						}
-	   	 					}
-	   	 					idleTime {
-	   	 						id
-	   	 						name
-	   	 					}
-	   	 					person {
-	   	 						id
-	   	 						role {
+let createQuery = gql`
+mutation CreateAllocation($input: CreateAllocationInput!) {
+	createAllocation(input: $input) {
+   	 	allocation {
+   	 		node {
+	   	 		id
+	   	 		monday
+	   	 		tuesday
+	   	 		wednesday
+	   	 		thursday
+	   	 		friday
+	   	 		saturday
+	   	 		sunday
+	   	 		projectGroupId
+	   	 		projectGroupColor
+	   	 		description
+	   	 		startYear
+	   	 		startMonth
+	   	 		startDay
+	   	 		endYear
+	   	 		endMonth
+	   	 		endDay
+	   	 		project {
+	   	 			id
+	   	 			projectPersons (first: 10000) {
+	   	 				edges {
+	   	 					node {
+	   	 						person {
 	   	 							id
 	   	 						}
 	   	 					}
 	   	 				}
+	   	 			}
+	   	 		}
+	   	 		idleTime {
+	   	 			id
+	   	 			name
+	   	 		}
+	   	 		person {
+	   	 			id
+	   	 			role {
+	   	 				id
+	   	 			}
+	   	 		}
+	   	 	}
+   	 	}
+	}
+}
+`;
+
+let updateQuery = gql`
+mutation UpdateAllocation($input: UpdateAllocationInput!) {
+				updateAllocation(input: $input) {
+   	 				allocation {
+   	 					id
+   	 					monday
+   	 					tuesday
+   	 					wednesday
+   	 					thursday
+   	 					friday
+   	 					saturday
+   	 					sunday
+   	 					projectGroupId
+   	 					description
+   	 					startYear
+   	 					startMonth
+   	 					startDay
+   	 					endYear
+   	 					endMonth
+   	 					endDay
+   	 					project {
+   	 						id
+   	 						projectPersons (first: 10000) {
+   	 							edges {
+   	 								node {
+   	 									person {
+   	 										id
+   	 									}
+   	 								}
+   	 							}
+   	 						}
+   	 					}
+   	 					idleTime {
+   	 						id
+   	 						name
+   	 					}
+   	 					person {
+   	 						id
+   	 						role {
+   	 							id
+   	 						}
+   	 					}
    	 				}
 				}
-			}`;
+			}
+`;
 
 let deleteQuery = gql`
 mutation DeleteAllocation($input: DeleteAllocationInput!) {
