@@ -112,9 +112,9 @@ class PeopleHRMigration {
     })
   };
 
-  async createForecastAllocation (api, day, csrfToken) {
-    let response = await api.createAllocation({
-      csrfToken: csrfToken,
+  _allocationBuilder (day, token, shouldUpdate) {
+    let output = {
+      csrfToken: token,
       endDay: moment(day.item.EndDate).get('day'),
       endMonth: moment(day.item.EndDate).get('month') + 1,
       endYear: moment(day.item.EndDate).get('year'),
@@ -130,7 +130,17 @@ class PeopleHRMigration {
       thursday: 480 * day.item.DurationDays,
       friday: 480 * day.item.DurationDays,
       saturday: 0
-    });
+    };
+
+    if (shouldUpdate) {
+      output.id = day.forecastAllocationId
+    }
+
+    return output
+  }
+
+  async createForecastAllocation (api, day, csrfToken) {
+    let response = await api.createAllocation(this._allocationBuilder(day, csrfToken));
 
     day.set('forecastAllocationId', response.data.createAllocation.allocation.node.id);
 
@@ -140,25 +150,7 @@ class PeopleHRMigration {
   }
 
   async updateForecastAllocation (api, day, csrfToken) {
-    let response = await api.updateAllocation({
-      id: day.forecastAllocationId,
-      csrfToken: csrfToken,
-      endDay: moment(day.item.EndDate).get('day'),
-      endMonth: moment(day.item.EndDate).get('month') + 1,
-      endYear: moment(day.item.EndDate).get('year'),
-      personId: day.forecastMemberId,
-      projectId: day.forecastProjectId,
-      startDay: moment(day.item.StartDate).get('day'),
-      startMonth: moment(day.item.StartDate).get('month') + 1,
-      startYear: moment(day.item.StartDate).get('year'),
-      sunday: 0,
-      monday: 480 * day.item.DurationDays,
-      tuesday: 480 * day.item.DurationDays,
-      wednesday: 480 * day.item.DurationDays,
-      thursday: 480 * day.item.DurationDays,
-      friday: 480 * day.item.DurationDays,
-      saturday: 0
-    });
+    let response = await api.updateAllocation(this._allocationBuilder(day, csrfToken, true));
 
     day.set('forecastAllocationId', response.data.updateAllocation.allocation.id);
 

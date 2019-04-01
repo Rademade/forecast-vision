@@ -10,7 +10,6 @@ class PeopleHRMember {
    * @param endDdate: Date
    * @param memberDocument: MemberModel
    */
-
   constructor(startDate, endDdate, memberDocument) {
     this.startDate = startDate;
     this.endDdate = endDdate;

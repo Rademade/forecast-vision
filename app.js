@@ -23,13 +23,9 @@ program
 
 if (program.start) startServer();
 if (program.sendReport) {
-    (async () => {
-        await new EmailNotifications().reportNotification()
-    })()
+    new EmailNotifications().reportNotification()
 }
 
 if (program.collectHolidays) {
-    (async () => {
-        await new PeopleHRMigration().updateHolidaysAndAbsence()
-    })()
+    new PeopleHRMigration().updateHolidaysAndAbsence()
 }

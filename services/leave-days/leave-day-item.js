@@ -1,16 +1,6 @@
 const { LeaveDay } = require('../../models/leave-days');
 
 class LeaveDayItem {
-  static get NEW_STATUS () {
-    return 0
-  };
-  static get SHOULD_UPDATE () {
-    return 1
-  };
-  static get SHOULD_DELETE () {
-    return 2
-  };
-
   static async updateLeaveDay (leaveDay, projectID, forecastMemberId) {
     try {
       let leaveDayObject = new LeaveDay({
@@ -22,7 +12,7 @@ class LeaveDayItem {
       let exists = await LeaveDay.find({'item.AbsenceLeaveTxnId': leaveDayObject.item.AbsenceLeaveTxnId});
 
       if (exists.length < 1) {
-        leaveDayObject.set('status', this.NEW_STATUS)
+        leaveDayObject.set('status', this.NEW_STATUS);
 
         return await leaveDayObject.save()
       }
@@ -53,5 +43,9 @@ class LeaveDayItem {
     return await deletedItem.save()
   }
 }
+
+LeaveDayItem.NEW_STATUS = 0;
+LeaveDayItem.SHOULD_UPDATE = 1;
+LeaveDayItem.SHOULD_DELETE = 2;
 
 module.exports.LeaveDayItem = LeaveDayItem;
