@@ -27,29 +27,46 @@ class ForecastScrapingMethods {
         });
     }
 
+    /**
+     * @description Use Symbol for private methods
+     * @param allocation
+     * @param shouldUpdate
+     * @returns allocationData
+     */
+
+     _dataAllocationsBuilder (allocation, shouldUpdate) {
+        let output = {
+            csrfToken: allocation.csrfToken,
+            endDay: allocation.endDay,
+            endMonth: allocation.endMonth,
+            endYear: allocation.endYear,
+            friday: allocation.friday,
+            idleTimeId: null,
+            monday: allocation.monday,
+            personId: allocation.personId,
+            projectGroupId: null,
+            projectId: allocation.projectId,
+            saturday: allocation.saturday,
+            startDay: allocation.startDay,
+            startMonth: allocation.startMonth,
+            startYear: allocation.startYear,
+            sunday: allocation.sunday,
+            tuesday: allocation.tuesday,
+            wednesday: allocation.wednesday,
+            thursday: allocation.thursday,
+        };
+
+        if (shouldUpdate) {
+            output.id = allocation.id
+        }
+
+        return output
+    }
+
     createAllocation (allocation) {
         return new Promise((resolve, reject) => {
             let variables = {
-                input: {
-                    csrfToken: allocation.csrfToken,
-                    endDay: allocation.endDay,
-                    endMonth: allocation.endMonth,
-                    endYear: allocation.endYear,
-                    friday: allocation.friday,
-                    idleTimeId: null,
-                    monday: allocation.monday,
-                    personId: allocation.personId,
-                    projectGroupId: null,
-                    projectId: allocation.projectId,
-                    saturday: allocation.saturday,
-                    startDay: allocation.startDay,
-                    startMonth: allocation.startMonth,
-                    startYear: allocation.startYear,
-                    sunday: allocation.sunday,
-                    tuesday: allocation.tuesday,
-                    wednesday: allocation.wednesday,
-                    thursday: allocation.thursday,
-                }
+                input: this._dataAllocationsBuilder(allocation)
             };
 
             return this.client.mutate({
@@ -68,27 +85,7 @@ class ForecastScrapingMethods {
     updateAllocation (allocation) {
         return new Promise((resolve, reject) => {
             let variables = {
-                input: {
-                    id: allocation.id,
-                    csrfToken: allocation.csrfToken,
-                    endDay: allocation.endDay,
-                    endMonth: allocation.endMonth,
-                    endYear: allocation.endYear,
-                    friday: allocation.friday,
-                    idleTimeId: null,
-                    monday: allocation.monday,
-                    personId: allocation.personId,
-                    projectGroupId: null,
-                    projectId: allocation.projectId,
-                    saturday: allocation.saturday,
-                    startDay: allocation.startDay,
-                    startMonth: allocation.startMonth,
-                    startYear: allocation.startYear,
-                    sunday: allocation.sunday,
-                    tuesday: allocation.tuesday,
-                    wednesday: allocation.wednesday,
-                    thursday: allocation.thursday,
-                }
+                input: this._dataAllocationsBuilder(allocation, true)
             };
 
             return this.client.mutate({

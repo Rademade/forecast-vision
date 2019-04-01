@@ -12,7 +12,7 @@ const sleep = require('sleep');
 const { PeopleHRMember } = require('../services/people-hr/member');
 const { ForecastScrapingAuth } = require('../services/forecast/scraping-auth');
 const { peopleHRLogger } = require('../logger');
-const  { LeaveDayItem, constants } = require('../services/leave-days/leave-day-item')
+const  { LeaveDayItem } = require('../services/leave-days/leave-day-item')
 
 /**
  * Models
@@ -64,11 +64,7 @@ class PeopleHRMigration {
           const leaveDays = await mongoose.model('LeaveDay').find({});
 
           for (let day of leaveDays) {
-            let existsInFetchedData = [...absenceDays, ...holidaysDays].find(fetchedItem => {
-              return day.item.AbsenceLeaveTxnId === fetchedItem.AbsenceLeaveTxnId
-            });
-
-            if (!existsInFetchedData) {
+            if ([...absenceDays, ...holidaysDays].findIndex(fetchedItem => day.item.AbsenceLeaveTxnId === fetchedItem.AbsenceLeaveTxnId) < 0) {
               await LeaveDayItem.markAsShouldDelete(day.item.AbsenceLeaveTxnId)
             }
           }
@@ -87,7 +83,7 @@ class PeopleHRMigration {
 
     apiLoader.ready(async (api, csrfToken) => {
       for (let day of leaveDays) {
-        if (day.status === constants.NEW_STATUS) {
+        if (parseInt(day.status) === LeaveDayItem.NEW_STATUS) {
           /**
            * Here call create method
            */
@@ -95,14 +91,14 @@ class PeopleHRMigration {
           await this.createForecastAllocation(api, day, csrfToken)
         }
 
-        if (day.status === constants.SHOULD_UPDATE) {
+        if (parseInt(day.status) === LeaveDayItem.SHOULD_UPDATE) {
           /**
            * Here call method for update allocation
            */
           await this.updateForecastAllocation(api, day, csrfToken)
         }
 
-        if (day.status === constants.SHOULD_DELETE) {
+        if (parseInt(day.status) === LeaveDayItem.SHOULD_DELETE) {
           /**
            * here call method for delete allcoation
            */
@@ -181,4 +177,4 @@ class PeopleHRMigration {
   }
 }
 
-module.exports.PeopleHRMigration = PeopleHRMigration
+module.exports.PeopleHRMigration = PeopleHRMigration;

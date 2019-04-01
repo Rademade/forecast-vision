@@ -4,6 +4,13 @@ const moment = require('moment')
 const APIKey = process.env.PEOPLEHR_API_KEY;
 
 class PeopleHRMember {
+  /**
+   * @description Class for migrate PeopleHR data
+   * @param startDate: Date
+   * @param endDdate: Date
+   * @param memberDocument: MemberModel
+   */
+
   constructor(startDate, endDdate, memberDocument) {
     this.startDate = startDate;
     this.endDdate = endDdate;

@@ -1,10 +1,16 @@
 const { LeaveDay } = require('../../models/leave-days');
 
-const NEW_STATUS = 'NEW_ALLOCATION';
-const SHOULD_UPDATE = 'SHOULD_UPDATE';
-const SHOULD_DELETE = 'SHOULD_DELETE';
-
 class LeaveDayItem {
+  static get NEW_STATUS () {
+    return 0
+  };
+  static get SHOULD_UPDATE () {
+    return 1
+  };
+  static get SHOULD_DELETE () {
+    return 2
+  };
+
   static async updateLeaveDay (leaveDay, projectID, forecastMemberId) {
     try {
       let leaveDayObject = new LeaveDay({
@@ -16,17 +22,17 @@ class LeaveDayItem {
       let exists = await LeaveDay.find({'item.AbsenceLeaveTxnId': leaveDayObject.item.AbsenceLeaveTxnId});
 
       if (exists.length < 1) {
-        leaveDayObject.set('status', NEW_STATUS)
+        leaveDayObject.set('status', this.NEW_STATUS)
 
         return await leaveDayObject.save()
       }
 
       if (exists.length > 0) {
-        leaveDayObject.status = SHOULD_UPDATE;
+        leaveDayObject.status = this.SHOULD_UPDATE;
 
         let updated = await LeaveDay.findOneAndUpdate(
           { 'item.AbsenceLeaveTxnId': leaveDayObject.item.AbsenceLeaveTxnId },
-          { status: SHOULD_UPDATE, item: leaveDay},
+          { status: this.SHOULD_UPDATE, item: leaveDay},
           { new: true }
         );
 
@@ -40,7 +46,7 @@ class LeaveDayItem {
   static async markAsShouldDelete (peopleHRID) {
     let deletedItem =  await LeaveDay.findOneAndUpdate(
       {'item.AbsenceLeaveTxnId': peopleHRID},
-      { status: SHOULD_DELETE},
+      { status: this.SHOULD_DELETE},
       { new: true }
       );
 
@@ -49,8 +55,3 @@ class LeaveDayItem {
 }
 
 module.exports.LeaveDayItem = LeaveDayItem;
-module.exports.constants = {
-  NEW_STATUS,
-  SHOULD_UPDATE,
-  SHOULD_DELETE
-};
