@@ -1,6 +1,8 @@
 require('dotenv').config();
 
-const { reportNotification } = require('./commands/commands');
+const {EmailNotifications} = require('./commands/email-notifications');
+const {PeopleHRMigration} = require('./commands/vacations');
+
 const { startServer } = require('./server');
 
 const mongoose = require('mongoose');
@@ -16,7 +18,14 @@ program
     .version('0.1.0')
     .option('--start', 'Start application')
     .option('--send-report', 'Send reports')
+    .option('--collect-holidays', 'Collect holidays and absence days')
     .parse(process.argv);
 
 if (program.start) startServer();
-if (program.sendReport) reportNotification();
+if (program.sendReport) {
+    new EmailNotifications().reportNotification()
+}
+
+if (program.collectHolidays) {
+    new PeopleHRMigration().updateHolidaysAndAbsence()
+}

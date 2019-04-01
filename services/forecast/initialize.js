@@ -12,7 +12,7 @@ class ForecastInitialize {
         this.client = new ApolloClient({
             link: this.getCookieLink().concat(this.setCookieLink()).concat(this.getHttpLink()),
             cache: new InMemoryCache()
-        })
+        });
     }
     getHttpLink() {
         return createHttpLink({

@@ -39,6 +39,7 @@ class ReportDataBuilder {
     /**
      * @return {Promise<ReportData>}
      */
+
     async getReport() {
         return new Promise((resolve, reject) => {
             Promise
@@ -51,6 +52,8 @@ class ReportDataBuilder {
                 });
         });
     }
+
+
 
     /**
      * @return {Promise<ReportMembersList>}

@@ -6,13 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js --start",
-    "send-report": "node app.js --send-report"
+    "send-report": "node app.js --send-report",
+    "collect-holidays": "node app.js --collect-holidays"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "apollo-client-preset": "^1.0.8",
     "apollo-link-context": "^1.0.7",
+    "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "commander": "^2.19.0",
     "dotenv": "^6.2.0",
@@ -32,6 +34,9 @@
     "node-fetch": "^2.1.2",
     "pug": "^2.0.3",
     "request": "^2.85.0",
-    "toggl-api": "^1.0.1"
+    "sleep": "^6.0.0",
+    "toggl-api": "^1.0.1",
+    "winston": "^3.2.1",
+    "winston-mongodb": "^5.0.0"
   }
 }

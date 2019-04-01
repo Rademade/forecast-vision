@@ -44,6 +44,7 @@ class MembersController {
 
     static create(req, res) {
         let member = new Member();
+
         MembersController._setParams(member, req.body).save();
         MembersController._sendResult(member, res);
     }
@@ -73,11 +74,14 @@ class MembersController {
     static _setParams(document, body) {
         // TODO validate params
         if (!body.team) body.team = null;
+        if (!body.peopleHRId) body.peopleHRId = null;
+
         document.set({
             name: body.name,
             email: body.email,
             togglId: body.togglId,
             forecastId: body.forecastId,
+            peopleHRId: body.peopleHRId,
             actualUtilization: body.actualUtilization,
             team: body.team
         });

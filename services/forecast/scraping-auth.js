@@ -15,6 +15,7 @@ class ForecastScrapingAuth {
             login(input: $input) {
               clientMutationId
               viewer {
+                csrfToken
                 id
                 language
                 firstName
@@ -37,9 +38,9 @@ class ForecastScrapingAuth {
         })
     }
     ready(callback) {
-        this.auth().then(() => {
+        this.auth().then((data) => {
             console.log('Scrapper methods loaded');
-            callback(this.scrapingMethods);
+            callback(this.scrapingMethods, data.data.login.viewer.csrfToken);
         });
     }
 
