@@ -150,7 +150,7 @@ class PeopleHRMigration {
 
       await day.save();
 
-      console.log(response)
+      console.log('success create')
     } catch (error) {
       console.log('error create')
     }
@@ -164,7 +164,7 @@ class PeopleHRMigration {
 
       await day.save();
 
-      console.log(response)
+      console.log('success update')
     } catch (error) {
       console.log('allocation was deleted')
       /**
@@ -181,7 +181,7 @@ class PeopleHRMigration {
         id: allocationId
       });
 
-      console.log(response)
+      console.log('success delete')
     } catch (error) {
       console.log('delete error');
     }
