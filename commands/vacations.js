@@ -64,11 +64,12 @@ class PeopleHRMigration {
           const leaveDays = await mongoose.model('LeaveDay').find({});
 
           for (let day of leaveDays) {
-            let isDeleted = [...absenceDays, ...holidaysDays].findIndex(fetchedItem => day.item.AbsenceLeaveTxnId === fetchedItem.AbsenceLeaveTxnId) < 0;
+            let searchKey = day.forecastProjectId === FORECAST_ABSENCE_PROJECT_ID ? 'AbsenceLeaveTxnId' : 'AnnualLeaveTxnId';
+            let isDeleted = [...absenceDays, ...holidaysDays].findIndex(fetchedItem => day.item[searchKey] === fetchedItem[searchKey]) < 0;
             let isSameMember = day.forecastMemberId === peopleHrMember.memberDocument.forecastId;
 
             if (isDeleted && isSameMember) {
-              await LeaveDayItem.markAsShouldDelete(day.item.AbsenceLeaveTxnId)
+              await LeaveDayItem.markAsShouldDelete(day.item[searchKey])
             }
           }
         }
