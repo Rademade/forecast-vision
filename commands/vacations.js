@@ -140,13 +140,18 @@ class PeopleHRMigration {
   }
 
   async createForecastAllocation (api, day, csrfToken) {
-    let response = await api.createAllocation(this._allocationBuilder(day, csrfToken));
+    try {
+      let response = await api.createAllocation(this._allocationBuilder(day, csrfToken));
 
-    day.set('forecastAllocationId', response.data.createAllocation.allocation.node.id);
+      day.set('forecastAllocationId', response.data.createAllocation.allocation.node.id);
 
-    await day.save();
+      await day.save();
 
-    console.log(response)
+      console.log(response)
+    } catch (error) {
+      console.log('error create')
+       console.log(error)
+    }
   }
 
   async updateForecastAllocation (api, day, csrfToken) {
@@ -160,6 +165,7 @@ class PeopleHRMigration {
       console.log(response)
     } catch (error) {
       console.log('allocation was deleted')
+      console.log(error)
       /**
        * If allocation was manually deleted from forecast application doesnt know about this so we should create it
        */
@@ -168,12 +174,17 @@ class PeopleHRMigration {
   }
 
   async deleteForecastAllocation (api, allocationId, csrfToken) {
-    let response = await api.deleteAllocation({
-      csrfToken: csrfToken,
-      id: allocationId
-    });
+    try {
+      let response = await api.deleteAllocation({
+        csrfToken: csrfToken,
+        id: allocationId
+      });
 
-    console.log(response)
+      console.log(response)
+    } catch (error) {
+      console.log('delete error');
+      console.log(error)
+    }
   }
 }
 
