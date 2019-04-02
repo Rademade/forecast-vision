@@ -64,7 +64,10 @@ class PeopleHRMigration {
           const leaveDays = await mongoose.model('LeaveDay').find({});
 
           for (let day of leaveDays) {
-            if ([...absenceDays, ...holidaysDays].findIndex(fetchedItem => day.item.AbsenceLeaveTxnId === fetchedItem.AbsenceLeaveTxnId) < 0) {
+            let isDeleted = [...absenceDays, ...holidaysDays].findIndex(fetchedItem => day.item.AbsenceLeaveTxnId === fetchedItem.AbsenceLeaveTxnId) < 0;
+            let isSameMember = day.forecastMemberId === peopleHrMember.memberDocument.forecastId;
+
+            if (isDeleted && isSameMember) {
               await LeaveDayItem.markAsShouldDelete(day.item.AbsenceLeaveTxnId)
             }
           }
@@ -150,7 +153,6 @@ class PeopleHRMigration {
       console.log(response)
     } catch (error) {
       console.log('error create')
-       console.log(error)
     }
   }
 
@@ -165,7 +167,6 @@ class PeopleHRMigration {
       console.log(response)
     } catch (error) {
       console.log('allocation was deleted')
-      console.log(error)
       /**
        * If allocation was manually deleted from forecast application doesnt know about this so we should create it
        */
@@ -183,7 +184,6 @@ class PeopleHRMigration {
       console.log(response)
     } catch (error) {
       console.log('delete error');
-      console.log(error)
     }
   }
 }
