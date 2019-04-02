@@ -150,13 +150,21 @@ class PeopleHRMigration {
   }
 
   async updateForecastAllocation (api, day, csrfToken) {
-    let response = await api.updateAllocation(this._allocationBuilder(day, csrfToken, true));
+    try {
+      let response = await api.updateAllocation(this._allocationBuilder(day, csrfToken, true));
 
-    day.set('forecastAllocationId', response.data.updateAllocation.allocation.id);
+      day.set('forecastAllocationId', response.data.updateAllocation.allocation.id);
 
-    await day.save();
+      await day.save();
 
-    console.log(response)
+      console.log(response)
+    } catch (error) {
+      console.log('allocation was deleted')
+      /**
+       * If allocation was manually deleted from forecast application doesnt know about this so we should create it
+       */
+      await this.createForecastAllocation(api, day, csrfToken)
+    }
   }
 
   async deleteForecastAllocation (api, allocationId, csrfToken) {
