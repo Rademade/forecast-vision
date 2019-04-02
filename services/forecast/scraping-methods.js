@@ -73,7 +73,6 @@ class ForecastScrapingMethods {
                 variables: variables,
                 mutation: createQuery,
             }).catch((error) =>{
-                console.error(error);
                 reject(error)
             }).then(data => {
                 resolve(data);
@@ -92,7 +91,6 @@ class ForecastScrapingMethods {
                 variables: variables,
                 mutation: updateQuery,
             }).catch((error) =>{
-                console.error(error);
                 reject(error)
             }).then(data => {
                 resolve(data);
@@ -119,7 +117,6 @@ class ForecastScrapingMethods {
                 mutation: deleteQuery,
                 variables: output
             }).catch((error) =>{
-                console.error(error)
                 reject(error)
             }).then(data => {
                 resolve(data);
