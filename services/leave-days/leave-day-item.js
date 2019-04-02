@@ -43,9 +43,9 @@ class LeaveDayItem {
     }
   }
 
-  static async markAsShouldDelete (peopleHRID) {
+  static async markAsShouldDelete (peopleHRID, type) {
     let deletedItem =  await LeaveDay.findOneAndUpdate(
-      {'item.AbsenceLeaveTxnId': peopleHRID},
+      {['item.' + type]: peopleHRID},
       { status: this.SHOULD_DELETE},
       { new: true }
       );

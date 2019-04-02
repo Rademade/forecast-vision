@@ -69,7 +69,7 @@ class PeopleHRMigration {
             let isSameMember = day.forecastMemberId === peopleHrMember.memberDocument.forecastId;
 
             if (isDeleted && isSameMember) {
-              await LeaveDayItem.markAsShouldDelete(day.item[searchKey])
+              await LeaveDayItem.markAsShouldDelete(day.item[searchKey], searchKey)
             }
           }
         }
@@ -109,8 +109,6 @@ class PeopleHRMigration {
           await this.deleteForecastAllocation(api, day.forecastAllocationId, csrfToken)
 
           await day.remove()
-
-          console.log(leaveDays)
         }
       }
     })
