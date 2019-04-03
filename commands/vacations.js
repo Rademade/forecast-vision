@@ -29,7 +29,7 @@ const FORECAST_ABSENCE_PROJECT_ID = "UHJvamVjdFR5cGU6NDQ4MzM=";
 class PeopleHRMigration {
   async updateHolidaysAndAbsence () {
     const CHUNK_SIZE = 25;
-    const SLEEP_TIME = 1;
+    const SLEEP_TIME = 60;
     const startDate = moment().subtract(5, 'month').startOf('month');
     const endDate = moment().add(5, 'weeks').startOf('week').subtract(1, 'day');
 
