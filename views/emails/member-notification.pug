@@ -11,6 +11,7 @@ html
         - isBillableNotification = lastWeekReport.isGoodAccuracy() && lastWeekReport.isGoodFactReport()
         - isForecastEmpty = currentWeekReport && !currentWeekReport.isNormalBillableHours()
         - isToggleEmptyProject = lastWeekReport.isTasksWithoutProjects()
+        - weekKinds = ['хорошей', 'замечательной', 'классной', 'приличной', 'недурственной', 'продуктивной', 'плодотворной']
 
         img(style={
           'width': '36px',
@@ -20,28 +21,28 @@ html
         p(style={'margin-top': '16px'}) #{lastWeekReport.getName()}, привет.
 
         if isBillableNotification
-            p Есть проблемка, процент billable часов на прошлой неделе составил #{lastWeekReport.getFactBillablePercent()}%, а загрузка планировалась #{lastWeekReport.getPlanningBillablePercent()}%
-            p Будет круто, если ты:
+            p Твой процент billable часов на прошлой неделе составил #{lastWeekReport.getFactBillablePercent()}%, а планировалось #{lastWeekReport.getPlanningBillablePercent()}% загрузки.
+            p Попробуй следующее:
             ul
-                li Пересмотришь свот <a href="https://toggl.com/app/reports/summary/197313/period/prevWeek/users/#{currentWeekReport.getMemberTogglId()}">toggl отчет</a>
-                li Скажешь, если тебе нужна помощь в этом вопросе
+                li Пересмотри свой <a href="https://toggl.com/app/reports/summary/197313/period/prevWeek/users/#{currentWeekReport.getMemberTogglId()}">toggl отчет</a>
+                li Скажи, если тебе нужна помощь в этом вопросе
 
         if isForecastEmpty
             // TODO use const 80%
-            p(style={'margin-top': '16px'}) Есть нюанс - на эту неделю у тебя планируется #{currentWeekReport.getPlanningBillablePercent() || 0}% загрузки. Минимальный показатель должен быть 80%, если не считать отпуск/больничный.
-            p Будет круто, если ты:
+            p(style={'margin-top': '16px'}) На эту неделю у тебя планируется #{currentWeekReport.getPlanningBillablePercent() || 0}% загрузки. Минимальный показатель должен быть 80%, если не считать отпуск/больничный.
+            p Стоит сделать следующее:
             ul
-                li Заполнишь свой <a href="https://app.forecast.it/scheduling">Forecast.it</a>
-                li Или поговоришь с командой о необходимости проекта. Представитель поднимет этот вопрос на RTeamsWeekly.
+                li Поверить корректно ли заполен прогноз на <a href="https://app.forecast.it/scheduling">Forecast.it</a>
+                li Поговорить с командой о необходимости проекта. Представитель поднимет этот вопрос на RTeamsWeekly.
 
         if isToggleEmptyProject
             p Важный момент, у тебя есть задачи в Toggl без прикрепленного проекта
             ul
                 li Просмотри пожалуйста свой <a href="https://toggl.com/app/reports/summary/197313/period/prevWeek/projects/0/users/#{currentWeekReport.getMemberTogglId()}">toggl за прошлую и текущую неделю</a> и прикрепи задачи к проектам
-
+                li Если проекта над которым ты работал нет, добавь его, или обратись к тому, кто сможет это сделать
         if !isBillableNotification && !isForecastEmpty && !isToggleEmptyProject
            p Спасибо, что клево ведешь forecast, toggl. Ты красавчик ❤
 
         br
-        p  Желаю тебе офигенной недели
+        p  Желаю тебе #{_.sample(weekKinds)} недели!
         p  С любовью, Rademade Vision
