@@ -51,7 +51,8 @@ class EmailNotifications {
 
     compiledTemplate = compiledTemplate({
       lastWeekReport,
-      currentWeekReport
+      currentWeekReport,
+      _: require('lodash')
     });
 
     let mailToUser = new Mailer(lastWeekReport.getEmail(), compiledTemplate);
