@@ -99,14 +99,12 @@ class ReportMember extends CollectionItem {
     }
 
     getAvailableDuration() {
-        let leaveDays = this.getHolidaysDuration().add(this.getAbsenceDuration());
-
         if (!this.availableDuration) {
             let percent = this.memberDocument.actualUtilization / 100;
 
             this.availableDuration = new Duration( this.getForecastAvailableDuration().getMinutes() * percent );
-            if (leaveDays.getMinutes() > 0) {
-                this.availableDuration = this.availableDuration.remove(leaveDays)
+            if (this.getUselessProjects().getMinutes() > 0) {
+                this.availableDuration = this.availableDuration.remove(this.getUselessProjects())
             }
         }
 
@@ -128,7 +126,7 @@ class ReportMember extends CollectionItem {
     getAbsenceDuration () {
         let absenceData = this.getMatchedAllocationsItems().filter(item => {
             return item.allocation.allocationData.project.companyProjectId === FORECAST_ABSENCE_PROJECT_ID
-        })
+        });
 
         if (absenceData.length > 0) {
             return absenceData.reduce((duration, item) => {
@@ -153,11 +151,21 @@ class ReportMember extends CollectionItem {
         }
     }
 
+    getUselessProjects () {
+        return this.getHolidaysDuration().add(this.getAbsenceDuration());
+    }
+
     getBenchDuration() {
         //FIXME getAvailableDuration - getScheduledDuration + useLessProject()
-        return this.getMatchedAllocationsItems().reduce((duration, item) => {
+        let benchDuration = this.getMatchedAllocationsItems().reduce((duration, item) => {
             return duration.add( item.getAllocation().isBenchProject() ? item.getDuration() : new Duration());
         }, this.getUnplannedDuration().clone());
+
+        if (this.getUselessProjects().getMinutes() > 0) {
+            benchDuration = benchDuration.remove(this.getUselessProjects())
+        }
+
+        return benchDuration
     }
 
     getUnplannedDuration() {
