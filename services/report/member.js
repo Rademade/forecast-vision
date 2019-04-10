@@ -103,12 +103,13 @@ class ReportMember extends CollectionItem {
             let percent = this.memberDocument.actualUtilization / 100;
 
             this.availableDuration = new Duration( this.getForecastAvailableDuration().getMinutes() * percent );
-            if (this.getUselessProjects().getMinutes() > 0) {
-                this.availableDuration = this.availableDuration.remove(this.getUselessProjects())
-            }
         }
 
         return this.availableDuration;
+    }
+
+    getAvailableDurationWithoutHolidays () {
+        return this.getAvailableDuration().clone().remove(this.getTotalLeaveDaysDuration())
     }
 
     getScheduledDuration() {
@@ -140,7 +141,7 @@ class ReportMember extends CollectionItem {
     getHolidaysDuration() {
         let holidayData = this.getMatchedAllocationsItems().filter(item => {
             return item.allocation.allocationData.project.companyProjectId === FORECAST_HOLIDAY_PROJECT_ID
-        })
+        });
 
         if (holidayData.length > 0) {
             return holidayData.reduce((duration, item) => {
@@ -151,21 +152,26 @@ class ReportMember extends CollectionItem {
         }
     }
 
-    getUselessProjects () {
-        return this.getHolidaysDuration().add(this.getAbsenceDuration());
+    getTotalLeaveDaysDuration () {
+        return this.getHolidaysDuration().add(this.getAbsenceDuration()).getMinutes() > 0 ? this.getHolidaysDuration().add(this.getAbsenceDuration()) : new Duration();
+    }
+
+    getUselessProjectsDuration () {
+        let uselessData = this.getMatchedAllocationsItems().filter(item => {
+            return item.getAllocation().isUsefulProject()
+        });
+
+        if (uselessData.length > 0) {
+            return uselessData.reduce((duration, item) => {
+                return duration.add( item.getDuration() );
+            }, new Duration());
+        } else {
+            return new Duration()
+        }
     }
 
     getBenchDuration() {
-        //FIXME getAvailableDuration - getScheduledDuration + useLessProject()
-        let benchDuration = this.getMatchedAllocationsItems().reduce((duration, item) => {
-            return duration.add( item.getAllocation().isBenchProject() ? item.getDuration() : new Duration());
-        }, this.getUnplannedDuration().clone());
-
-        if (this.getUselessProjects().getMinutes() > 0) {
-            benchDuration = benchDuration.remove(this.getUselessProjects())
-        }
-
-        return benchDuration
+        return this.getAvailableDurationWithoutHolidays().clone().remove(this.getBillableDuration())
     }
 
     getUnplannedDuration() {
