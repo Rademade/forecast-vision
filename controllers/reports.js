@@ -7,36 +7,38 @@ const Project = require('../models/project');
 const MOMENT_FORMAT = 'YYYY-MM-DD';
 
 class ReportsController {
+    //FIXME PLEASE REFACTOR ME
 
-    static weekReport(req, res) {
-        ReportLoaderFactory.getWeeksRhythmReport().load((weeksData) => {
-            res.render('reports/index', {weeksData: weeksData});
-        });
+
+    static async weekReport(req, res) {
+        const weeksData = await ReportLoaderFactory.getWeeksRhythmReport();
+
+        res.render('reports/index', {weeksData: weeksData});
     }
 
-    static factReport(req, res) {
-        ReportLoaderFactory.getWeeksFactReport().load((weeksData) => {
-            res.render('reports/plan-fact', {weeksData: weeksData});
-        });
+    static async factReport(req, res) {
+        const weeksData = await ReportLoaderFactory.getWeeksFactReport();
+
+        res.render('reports/plan-fact', {weeksData: weeksData});
     }
 
-    static monthReport(req, res) {
-        ReportLoaderFactory.getMonthsReport().load((monthsReport) => {
-            res.render('reports/month-report', {monthsReport: monthsReport});
-        });
+    static async monthReport(req, res) {
+        const monthsReport = await ReportLoaderFactory.getMonthsReport();
+
+        res.render('reports/month-report', {monthsReport: monthsReport});
     }
 
-    static matrixReport(req, res) {
+    static async matrixReport(req, res) {
         let dateFrom = moment(req.query.dateFrom, MOMENT_FORMAT);
         let dateTo = moment(req.query.dateTo, MOMENT_FORMAT);
 
         if (dateTo.isValid() && dateTo.isValid()) {
-            ReportLoaderFactory.getMonthReport(dateFrom, dateTo).load((monthReport) => {
-                res.render('reports/matrix', {
-                    report: monthReport[0],
-                    dateFrom: req.query.dateFrom,
-                    dateTo: req.query.dateTo
-                });
+            const monthReport = ReportLoaderFactory.getMonthReport(dateFrom, dateTo);
+
+            res.render('reports/matrix', {
+                report: monthReport[0],
+                dateFrom: req.query.dateFrom,
+                dateTo: req.query.dateTo
             });
         } else {
             res.render('reports/matrix', {
@@ -60,15 +62,13 @@ class ReportsController {
                 }
 
                 let project = await Project.findById(req.query.projectId);
+                const factReports = ReportLoaderFactory.getCustomFactReport(dateFrom, dateTo, project);
 
-                ReportLoaderFactory.getCustomFactReport(dateFrom, dateTo, project).load((factReports) => {
-                    resolve({
-                        project: project,
-                        projects: projects,
-                        factReports: factReports
-                    });
+                resolve({
+                    project: project,
+                    projects: projects,
+                    factReports: factReports
                 });
-
             });
 
         }).then((result) => {

@@ -58,6 +58,10 @@ class ReportMember extends CollectionItem {
         return this.roleName;
     }
 
+    setDepartmentName (roleName) {
+        this.roleName = roleName
+    }
+
     getTeamName() {
         // TODO object type check
         if (this.memberDocument.team) {
@@ -88,6 +92,10 @@ class ReportMember extends CollectionItem {
         return this.togglFactReport;
     }
 
+    setTogglReport (togglFactReport) {
+        this.togglFactReport = togglFactReport
+    }
+
     hasDisplayHours() {
         return this.getScheduledDuration().getMinutes() > 0 ||
             this.getFactBillableDuration().getMinutes() > 0 ||
@@ -98,18 +106,21 @@ class ReportMember extends CollectionItem {
         return this.forecastAvailableDuration
     }
 
+    setForecastAvailableDuration (forecastAvailableDuration) {
+        this.forecastAvailableDuration = forecastAvailableDuration
+    }
+
     getAvailableDuration() {
         if (!this.availableDuration) {
             let percent = this.memberDocument.actualUtilization / 100;
+            let minutes = this.getForecastAvailableDuration().clone().remove(this.getTotalLeaveDaysDuration()).getMinutes();
 
-            this.availableDuration = new Duration( this.getForecastAvailableDuration().getMinutes() * percent );
+            this.availableDuration = new Duration( minutes * percent );
+
+            return this.availableDuration;
+        } else {
+            return this.availableDuration;
         }
-
-        return this.availableDuration;
-    }
-
-    getAvailableDurationWithoutHolidays () {
-        return this.getAvailableDuration().clone().remove(this.getTotalLeaveDaysDuration())
     }
 
     getScheduledDuration() {
@@ -153,7 +164,7 @@ class ReportMember extends CollectionItem {
     }
 
     getTotalLeaveDaysDuration () {
-        return this.getHolidaysDuration().add(this.getAbsenceDuration()).getMinutes() > 0 ? this.getHolidaysDuration().add(this.getAbsenceDuration()) : new Duration();
+        return this.getHolidaysDuration().add(this.getAbsenceDuration());
     }
 
     getUselessProjectsDuration () {
@@ -171,7 +182,7 @@ class ReportMember extends CollectionItem {
     }
 
     getBenchDuration() {
-        return this.getAvailableDurationWithoutHolidays().clone().remove(this.getBillableDuration())
+        return this.getAvailableDuration().clone().remove(this.getBillableDuration())
     }
 
     getUnplannedDuration() {
@@ -227,6 +238,8 @@ class ReportMember extends CollectionItem {
         return member instanceof ReportMember && this.memberDocument.id === member.memberDocument.id;
     }
 
+
+    //FIXME BIG BIG TROUBLE HERE
     groupWith(member) {
         this.userName = this.getName() || member.getName();
         this.roleName = this.getDepartmentName() || member.getDepartmentName();

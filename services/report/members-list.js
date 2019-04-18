@@ -16,6 +16,12 @@ class ReportMembersList extends CollectionList {
         return this.addItem(member);
     }
 
+    addMemberWithoutGrouping (member) {
+        let slug = member.getSlug();
+
+        this.items[slug] = member
+    }
+
     /**
      * @param {ForecastAllocationItemMatch} matchedItem
      */

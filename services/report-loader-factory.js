@@ -7,24 +7,24 @@ const moment = require('moment');
  */
 class ReportLoaderFactory {
 
-    static getWeeksRhythmReport() {
+    static async getWeeksRhythmReport() {
         let startDate = moment().startOf('week');
         // If we use endOf function we have 59 second
         let endDate = moment().add(6, 'weeks').startOf('week').subtract(1, 'day');
 
-        return new ReportLoader(startDate, endDate, null, (startIntervalDate) => {
+        return await new ReportLoader(startDate, endDate, null, (startIntervalDate) => {
             return startIntervalDate.clone().add(1, 'week');
-        });
+        }).load();
     }
 
-    static getWeeksFactReport() {
+    static async getWeeksFactReport() {
         let startDate = moment().subtract(4, 'weeks').startOf('week');
         // If we use endOf function we have 59 second
         let endDate = moment().add(1, 'week').startOf('week').subtract(1, 'day');
 
-        return new ReportLoader(startDate, endDate, null, (startIntervalDate) => {
+        return await new ReportLoader(startDate, endDate, null, (startIntervalDate) => {
             return startIntervalDate.clone().add(1, 'week');
-        });
+        }).load();
     }
 
     /**
@@ -33,31 +33,32 @@ class ReportLoaderFactory {
      * @param {Project} projectDocument
      * @return {ReportLoader}
      */
-    static getCustomFactReport(dateStart, dateEnd, projectDocument) {
+    static async getCustomFactReport(dateStart, dateEnd, projectDocument) {
         let daysLength = dateEnd.diff(dateStart, 'days');
 
-        return new ReportLoader(dateStart, dateEnd, projectDocument, (startIntervalDate) => {
+        return await new ReportLoader(dateStart, dateEnd, projectDocument, (startIntervalDate) => {
             return startIntervalDate.clone().add(daysLength, 'day');
-        });
+        }).load();
     }
 
-    static getCustomNotificationReport() {
+    static async getCustomNotificationReport() {
         let startDate = moment().subtract(1, 'week').startOf('week');
         let endDate =   moment().add(2, 'weeks').startOf('week').subtract(1, 'day')
 
-        return new ReportLoader(startDate, endDate, null, (startIntervalDate) => {
+        return await new ReportLoader(startDate, endDate, null, (startIntervalDate) => {
             return startIntervalDate.clone().add(1, 'week');
-        });
+        }).load();
     }
 
-    static getMonthReport(dateStart, dateEnd) {
+    static async getMonthReport(dateStart, dateEnd) {
         let daysLength = dateEnd.diff(dateStart, 'days');
-        return new ReportLoader(dateStart, dateEnd, null, (startIntervalDate) => {
+
+        return await new ReportLoader(dateStart, dateEnd, null, (startIntervalDate) => {
             return startIntervalDate.clone().add(daysLength, 'day');
-        });
+        }).load();
     }
 
-    static getReportByPrevMonthCount(monthCount) {
+    static async getReportByPrevMonthCount(monthCount) {
       if (monthCount < 6 || monthCount > 60) {
           return 'Invalid month count'
       }
@@ -65,19 +66,19 @@ class ReportLoaderFactory {
       const dateEnd = moment().startOf('isoWeek'),
             dateStart = moment(dateEnd).subtract(monthCount, 'month');
 
-      return new ReportLoader(dateStart, dateEnd, null, (startIntervalDate) => {
-        return startIntervalDate.clone().add(1, 'month');
-      });
+      return await new ReportLoader(dateStart, dateEnd, null, (startIntervalDate) => {
+          return startIntervalDate.clone().add(1, 'month');
+      }).load();
     }
 
-    static getMonthsReport() {
+    static async getMonthsReport() {
         let startDate = moment().subtract(1, 'months').startOf('month');
         // If we use endOf function we have 59 second
         let endDate = moment().add(2, 'month').startOf('month').subtract(1, 'day');
 
-        return new ReportLoader(startDate, endDate, null, (startIntervalDate) => {
+        return await new ReportLoader(startDate, endDate, null, (startIntervalDate) => {
             return startIntervalDate.clone().add(1, 'month');
-        });
+        }).load();
     }
 
 }
