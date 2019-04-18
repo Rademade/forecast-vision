@@ -41,7 +41,7 @@ class EmailNotifications {
           return secondCircleMember.memberDocument.id === lastWeekMember.memberDocument.id
         });
 
-        // await this.sendEmailToMember(lastWeekMember, currentWeekMember)
+        await this.sendEmailToMember(lastWeekMember, currentWeekMember)
       }
     }
   };
