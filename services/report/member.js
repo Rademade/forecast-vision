@@ -58,10 +58,6 @@ class ReportMember extends CollectionItem {
         return this.roleName;
     }
 
-    setDepartmentName (roleName) {
-        this.roleName = roleName
-    }
-
     getTeamName() {
         // TODO object type check
         if (this.memberDocument.team) {
@@ -92,10 +88,6 @@ class ReportMember extends CollectionItem {
         return this.togglFactReport;
     }
 
-    setTogglReport (togglFactReport) {
-        this.togglFactReport = togglFactReport
-    }
-
     hasDisplayHours() {
         return this.getScheduledDuration().getMinutes() > 0 ||
             this.getFactBillableDuration().getMinutes() > 0 ||
@@ -104,10 +96,6 @@ class ReportMember extends CollectionItem {
 
     getForecastAvailableDuration() {
         return this.forecastAvailableDuration
-    }
-
-    setForecastAvailableDuration (forecastAvailableDuration) {
-        this.forecastAvailableDuration = forecastAvailableDuration
     }
 
     getAvailableDuration() {
