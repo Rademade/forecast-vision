@@ -60,16 +60,16 @@ class ReportDataBuilder {
      * @return {Promise<ReportMembersList>}
      */
     async getReportMemberList() {
-        //FIXME add member only after adding matchedAlocation
         let mergedListClass = new ReportMembersList();
         let togglMemberList = new ReportMembersList();
         let forecastMemberList = new ReportMembersList();
+        const matchedAllocations = this.allocationReport.getMatchedAllocation(this.range);
 
         for (let togglUser of this.togglReport.getUsersList().getUsers()) {
             let memberDocument = await Member.getByTogglUser(togglUser);
             let member = new ReportMember(memberDocument.name, '', 0, togglUser, memberDocument);
 
-            togglMemberList.addMemberWithoutGrouping(member);
+            togglMemberList.addMember(member);
         }
 
         for (let forecastMember of this.forecastMembers) {
@@ -81,33 +81,25 @@ class ReportDataBuilder {
               TogglReportUser.null(),
               memberDocument);
 
-            forecastMemberList.addMemberWithoutGrouping(member);
+            forecastMemberList.addMember(member);
         }
 
-        let customMerge =((objValue, srcValue) => {
-            if (!objValue) return srcValue;
-            if (!srcValue) return objValue;
-
-            objValue.setForecastAvailableDuration(srcValue.getForecastAvailableDuration());
-            objValue.setDepartmentName(srcValue.getDepartmentName());
-
-            return objValue
-        });
-
-        let mergedListObject = _.mergeWith(togglMemberList.getAllMembers(), forecastMemberList.getAllMembers(), customMerge);
-
-        for (let [key, value] of Object.entries(mergedListObject)) {
-            mergedListClass.addMemberWithoutGrouping(value)
+        for (let matchedItem of matchedAllocations) {
+            forecastMemberList.addMatchedAllocationItem( matchedItem );
         }
 
-        // Add allocations
-        for (let matchedItem of this.allocationReport.getMatchedAllocation(this.range)) {
-            mergedListClass.addMatchedAllocationItem( matchedItem );
+        /**
+         * @desc merging is necessary only if toggleReport is presenting, forecast is always available
+         */
+
+        if (togglMemberList.getAllMembers().length > 0) {
+            mergedListClass.mergeMemberList(togglMemberList, forecastMemberList);
+
+            return mergedListClass;
+
+        } else {
+            return forecastMemberList;
         }
-
-        mergedListClass.groupSimilar();
-
-        return mergedListClass;
     }
 
     /**

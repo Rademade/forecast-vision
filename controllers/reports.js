@@ -7,8 +7,6 @@ const Project = require('../models/project');
 const MOMENT_FORMAT = 'YYYY-MM-DD';
 
 class ReportsController {
-    //FIXME PLEASE REFACTOR ME
-
 
     static async weekReport(req, res) {
         const weeksData = await ReportLoaderFactory.getWeeksRhythmReport();

@@ -238,16 +238,13 @@ class ReportMember extends CollectionItem {
         return member instanceof ReportMember && this.memberDocument.id === member.memberDocument.id;
     }
 
-
-    //FIXME BIG BIG TROUBLE HERE
     groupWith(member) {
-        this.userName = this.getName() || member.getName();
-        this.roleName = this.getDepartmentName() || member.getDepartmentName();
-        this.getAvailableDuration().add( member.getAvailableDuration() );
-        this.getTogglReport().groupWith( member.getTogglReport() );
+        this.forecastAvailableDuration = member.getForecastAvailableDuration();
 
-        // TODO add unique validation
-        this.matchedAllocations = this.getMatchedAllocationsItems().concat( member.getMatchedAllocationsItems() );
+        if (this.getDepartmentName().length <= 0)   this.roleName = member.getDepartmentName();
+
+        this.matchedAllocations =  member.getMatchedAllocationsItems();
+        this.userName = this.getName() || member.getName();
     }
 
 }

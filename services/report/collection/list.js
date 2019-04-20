@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 class CollectionList {
 
     constructor() {
@@ -20,7 +22,6 @@ class CollectionList {
         }
         return this.items[ slug ];
     }
-
 
     /**
      * Group similar members in this collection
