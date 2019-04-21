@@ -24,27 +24,29 @@ class EmailNotifications {
 
 
     for (const lastWeekMember of firstCircle) {
-      if (lastWeekMember.getEmail()) {
-        let currentWeekMember = secondCircle.find((secondCircleMember) => {
-          return secondCircleMember.memberDocument.id === lastWeekMember.memberDocument.id
-        });
+      if (!lastWeekMember.getEmail()) continue;
 
-        await EmailNotifications.sendEmailToMember(lastWeekMember, currentWeekMember)
-      }
+      let currentWeekMember = secondCircle.find((secondCircleMember) => {
+        return secondCircleMember.memberDocument.id === lastWeekMember.memberDocument.id
+      });
+
+      new Mailer(
+          lastWeekMember.getEmail(),
+          await EmailNotifications.compileTemplate(lastWeekMember, currentWeekMember),
+          ['Vision report for ', lastWeekMember.getName(), ' | Week #', intervals[1].getWeekNumber()].join('')
+      ).sendEmail()
     }
   };
 
-  static async sendEmailToMember (lastWeekReport, currentWeekReport) {
+  static async compileTemplate(lastWeekMember, currentWeekMember) {
     let compiledTemplate = pug.compileFile('views/emails/member-notification.pug');
-
-    compiledTemplate = compiledTemplate({
-      lastWeekReport,
-      currentWeekReport,
+    return compiledTemplate({
+      lastWeekReport: lastWeekMember,
+      currentWeekReport: currentWeekMember,
       _: require('lodash')
     });
-
-    await (new Mailer(lastWeekReport.getEmail(), compiledTemplate)).sendEmail()
   };
+
 }
 
 module.exports.EmailNotifications = EmailNotifications;

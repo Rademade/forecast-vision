@@ -5,6 +5,7 @@ const MAILGUN_FROM = process.env.MAILGUN_FROM;
 const Mailgun = require('mailgun-js');
 
 class Mailer {
+
   constructor (emailTo, template, subject) {
     this.emailTo = emailTo;
     this.template = template;
