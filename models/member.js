@@ -45,14 +45,15 @@ _self.getByTogglUser = (togglMember) => {
     });
 };
 
-/**
- * @desc get all users from DB
- */
-_self.getUserList = async () => {
-    const userList = await mongoose.model('Member').find({})
 
-    return userList
-}
+/**
+ * @returns {Promise<*>}
+ */
+_self.getMembersForHolidaysSync = async () => {
+    return await mongoose.model('Member').find({
+        peopleHRId: {$exists: true}
+    });
+};
 
 /**
  * @param togglMember

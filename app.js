@@ -22,10 +22,5 @@ program
     .parse(process.argv);
 
 if (program.start) startServer();
-if (program.sendReport) {
-    new EmailNotifications().reportNotification()
-}
-
-if (program.collectHolidays) {
-    new PeopleHRMigration().updateHolidaysAndAbsence()
-}
+if (program.sendReport) new EmailNotifications().reportNotification();
+if (program.collectHolidays) new PeopleHRMigration().updateHolidaysAndAbsence();

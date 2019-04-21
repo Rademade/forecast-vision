@@ -10,31 +10,28 @@ class PeopleHRMember {
    * @param endDdate: Date
    * @param memberDocument: MemberModel
    */
-  constructor(startDate, endDdate, memberDocument) {
+  constructor(startDate, endDdate, peopleHRId) {
     this.startDate = startDate;
     this.endDdate = endDdate;
-    this.memberDocument = memberDocument;
+    this.peopleHRId = peopleHRId;
     this.holidayData = null;
     this.abscenceData = null
   }
 
-  getMemberForecastId () {
-    return this.memberDocument.forecastId
-  }
-
+  // TODO check self Absence leaves. Marked as other events
   async fetchAbsenceData () {
     try {
       let abscenceData = await axios.post('https://api.peoplehr.net/Absence', {
         APIKey: APIKey,
         Action: 'GetAbsenceDetail',
-        EmployeeId: this.memberDocument.peopleHRId,
+        EmployeeId: this.peopleHRId,
         StartDate: moment(this.startDate).format('YYYY-MM-DD'),
         EndDate: moment(this.endDdate).format('YYYY-MM-DD')
-      })
-
+      });
       return abscenceData.data.Result;
     } catch (error) {
-      console.log(error)
+      console.log(error);
+      return [];
     }
   }
 
@@ -44,36 +41,29 @@ class PeopleHRMember {
       let holidayData = await axios.post('https://api.peoplehr.net/Holiday', {
         APIKey: APIKey,
         Action: 'GetHolidayDetail',
-        EmployeeId: this.memberDocument.peopleHRId,
+        EmployeeId: this.peopleHRId,
         StartDate: moment(this.startDate).format('YYYY-MM-DD'),
         EndDate: moment(this.endDdate).format('YYYY-MM-DD')
       });
-
       return holidayData.data.Result
     } catch (error) {
-      console.log(error)
+      console.log(error);
+      return [];
     }
   }
 
   async getHolidaysDays () {
-    if (this.holidayData) {
-      return this.holidayData
-    } else {
-      this.holidayData = await this.fetchHolidayData()
-
-      return this.holidayData
-    }
+    if (this.holidayData) return this.holidayData;
+    this.holidayData = await this.fetchHolidayData();
+    return this.holidayData
   }
 
   async getAbsenceDays () {
-    if (this.abscenceData) {
-      return this.abscenceData
-    } else {
-      this.abscenceData = await this.fetchAbsenceData()
-
-      return this.abscenceData
-    }
+    if (this.abscenceData) return this.abscenceData;
+    this.abscenceData = await this.fetchAbsenceData();
+    return this.abscenceData;
   }
+
 }
 
-module.exports.PeopleHRMember = PeopleHRMember
+module.exports.PeopleHRMember = PeopleHRMember;
