@@ -1,5 +1,7 @@
 const moment = require('moment');
 
+const _ = require('lodash');
+
 const { ReportData } = require('./report-data');
 
 
@@ -41,31 +43,33 @@ class ReportDataBuilder {
      */
 
     async getReport() {
-        return new Promise((resolve, reject) => {
-            Promise
-                .all([this.getReportMemberList(), this.getReportProjectList()])
-                .then((args) => {
-                    let report = new ReportData(this.startDate, this.endDate, args[0], args[1], this.allocationReport);
-                    resolve( report );
-                }).catch((e) => {
-                    console.log(e);
-                });
-        });
+        const reportMemberList = await this.getReportMemberList();
+        const reportProjectList = await this.getReportProjectList();
+
+        return new ReportData(this.startDate, this.endDate, reportMemberList, reportProjectList, this.allocationReport);
     }
 
 
 
     /**
+     * @Desc 1 - collect toggle reports
+     *       2 - collect forecast reports
+     *       3 - merge reportMembers
+     *       4 - setMatchedAllcoations
+     *       5 - return and enjoy
      * @return {Promise<ReportMembersList>}
      */
     async getReportMemberList() {
-        let membersList = new ReportMembersList();
+        let mergedListClass = new ReportMembersList();
+        let togglMemberList = new ReportMembersList();
+        let forecastMemberList = new ReportMembersList();
+        const matchedAllocations = this.allocationReport.getMatchedAllocation(this.range);
 
-        //Build members from toggl side
         for (let togglUser of this.togglReport.getUsersList().getUsers()) {
             let memberDocument = await Member.getByTogglUser(togglUser);
             let member = new ReportMember(memberDocument.name, '', 0, togglUser, memberDocument);
-            membersList.addMember(member);
+
+            togglMemberList.addMember(member);
         }
 
         for (let forecastMember of this.forecastMembers) {
@@ -77,17 +81,25 @@ class ReportDataBuilder {
               TogglReportUser.null(),
               memberDocument);
 
-            membersList.addMember(member);
+            forecastMemberList.addMember(member);
         }
 
-        // Add allocations
-        for (let matchedItem of this.allocationReport.getMatchedAllocation(this.range)) {
-            membersList.addMatchedAllocationItem( matchedItem );
+        for (let matchedItem of matchedAllocations) {
+            forecastMemberList.addMatchedAllocationItem( matchedItem );
         }
 
-        membersList.groupSimilar();
+        /**
+         * @desc merging is necessary only if toggleReport is presenting, forecast is always available
+         */
 
-        return membersList;
+        if (togglMemberList.getAllMembers().length > 0) {
+            mergedListClass.mergeMemberList(togglMemberList, forecastMemberList);
+
+            return mergedListClass;
+
+        } else {
+            return forecastMemberList;
+        }
     }
 
     /**

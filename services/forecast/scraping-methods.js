@@ -13,18 +13,21 @@ class ForecastScrapingMethods {
     }
 
     getMembers() {
-        return this.client.query({
-            query: membersQuery
-        }).catch(function(error){
-            console.error(error)
-        }).then(function (data) {
-            return data.data.viewer.company.persons.edges.map(function(item){
-                // console.log(item)
-                return new ForecastReportMember(item.node);
-            }).filter(function(reportMember){
-                return reportMember.isActive();
+        return new Promise((resolve, reject) => {
+            return this.client.query({
+                query: membersQuery
+            }).catch(function(error){
+                console.error(error)
+            }).then(function (data) {
+                let outputData = data.data.viewer.company.persons.edges.map(function(item){
+                    return new ForecastReportMember(item.node);
+                }).filter(function(reportMember){
+                    return reportMember.isActive();
+                });
+
+                resolve(outputData)
             });
-        });
+        })
     }
 
     /**

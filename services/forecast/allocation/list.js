@@ -17,6 +17,8 @@ class ForecastAllocationList {
         this.allocations = allocationData.data.viewer.company.allocations.edges.map((allocation) => {
             return new ForecastAllocationItem(allocation.node);
         }).filter((allocationItem) => {
+            if (allocationItem.allocationData.project === null) return false
+
             if (filters.length === 0)  return true;
             return (
                 (!filters.projectId || (filters.projectId && filters.projectId === allocationItem.getProjectId()))

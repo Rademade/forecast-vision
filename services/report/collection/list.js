@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 class CollectionList {
 
     constructor() {
@@ -15,11 +17,11 @@ class CollectionList {
             this.items[ slug ] = item;
         } else {
             // TODO add validation for multi addItem call
+            //FIXME groupwith
             this.items[ slug ].groupWith( item );
         }
         return this.items[ slug ];
     }
-
 
     /**
      * Group similar members in this collection

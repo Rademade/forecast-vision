@@ -38,59 +38,48 @@ class ReportLoader {
      * @param {moment} loadDate
      * @param {Function} loadedWeeksCallback
      */
-    loadIntervalData(loadDate, loadedWeeksCallback) {
-        const startDate  = loadDate.clone();
-        const endDate = this.getIntervalEndDate(startDate);
+     async loadIntervalData(loadDate) {
+      const startDate  = loadDate.clone();
+      const endDate = this.getIntervalEndDate(startDate);
 
-        // If last date load break out
-        if (endDate > this.dateEnd) {
-            loadedWeeksCallback();
-            return ;
-        }
+      // If last date load break out
+      if (endDate > this.dateEnd) {
+        return this.reports
+      }
 
+      let membersReport = await this.scrappingAPI.getMembers()
+      let togglReport = await this.togglLoader.getReport(startDate, endDate, {
+        projectId: this.getProjectTogglId()
+      });
+
+      let report = await new ReportDataBuilder(startDate, endDate, membersReport, this.allocationReport, togglReport).getReport()
+
+      this.reports.push(report);
+
+      return await this.loadIntervalData(endDate)
         // TODO. Store locally or cache. It's the same for all reports
-        this.scrappingAPI.getMembers().then((membersReport) => {
-            this.togglLoader.getReport(startDate, endDate, {
-                projectId: this.getProjectTogglId()
-            }, (togglReport) => {
-
-                (new ReportDataBuilder(startDate, endDate, membersReport, this.allocationReport, togglReport))
-                    .getReport()
-                    .then((report) => {
-                        this.reports.push(report);
-                        this.loadIntervalData(endDate, loadedWeeksCallback);
-                    });
-
-            });
-        });
     }
 
-    /**
-     * @param {Function} loadReadyCallback
-     */
-    startIntervalLoading(loadReadyCallback) {
-        this.loadIntervalData(this.dateStart, () => {
-            console.log('All intervals loaded. Count ' + this.reports.length);
-            loadReadyCallback(this.reports);
-        });
-    }
 
-    load(loadReadyCallback) {
+    async load() {
+      return new Promise((resolve, reject) => {
         this.apiLoader.ready((api) => {
-
-            // Init ForecastScrapingMethods API
-            this.scrappingAPI = api;
-
-            // TODO. Store locally or cache. It's the same for all reports
-            // Load Allocations
-            api.getScheduleAllocations().then((allocationData) => {
-                this.allocationReport = new ForecastAllocationList(allocationData, {
-                    projectId: this.getProjectForecastId()
-                });
-                this.startIntervalLoading(loadReadyCallback);
+          // Init ForecastScrapingMethods API
+          this.scrappingAPI = api;
+          // TODO. Store locally or cache. It's the same for all reports
+          // Load Allocations
+          api.getScheduleAllocations().then(async (allocationData) => {
+            this.allocationReport = new ForecastAllocationList(allocationData, {
+              projectId: this.getProjectForecastId()
             });
 
+            const reports = await this.loadIntervalData(this.dateStart);
+
+            resolve(reports)
+          });
+
         });
+      })
     }
 
 }

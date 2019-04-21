@@ -8,12 +8,13 @@ const MIN_HOURS = 1;
 const BENCH_MIN_HOURS = 8;
 
 class ReportMembersList extends CollectionList {
-
     /**
      * @param {ReportMember} member
      */
     addMember(member) {
-        return this.addItem(member);
+        let slug = member.getSlug();
+
+        this.items[slug] = member
     }
 
     /**
@@ -27,6 +28,26 @@ class ReportMembersList extends CollectionList {
         } else {
             console.log('Member ' + slug + ' not founded');
         }
+    }
+
+    mergeMemberList (firstList, secondList) {
+        let customMerge =((objValue, srcValue) => {
+            /**
+             * Find in second list member with same id and than merge tham
+             */
+            if (!objValue) return;
+            if (!srcValue) return;
+
+            let sameMember = _.find(secondList.getAllMembers(), member => member.memberDocument.id === objValue.memberDocument.id);
+
+            if (!sameMember) return srcValue;
+
+            objValue.groupWith(sameMember);
+
+            this.addMember(objValue)
+        });
+
+        _.mergeWith(firstList.getAllMembers(), secondList.getAllMembers(), customMerge);
     }
 
 

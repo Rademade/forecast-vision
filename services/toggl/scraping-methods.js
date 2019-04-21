@@ -23,38 +23,39 @@ class TogglScrapingMethods {
      * projectId – Toggl Project Id
      * @param {Object} opt
      */
-    getReport(startDate, endDate, opt, callback) {
-        // Pass empty report for feature dates. Don't spend request for load empty data
-        if (startDate > moment()) {
-            callback(new TogglReport(new TogglReportUserList()));
-            return ;
-        }
+    getReport(startDate, endDate, opt) {
+        return new Promise((resolve, reject) => {
+            // Pass empty report for feature dates. Don't spend request for load empty data
+            if (startDate > moment()) {
+                return resolve(new TogglReport(new TogglReportUserList()));
+            }
 
-        this.toggl.summaryReport({
-            workspace_id: WORKSPACE_ID,
-            since: startDate.format('YYYY-MM-DD'),
-            until: endDate.format('YYYY-MM-DD'),
-            grouping: 'users',
-            subgrouping: 'projects',
-            billable: 'yes',
-            project_ids: opt.projectId ? opt.projectId : null,
-        }, async (err, data) => {
-            // TODO return report raw data
-            let billableReports = data.data.map((togglUserData) => {
-                togglUserData.emptyProjects = [];
+            this.toggl.summaryReport({
+                workspace_id: WORKSPACE_ID,
+                since: startDate.format('YYYY-MM-DD'),
+                until: endDate.format('YYYY-MM-DD'),
+                grouping: 'users',
+                subgrouping: 'projects',
+                billable: 'yes',
+                project_ids: opt.projectId ? opt.projectId : null,
+            }, async (err, data) => {
+                // TODO return report raw data
+                let billableReports = data.data.map((togglUserData) => {
+                    togglUserData.emptyProjects = [];
 
-                return togglUserData
+                    return togglUserData
+                });
+
+                let reportsWithoutProject = await this.getEmptyProjectsReport(startDate, endDate, opt);
+
+                let mergedReports = this.mergeReports(billableReports, reportsWithoutProject);
+
+                mergedReports = new TogglReportUserList( mergedReports.map((togglUserData) => {
+                    return new TogglReportUser(togglUserData);
+                }) );
+
+                resolve( new TogglReport( mergedReports ) );
             });
-
-            let reportsWithoutProject = await this.getEmptyProjectsReport(startDate, endDate, opt);
-
-            let mergedReports = this.mergeReports(billableReports, reportsWithoutProject);
-
-            mergedReports = new TogglReportUserList( mergedReports.map((togglUserData) => {
-                return new TogglReportUser(togglUserData);
-            }) );
-
-            callback( new TogglReport( mergedReports ) );
         });
     }
 

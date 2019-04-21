@@ -99,18 +99,16 @@ class ReportMember extends CollectionItem {
     }
 
     getAvailableDuration() {
-        let leaveDays = this.getHolidaysDuration().add(this.getAbsenceDuration());
-
         if (!this.availableDuration) {
             let percent = this.memberDocument.actualUtilization / 100;
+            let minutes = this.getForecastAvailableDuration().clone().remove(this.getTotalLeaveDaysDuration()).getMinutes();
 
-            this.availableDuration = new Duration( this.getForecastAvailableDuration().getMinutes() * percent );
-            if (leaveDays.getMinutes() > 0) {
-                this.availableDuration = this.availableDuration.remove(leaveDays)
-            }
+            this.availableDuration = new Duration( minutes * percent );
+
+            return this.availableDuration;
+        } else {
+            return this.availableDuration;
         }
-
-        return this.availableDuration;
     }
 
     getScheduledDuration() {
@@ -128,7 +126,7 @@ class ReportMember extends CollectionItem {
     getAbsenceDuration () {
         let absenceData = this.getMatchedAllocationsItems().filter(item => {
             return item.allocation.allocationData.project.companyProjectId === FORECAST_ABSENCE_PROJECT_ID
-        })
+        });
 
         if (absenceData.length > 0) {
             return absenceData.reduce((duration, item) => {
@@ -142,7 +140,7 @@ class ReportMember extends CollectionItem {
     getHolidaysDuration() {
         let holidayData = this.getMatchedAllocationsItems().filter(item => {
             return item.allocation.allocationData.project.companyProjectId === FORECAST_HOLIDAY_PROJECT_ID
-        })
+        });
 
         if (holidayData.length > 0) {
             return holidayData.reduce((duration, item) => {
@@ -153,11 +151,26 @@ class ReportMember extends CollectionItem {
         }
     }
 
+    getTotalLeaveDaysDuration () {
+        return this.getHolidaysDuration().add(this.getAbsenceDuration());
+    }
+
+    getUselessProjectsDuration () {
+        let uselessData = this.getMatchedAllocationsItems().filter(item => {
+            return item.getAllocation().isUsefulProject()
+        });
+
+        if (uselessData.length > 0) {
+            return uselessData.reduce((duration, item) => {
+                return duration.add( item.getDuration() );
+            }, new Duration());
+        } else {
+            return new Duration()
+        }
+    }
+
     getBenchDuration() {
-        //FIXME getAvailableDuration - getScheduledDuration + useLessProject()
-        return this.getMatchedAllocationsItems().reduce((duration, item) => {
-            return duration.add( item.getAllocation().isBenchProject() ? item.getDuration() : new Duration());
-        }, this.getUnplannedDuration().clone());
+        return this.getAvailableDuration().clone().remove(this.getBillableDuration())
     }
 
     getUnplannedDuration() {
@@ -214,13 +227,12 @@ class ReportMember extends CollectionItem {
     }
 
     groupWith(member) {
-        this.userName = this.getName() || member.getName();
-        this.roleName = this.getDepartmentName() || member.getDepartmentName();
-        this.getAvailableDuration().add( member.getAvailableDuration() );
-        this.getTogglReport().groupWith( member.getTogglReport() );
+        this.forecastAvailableDuration = member.getForecastAvailableDuration();
 
-        // TODO add unique validation
-        this.matchedAllocations = this.getMatchedAllocationsItems().concat( member.getMatchedAllocationsItems() );
+        if (this.getDepartmentName().length <= 0)   this.roleName = member.getDepartmentName();
+
+        this.matchedAllocations =  member.getMatchedAllocationsItems();
+        this.userName = this.getName() || member.getName();
     }
 
 }
