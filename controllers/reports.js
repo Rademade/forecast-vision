@@ -31,7 +31,7 @@ class ReportsController {
         let dateTo = moment(req.query.dateTo, MOMENT_FORMAT);
 
         if (dateTo.isValid() && dateTo.isValid()) {
-            const monthReport = ReportLoaderFactory.getMonthReport(dateFrom, dateTo);
+            let monthReport = await ReportLoaderFactory.getMonthReport(dateFrom, dateTo);
 
             res.render('reports/matrix', {
                 report: monthReport[0],
@@ -60,7 +60,7 @@ class ReportsController {
                 }
 
                 let project = await Project.findById(req.query.projectId);
-                const factReports = ReportLoaderFactory.getCustomFactReport(dateFrom, dateTo, project);
+                let factReports = await ReportLoaderFactory.getCustomFactReport(dateFrom, dateTo, project);
 
                 resolve({
                     project: project,
