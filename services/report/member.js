@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const { Duration } = require('../duration');
 const { CollectionItem } = require('./collection/item');
 
@@ -5,6 +7,7 @@ const NORMAL_BILLABLE_PERCENTAGE = 80;
 const GODD_ACCURACY = 95;
 
 const FORECAST_HOLIDAY_PROJECT_ID = 55;
+const FORECAST_VACATION_PROJECT_ID = 21;
 const FORECAST_ABSENCE_PROJECT_ID = 105;
 
 class ReportMember extends CollectionItem {
@@ -89,7 +92,7 @@ class ReportMember extends CollectionItem {
     }
 
     hasDisplayHours() {
-        return this.getScheduledDuration().getMinutes() > 0 ||
+        return this.getPlannedDuration().getMinutes() > 0 ||
             this.getFactBillableDuration().getMinutes() > 0 ||
             this.getBillableDuration().getMinutes() > 0;
     }
@@ -99,22 +102,14 @@ class ReportMember extends CollectionItem {
     }
 
     getAvailableDuration() {
-        if (!this.availableDuration) {
-            let percent = this.memberDocument.actualUtilization / 100;
-            let minutes = this.getForecastAvailableDuration().clone().remove(this.getTotalLeaveDaysDuration()).getMinutes();
+        if (this.availableDuration) return this.availableDuration;
 
-            this.availableDuration = new Duration( minutes * percent );
+        let percent = this.memberDocument.actualUtilization / 100;
+        let minutes = this.getForecastAvailableDuration().clone().remove(this.getTotalLeaveDaysDuration()).getMinutes();
 
-            return this.availableDuration;
-        } else {
-            return this.availableDuration;
-        }
-    }
+        this.availableDuration = new Duration( minutes * percent );
 
-    getScheduledDuration() {
-        return this.getMatchedAllocationsItems().reduce((duration, item) => {
-            return duration.add( item.getDuration() );
-        }, new Duration());
+        return this.availableDuration;
     }
 
     getBillableDuration() {
@@ -123,58 +118,65 @@ class ReportMember extends CollectionItem {
         }, new Duration());
     }
 
-    getAbsenceDuration () {
-        let absenceData = this.getMatchedAllocationsItems().filter(item => {
-            return item.allocation.allocationData.project.companyProjectId === FORECAST_ABSENCE_PROJECT_ID
-        });
+    getUnBillableDuration() {
+        let unBillableDuration = this.getMatchedAllocationsItems().reduce((duration, item) => {
+            return duration.add( !item.getAllocation().isBillable() ? item.getDuration() : new Duration());
+        }, new Duration());
 
-        if (absenceData.length > 0) {
-            return absenceData.reduce((duration, item) => {
-                return duration.add( item.getDuration() );
-            }, new Duration());
-        } else {
-            return new Duration()
-        }
-    }
+        unBillableDuration.remove( this.getTotalLeaveDaysDuration() );
 
-    getHolidaysDuration() {
-        let holidayData = this.getMatchedAllocationsItems().filter(item => {
-            return item.allocation.allocationData.project.companyProjectId === FORECAST_HOLIDAY_PROJECT_ID
-        });
-
-        if (holidayData.length > 0) {
-            return holidayData.reduce((duration, item) => {
-                return duration.add( item.getDuration() );
-            }, new Duration());
-        } else {
-            return new Duration()
-        }
+        return unBillableDuration;
     }
 
     getTotalLeaveDaysDuration () {
-        return this.getHolidaysDuration().add(this.getAbsenceDuration());
+        return this.getHolidaysDuration().clone().add(this.getAbsenceDuration());
     }
 
-    getUselessProjectsDuration () {
-        let uselessData = this.getMatchedAllocationsItems().filter(item => {
-            return item.getAllocation().isUsefulProject()
-        });
+    /**
+     * TODO add Unit tests
+     *
+     * Test 1
+     * getAvailableDuration() + getTotalLeaveDaysDuration() ==
+     * getBillableDuration() + getUnBillableDuration() + this.getUnplannedDuration() + getTotalLeaveDaysDuration();
+     *
+     * Test 2
+     * getForecastAvailableDuration() == getAvailableDuration() + getUnplannedDuration()
+     *
+     */
 
-        if (uselessData.length > 0) {
-            return uselessData.reduce((duration, item) => {
-                return duration.add( item.getDuration() );
-            }, new Duration());
-        } else {
-            return new Duration()
-        }
+    getAbsenceDuration () {
+        let duration = this.getMatchedAllocationsItems().filter(item => {
+            return item.allocation.allocationData.project.companyProjectId === FORECAST_ABSENCE_PROJECT_ID
+        }).reduce((duration, item) => {
+            return duration.add( item.getDuration() );
+        }, new Duration());
+
+        return duration ? duration : new Duration();
+    }
+
+    getHolidaysDuration() {
+        let duration = this.getMatchedAllocationsItems().filter(item => {
+            return _.includes(
+                [FORECAST_HOLIDAY_PROJECT_ID, FORECAST_VACATION_PROJECT_ID],
+                item.allocation.allocationData.project.companyProjectId
+            );
+        }).reduce((duration, item) => {
+            return duration.add( item.getDuration() );
+        }, new Duration());
+
+        return duration ? duration : new Duration();
     }
 
     getBenchDuration() {
-        return this.getAvailableDuration().clone().remove(this.getBillableDuration())
+        return this.getUnBillableDuration().clone().add( this.getUnplannedDuration() );
+    }
+
+    getPlannedDuration() {
+        return this.getBillableDuration().clone().add( this.getUnBillableDuration() );
     }
 
     getUnplannedDuration() {
-        return this.getAvailableDuration().clone().remove( this.getScheduledDuration(), {min: 0} );
+        return this.getAvailableDuration().clone().remove( this.getPlannedDuration() );
     }
 
     getFactBillableDuration() {
@@ -233,6 +235,8 @@ class ReportMember extends CollectionItem {
 
         this.matchedAllocations =  member.getMatchedAllocationsItems();
         this.userName = this.getName() || member.getName();
+
+        return this;
     }
 
 }

@@ -1,6 +1,5 @@
 const { ForecastAllocationItem } = require('./item');
 const { ForecastAllocationItemMatch } = require('./item-match');
-const { Duration } = require('../../duration');
 
 class ForecastAllocationList {
 
@@ -17,33 +16,13 @@ class ForecastAllocationList {
         this.allocations = allocationData.data.viewer.company.allocations.edges.map((allocation) => {
             return new ForecastAllocationItem(allocation.node);
         }).filter((allocationItem) => {
-            if (allocationItem.allocationData.project === null) return false
+            if (allocationItem.allocationData.project === null) return false;
 
             if (filters.length === 0)  return true;
             return (
                 (!filters.projectId || (filters.projectId && filters.projectId === allocationItem.getProjectId()))
             )
         });
-    }
-
-    getInternalProcessDuration(rangeDates) {
-        let duration = new Duration();
-        for (let matchedItem of this.getMatchedAllocation(rangeDates)) {
-            if (!matchedItem.getAllocation().isBillable()) {
-                duration.add( matchedItem.getDuration() );
-            }
-        }
-        return duration.remove( this.getVacationDurations(rangeDates) );
-    }
-
-    getVacationDurations(rangeDates) {
-        let duration = new Duration();
-        for (let matchedItem of this.getMatchedAllocation(rangeDates)) {
-            if (matchedItem.getAllocation().isVacation()) {
-                duration.add( matchedItem.getDuration() );
-            }
-        }
-        return duration;
     }
 
     /**

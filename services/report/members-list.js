@@ -1,13 +1,18 @@
 const _ = require('lodash');
 
 const { ReportMember } = require('./member');
-const { CollectionList } = require('./collection/list');
+const { MembersCircle } = require('./collection/members-circle');
 const { Duration } = require('../duration');
 
 const MIN_HOURS = 1;
 const BENCH_MIN_HOURS = 8;
 
-class ReportMembersList extends CollectionList {
+class ReportMembersList extends MembersCircle {
+
+    constructor() {
+        super('Member list report');
+    }
+
     /**
      * @param {ReportMember} member
      */
@@ -30,24 +35,30 @@ class ReportMembersList extends CollectionList {
         }
     }
 
+    /**
+     * @param {ReportMembersList} firstList
+     * @param {ReportMembersList} secondList
+     * @returns {ReportMembersList}
+     */
     mergeMemberList (firstList, secondList) {
-        let customMerge =((objValue, srcValue) => {
+
+        let customMerge =((objMember, scrMember) => {
             /**
-             * Find in second list member with same id and than merge tham
+             * Find in second list member with same id and than merge them
              */
-            if (!objValue) return;
-            if (!srcValue) return;
+            if (!objMember) return;
+            if (!scrMember) return;
 
-            let sameMember = _.find(secondList.getAllMembers(), member => member.memberDocument.id === objValue.memberDocument.id);
+            let sameMember = _.find(secondList.getAllMembers(), member => member.memberDocument.id === objMember.memberDocument.id);
 
-            if (!sameMember) return srcValue;
+            if (!sameMember) return scrMember;
 
-            objValue.groupWith(sameMember);
-
-            this.addMember(objValue)
+            this.addMember( objMember.groupWith(sameMember) )
         });
 
         _.mergeWith(firstList.getAllMembers(), secondList.getAllMembers(), customMerge);
+
+        return this;
     }
 
 
@@ -80,18 +91,6 @@ class ReportMembersList extends CollectionList {
         });
     }
 
-    getPlannedDuration() {
-        return this.getAllMembers().reduce((a, b) => {
-            return a.add( b.getScheduledDuration() );
-        }, new Duration() );
-    }
-
-    getBillableDuration() {
-        return this.getAllMembers().reduce((a, b) => {
-            return a.add( b.getBillableDuration() );
-        }, new Duration());
-    }
-
     getUnplannedDuration() {
         return this.getUnplannedMembers().reduce((a, b) => {
             return a.add( b.getUnplannedDuration() );
@@ -104,14 +103,10 @@ class ReportMembersList extends CollectionList {
         }, new Duration());
     }
 
-    getFactBillableDuration() {
-        return this.getAllMembers().reduce((a, b) => {
-            return a.add( b.getFactBillableDuration() );
-        }, new Duration() );
-    }
-
-    getPlanningAccuracyPercent() {
-        return this.getFactBillableDuration().getRatio( this.getBillableDuration() );
+    getVacationDuration() {
+        return this.getBenchMembers().reduce((a, b) => {
+            return a.add( b.getTotalLeaveDaysDuration() );
+        }, new Duration());
     }
 
 }
