@@ -65,6 +65,10 @@ class ForecastAllocationItem {
         ].join(' ').trim();
     }
 
+    getMemberId() {
+        return this.allocationData.person.id;
+    }
+
     getProjectName() {
         return this.allocationData.project.name.trim();
     }

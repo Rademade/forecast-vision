@@ -73,6 +73,10 @@ class ReportMember extends CollectionItem {
         return this.memberDocument.togglId;
     }
 
+    getForecastId() {
+        return this.memberDocument.forecastId;
+    }
+
     /**
      * @param {ForecastAllocationItemMatch} matchedItem
      */

@@ -27,6 +27,8 @@ const FORECAST_HOLIDAY_PROJECT_ID = "UHJvamVjdFR5cGU6MTMzNDM=";
 const FORECAST_ABSENCE_PROJECT_ID = "UHJvamVjdFR5cGU6NDQ4MzM=";
 
 class PeopleHRMigration {
+
+  // TODO split method
   async updateHolidaysAndAbsence () {
     const CHUNK_SIZE = 25;
     const SLEEP_TIME = 60;

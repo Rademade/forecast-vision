@@ -26,13 +26,33 @@ class ReportMembersList extends MembersCircle {
      * @param {ForecastAllocationItemMatch} matchedItem
      */
     addMatchedAllocationItem(matchedItem) {
+
+        // Variant 1. Search by name
+
         let slug = matchedItem.getAllocation().getMemberName();
         let member = this.items[ slug ];
+
         if (member) {
             member.addMatchedAllocationItem( matchedItem );
-        } else {
-            console.log('Member ' + slug + ' not founded');
+            return true;
         }
+
+
+        // Variant 2. Search by forecastId
+
+        member =_.find(this.getAllMembers(), (member) => {
+            return member.getForecastId() === matchedItem.getAllocation().getMemberId();
+        });
+
+        if (member) {
+            console.log(member);
+            member.addMatchedAllocationItem( matchedItem );
+            return true;
+        }
+
+        // Variant 3
+        console.log(slug + ' member not found. Please check member list and Forecast');
+        return false;
     }
 
     /**
