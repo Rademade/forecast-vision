@@ -44,29 +44,24 @@ class ReportData {
         return this.getWeekNumber() === (moment().startOf('week').isoWeek() + 1);
     }
 
-
     getTotalCapacityDuration() {
-        // This logic support over-planing hours
-        return this.getPlannedDuration().clone().add( this.getUnplannedDuration() );
+        return this.getMembersList().getAvailableDuration();
     }
 
     getPlannedDuration() {
-        if (!this.plannedDuration) {
-            this.plannedDuration = this.getMembersList().getPlannedDuration();
-        }
-        return this.plannedDuration;
+        return this.getMembersList().getPlannedDuration();
     }
 
     getBillableDuration() {
         return this.getMembersList().getBillableDuration();
     }
 
-    getInternalProcessDuration() {
-        return this.allocations.getInternalProcessDuration(this.getRange());
-    }
-
+    /**
+     * TODO rename getTotalLeaveDaysDuration
+     * @returns {*}
+     */
     getVacationDuration() {
-        return this.allocations.getVacationDurations(this.getRange());
+        return this.getMembersList().getVacationDuration();
     }
 
     getUnplannedDuration() {
@@ -118,10 +113,6 @@ class ReportData {
 
     getVacationPercent() {
         return this.getVacationDuration().getRatio( this.getTotalCapacityDuration() );
-    }
-
-    getInternalProcessPercent() {
-        return this.getInternalProcessDuration().getRatio( this.getTotalCapacityDuration() );
     }
 
     getUnplannedPercent() {

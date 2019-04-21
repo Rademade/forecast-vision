@@ -8,6 +8,7 @@ const FORECAST_HOLIDAY_PROJECT_ID = "UHJvamVjdFR5cGU6MTMzNDM=";
 const FORECAST_ABSENCE_PROJECT_ID = "UHJvamVjdFR5cGU6NDQ4MzM=";
 
 class LeaveDayItem {
+
   static async updateLeaveDay (leaveDay, projectID, forecastMemberId) {
     try {
       let leaveDayObject = new LeaveDay({

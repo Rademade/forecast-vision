@@ -1,8 +1,10 @@
 const { Duration } = require('../../duration');
+const { CollectionList } = require('./list');
 
-class MembersCircle {
+class MembersCircle extends CollectionList {
 
     constructor(name) {
+        super();
         this.name = name;
         this.members = [];
     }
@@ -25,17 +27,17 @@ class MembersCircle {
 
     getAvailableDuration() {
         if (!this.avaliableHours) {
-            this.avaliableHours = this.members.reduce((duration, member) => {
+            this.avaliableHours = this.getAllMembers().reduce((duration, member) => {
                 return duration.add( member.getAvailableDuration() );
             }, new Duration());
         }
         return this.avaliableHours;
     }
 
-    getScheduledDuration() {
+    getPlannedDuration() {
         if (!this.loadHours) {
-            this.loadHours = this.members.reduce((duration, member) => {
-                return duration.add( member.getScheduledDuration() );
+            this.loadHours = this.getAllMembers().reduce((duration, member) => {
+                return duration.add( member.getPlannedDuration() );
             }, new Duration());
         }
         return this.loadHours;
@@ -43,7 +45,7 @@ class MembersCircle {
 
     getBillableDuration() {
         if (!this.billableDuration) {
-            this.billableDuration = this.members.reduce((duration, member) => {
+            this.billableDuration = this.getAllMembers().reduce((duration, member) => {
                 return duration.add( member.getBillableDuration() );
             }, new Duration());
         }
@@ -52,7 +54,7 @@ class MembersCircle {
 
     getFactBillableDuration() {
         if (!this.factBillableDuration) {
-            this.factBillableDuration = this.members.reduce((duration, member) => {
+            this.factBillableDuration = this.getAllMembers().reduce((duration, member) => {
                 return duration.add( member.getFactBillableDuration() );
             }, new Duration());
         }

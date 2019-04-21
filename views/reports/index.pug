@@ -21,7 +21,7 @@ block table_body
                         ul
                             each department in weekData.getDepartmentsList()
                                 li(
-                                    title='Department capacity: ' + department.getScheduledDuration() + 'h. / ' + department.getAvailableDuration() + 'h.'
+                                    title='Department capacity: ' + department.getPlannedDuration() + 'h. / ' + department.getAvailableDuration() + 'h.'
                                 )
                                     span #{department.getName()}
                                     span –

@@ -1,5 +1,4 @@
 const moment = require('moment');
-
 const _ = require('lodash');
 
 const { ReportData } = require('./report-data');
@@ -63,34 +62,38 @@ class ReportDataBuilder {
         let mergedListClass = new ReportMembersList();
         let togglMemberList = new ReportMembersList();
         let forecastMemberList = new ReportMembersList();
-        const matchedAllocations = this.allocationReport.getMatchedAllocation(this.range);
 
         for (let togglUser of this.togglReport.getUsersList().getUsers()) {
             let memberDocument = await Member.getByTogglUser(togglUser);
-            let member = new ReportMember(memberDocument.name, '', 0, togglUser, memberDocument);
-
-            togglMemberList.addMember(member);
+            togglMemberList.addMember(new ReportMember(
+                memberDocument.name,
+                '',
+                0,
+                togglUser,
+                memberDocument
+            ));
         }
 
         for (let forecastMember of this.forecastMembers) {
             let memberDocument = await Member.getByForecastUser(forecastMember);
-            let member = new ReportMember(
-              memberDocument.name,
-              forecastMember.getRoleName(),
-              forecastMember.getAvailableMinutes(this.startDate, this.endDate),
-              TogglReportUser.null(),
-              memberDocument);
-
-            forecastMemberList.addMember(member);
+            forecastMemberList.addMember(new ReportMember(
+                memberDocument.name,
+                forecastMember.getRoleName(),
+                forecastMember.getAvailableMinutes(this.startDate, this.endDate),
+                TogglReportUser.null(),
+                memberDocument
+            ));
         }
 
-        for (let matchedItem of matchedAllocations) {
+        for (let matchedItem of this.allocationReport.getMatchedAllocation(this.range)) {
             forecastMemberList.addMatchedAllocationItem( matchedItem );
         }
 
         /**
          * @desc merging is necessary only if toggleReport is presenting, forecast is always available
          */
+
+        // TODO this logic it not clear. How to remove conditions for empty togglMemberList ?
 
         if (togglMemberList.getAllMembers().length > 0) {
             mergedListClass.mergeMemberList(togglMemberList, forecastMemberList);
