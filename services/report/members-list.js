@@ -18,8 +18,13 @@ class ReportMembersList extends MembersCircle {
      */
     addMember(member) {
         let slug = member.getSlug();
-
-        this.items[slug] = member
+        if (this.items[slug]) {
+            this.items[slug].groupWith( member );
+        } else {
+            // TODO add search by Mongo Document ID
+            // We can avoid Group Similar step
+            this.items[slug] = member;
+        }
     }
 
     /**
@@ -53,33 +58,6 @@ class ReportMembersList extends MembersCircle {
         console.log(slug + ' member not found. Please check member list and Forecast');
         return false;
     }
-
-    /**
-     * @param {ReportMembersList} firstList
-     * @param {ReportMembersList} secondList
-     * @returns {ReportMembersList}
-     */
-    mergeMemberList (firstList, secondList) {
-
-        let customMerge =((objMember, scrMember) => {
-            /**
-             * Find in second list member with same id and than merge them
-             */
-            if (!objMember) return;
-            if (!scrMember) return;
-
-            let sameMember = _.find(secondList.getAllMembers(), member => member.memberDocument.id === objMember.memberDocument.id);
-
-            if (!sameMember) return scrMember;
-
-            this.addMember( objMember.groupWith(sameMember) )
-        });
-
-        _.mergeWith(firstList.getAllMembers(), secondList.getAllMembers(), customMerge);
-
-        return this;
-    }
-
 
     /**
      * @return {ReportMember[]}

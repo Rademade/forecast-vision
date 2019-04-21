@@ -51,21 +51,14 @@ class ReportDataBuilder {
 
 
     /**
-     * @Desc 1 - collect toggle reports
-     *       2 - collect forecast reports
-     *       3 - merge reportMembers
-     *       4 - setMatchedAllcoations
-     *       5 - return and enjoy
      * @return {Promise<ReportMembersList>}
      */
     async getReportMemberList() {
-        let mergedListClass = new ReportMembersList();
-        let togglMemberList = new ReportMembersList();
-        let forecastMemberList = new ReportMembersList();
+        let membersCollection = new ReportMembersList();
 
         for (let togglUser of this.togglReport.getUsersList().getUsers()) {
             let memberDocument = await Member.getByTogglUser(togglUser);
-            togglMemberList.addMember(new ReportMember(
+            membersCollection.addMember(new ReportMember(
                 memberDocument.name,
                 '',
                 0,
@@ -76,7 +69,7 @@ class ReportDataBuilder {
 
         for (let forecastMember of this.forecastMembers) {
             let memberDocument = await Member.getByForecastUser(forecastMember);
-            forecastMemberList.addMember(new ReportMember(
+            membersCollection.addMember(new ReportMember(
                 memberDocument.name,
                 forecastMember.getRoleName(),
                 forecastMember.getAvailableMinutes(this.startDate, this.endDate),
@@ -86,20 +79,12 @@ class ReportDataBuilder {
         }
 
         for (let matchedItem of this.allocationReport.getMatchedAllocation(this.range)) {
-            forecastMemberList.addMatchedAllocationItem( matchedItem );
+            membersCollection.addMatchedAllocationItem( matchedItem );
         }
 
-        /**
-         * @desc merging is necessary only if toggleReport is presenting, forecast is always available
-         */
+        membersCollection.groupSimilar();
 
-        // TODO this logic it not clear. How to remove conditions for empty togglMemberList ?
-
-        if (togglMemberList.getAllMembers().length > 0) {
-            return mergedListClass.mergeMemberList(togglMemberList, forecastMemberList);
-        } else {
-            return forecastMemberList;
-        }
+        return membersCollection;
     }
 
     /**
