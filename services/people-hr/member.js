@@ -47,7 +47,7 @@ class PeopleHRMember {
         EmployeeId: this.memberDocument.peopleHRId,
         StartDate: moment(this.startDate).format('YYYY-MM-DD'),
         EndDate: moment(this.endDdate).format('YYYY-MM-DD')
-      })
+      });
 
       return holidayData.data.Result
     } catch (error) {

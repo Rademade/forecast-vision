@@ -1,4 +1,3 @@
-const { Duration } = require('../duration');
 const { MembersCircle } = require('./collection/members-circle');
 
 class ReportTeam extends MembersCircle {

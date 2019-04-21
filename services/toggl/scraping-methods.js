@@ -14,6 +14,12 @@ class TogglScrapingMethods {
         this.toggl = new TogglClient({apiToken: TOGGL_API_KEY});
     }
 
+    getProjects(callback) {
+        this.toggl.getWorkspaceProjects(WORKSPACE_ID, {}, (err, data) => {
+            callback( data );
+        });
+    }
+
     /**
      * Data loaded from Toggl API
      *
@@ -46,9 +52,9 @@ class TogglScrapingMethods {
                     return togglUserData
                 });
 
-                let reportsWithoutProject = await this.getEmptyProjectsReport(startDate, endDate, opt);
+                let reportsWithoutProject = await this._getEmptyProjectsReport(startDate, endDate, opt);
 
-                let mergedReports = this.mergeReports(billableReports, reportsWithoutProject);
+                let mergedReports = this._mergeReports(billableReports, reportsWithoutProject);
 
                 mergedReports = new TogglReportUserList( mergedReports.map((togglUserData) => {
                     return new TogglReportUser(togglUserData);
@@ -59,7 +65,7 @@ class TogglScrapingMethods {
         });
     }
 
-    getEmptyProjectsReport (startDate, endDate, opt) {
+    _getEmptyProjectsReport (startDate, endDate, opt) {
         return new Promise((resolve, reject) => {
             this.toggl.summaryReport({
                 workspace_id: WORKSPACE_ID,
@@ -85,28 +91,22 @@ class TogglScrapingMethods {
         })
     }
 
-    // TODO extract method with data mapping and initialize TogglReportUserList
+    // TODO extract method with data mapping and initialization TogglReportUserList
 
-    mergeReports (billableReports, emptyReports) {
+    _mergeReports (billableReports, emptyReports) {
         let mergedReports = billableReports;
 
         emptyReports.forEach(emptyReport => {
-            let excistedUser = billableReports.find(billableReport => billableReport.id === emptyReport.id)
+            let existingUser = billableReports.find(billableReport => billableReport.id === emptyReport.id);
 
-            if (excistedUser) {
-                excistedUser.emptyProjects = emptyReport.emptyProjects
+            if (existingUser) {
+                existingUser.emptyProjects = emptyReport.emptyProjects
             } else {
                 mergedReports.push(emptyReport)
             }
         });
 
         return mergedReports
-    }
-
-    getProjects(callback) {
-        this.toggl.getWorkspaceProjects(WORKSPACE_ID, {}, (err, data) => {
-            callback( data );
-        });
     }
 
 }

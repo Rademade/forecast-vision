@@ -39,43 +39,53 @@ class ReportLoader {
      * @param {Function} loadedWeeksCallback
      */
      async loadIntervalData(loadDate) {
-      const startDate  = loadDate.clone();
+      const startDate = loadDate.clone();
       const endDate = this.getIntervalEndDate(startDate);
 
       // If last date load break out
-      if (endDate > this.dateEnd) {
-        return this.reports
-      }
+      if (endDate > this.dateEnd) return ;
 
-      let membersReport = await this.scrappingAPI.getMembers()
+      // TODO load 1 time. Method is looped!
+      let membersReport = await this.scrappingAPI.getMembers();
+
       let togglReport = await this.togglLoader.getReport(startDate, endDate, {
         projectId: this.getProjectTogglId()
       });
 
-      let report = await new ReportDataBuilder(startDate, endDate, membersReport, this.allocationReport, togglReport).getReport()
+      let report = await new ReportDataBuilder(
+          startDate,
+          endDate,
+          membersReport,
+          this.allocationReport,
+          togglReport
+      ).getReport();
 
       this.reports.push(report);
 
-      return await this.loadIntervalData(endDate)
-        // TODO. Store locally or cache. It's the same for all reports
+      // TODO. Store locally or cache. It's the same for all reports
+      await this.loadIntervalData(endDate);
     }
 
 
     async load() {
       return new Promise((resolve, reject) => {
+
         this.apiLoader.ready((api) => {
+
           // Init ForecastScrapingMethods API
           this.scrappingAPI = api;
+
           // TODO. Store locally or cache. It's the same for all reports
           // Load Allocations
           api.getScheduleAllocations().then(async (allocationData) => {
+
             this.allocationReport = new ForecastAllocationList(allocationData, {
               projectId: this.getProjectForecastId()
             });
 
-            const reports = await this.loadIntervalData(this.dateStart);
+            await this.loadIntervalData(this.dateStart);
 
-            resolve(reports)
+            resolve(this.reports);
           });
 
         });

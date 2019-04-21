@@ -4,10 +4,10 @@ const { Duration } = require('../duration');
 const { CollectionItem } = require('./collection/item');
 
 const NORMAL_BILLABLE_PERCENTAGE = 80;
-const GODD_ACCURACY = 95;
+const GOOD_ACCURACY = 95;
 
-const FORECAST_HOLIDAY_PROJECT_ID = 55;
 const FORECAST_VACATION_PROJECT_ID = 21;
+const FORECAST_HOLIDAY_PROJECT_ID = 55;
 const FORECAST_ABSENCE_PROJECT_ID = 105;
 
 class ReportMember extends CollectionItem {
@@ -38,7 +38,7 @@ class ReportMember extends CollectionItem {
     }
 
     isGoodAccuracy () {
-        return this.getPlanningAccuracyPercent() > GODD_ACCURACY
+        return this.getPlanningAccuracyPercent() > GOOD_ACCURACY
     }
 
     isGoodFactReport () {

@@ -17,6 +17,7 @@ class LeaveDayItem {
         forecastProjectId: projectID
       });
 
+      // TODO extract few methods
       let leaveDayId = projectID === FORECAST_ABSENCE_PROJECT_ID ? leaveDayObject.item.AbsenceLeaveTxnId : leaveDayObject.item.AnnualLeaveTxnId
       let searchKey = projectID === FORECAST_ABSENCE_PROJECT_ID ? 'item.AbsenceLeaveTxnId' : 'item.AnnualLeaveTxnId';
 

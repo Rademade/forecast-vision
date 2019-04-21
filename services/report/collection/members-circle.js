@@ -13,10 +13,12 @@ class MembersCircle extends CollectionList {
      * @param {ReportMember} member
      */
     addMember(member) {
-        // console.log(member)
         this.members.push(member);
     }
 
+    /**
+     * @returns {ReportMember[]}
+     */
     getAllMembers() {
         return this.members;
     }

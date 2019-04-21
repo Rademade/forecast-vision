@@ -96,10 +96,7 @@ class ReportDataBuilder {
         // TODO this logic it not clear. How to remove conditions for empty togglMemberList ?
 
         if (togglMemberList.getAllMembers().length > 0) {
-            mergedListClass.mergeMemberList(togglMemberList, forecastMemberList);
-
-            return mergedListClass;
-
+            return mergedListClass.mergeMemberList(togglMemberList, forecastMemberList);
         } else {
             return forecastMemberList;
         }

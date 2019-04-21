@@ -1,6 +1,7 @@
 const _ = require('lodash');
 
 class AnalyzerMap {
+
   constructor (intervalReport) {
     this.intervalReport = intervalReport;
     this.outputChartData = null;

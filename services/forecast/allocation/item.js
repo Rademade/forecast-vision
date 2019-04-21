@@ -3,8 +3,6 @@ const { extendMoment } = require('moment-range');
 
 const moment = extendMoment(Moment);
 
-const PROJECT_ID_VACATION = 21;
-
 const PROJECT_ID_NEW_BIZ = 30;
 const PROJECT_ID_PROCESSES = 10;
 const PROJECT_ID_RECRUITMENT = 20;
@@ -93,10 +91,6 @@ class ForecastAllocationItem {
         return this.allocationData.project.billable;
     }
 
-    isVacation() {
-        return this.allocationData.project.companyProjectId === PROJECT_ID_VACATION
-    }
-
     isUsefulProject() {
         // TODO move to database
         return [
@@ -105,10 +99,6 @@ class ForecastAllocationItem {
             PROJECT_ID_RECRUITMENT,
             PROJECT_ID_TEAM_LEADING
         ].indexOf( this.allocationData.project.companyProjectId ) !== -1;
-    }
-
-    isBenchProject() {
-        return !(this.isBillable() || this.isUsefulProject() || this.isVacation());
     }
 
     hasWorkingSaturday() {

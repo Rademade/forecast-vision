@@ -45,7 +45,6 @@ class ReportMembersList extends MembersCircle {
         });
 
         if (member) {
-            console.log(member);
             member.addMatchedAllocationItem( matchedItem );
             return true;
         }
