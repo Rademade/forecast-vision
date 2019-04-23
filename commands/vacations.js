@@ -36,7 +36,7 @@ class PeopleHRMigration {
     const endDate = moment().add(5, 'weeks').startOf('week').subtract(1, 'day');
 
     let members = (await Member.getMembersForHolidaysSync()).map((member) => {
-      return new PeopleHRMember(startDate, endDate, member.peopleHRId);
+      return new PeopleHRMember(startDate, endDate, member.peopleHRId, member.forecastId);
     });
 
     let peopleHrMembers = _.chunk(members, CHUNK_SIZE);
@@ -44,21 +44,22 @@ class PeopleHRMigration {
     for (let chunckMembers of peopleHrMembers) {
       for (let peopleHrMember of chunckMembers) {
 
+        // TODO extract absence and holidays processing. 2 separated class and parent class
         const absenceDays = await peopleHrMember.getAbsenceDays();
         const holidaysDays = await peopleHrMember.getHolidaysDays();
 
         for (let absence of absenceDays) {
-          await LeaveDayItem.updateLeaveDay(absence, FORECAST_ABSENCE_PROJECT_ID, member.forecastId)
+          await LeaveDayItem.updateLeaveDay(absence, FORECAST_ABSENCE_PROJECT_ID, peopleHrMember.forecastId)
         }
 
         for (let vacation of holidaysDays) {
-          await LeaveDayItem.updateLeaveDay(vacation, FORECAST_HOLIDAY_PROJECT_ID, member.forecastId)
+          await LeaveDayItem.updateLeaveDay(vacation, FORECAST_HOLIDAY_PROJECT_ID, peopleHrMember.forecastId)
         }
 
         const leaveDays = await mongoose.model('LeaveDay').find({});
 
         for (let day of leaveDays) {
-          // TODO use pattern. Avoid if strategy
+          // TODO separate 2 classes
           let searchKey = day.forecastProjectId === FORECAST_ABSENCE_PROJECT_ID ? 'AbsenceLeaveTxnId' : 'AnnualLeaveTxnId';
           let isDeleted = [...absenceDays, ...holidaysDays].findIndex(fetchedItem => day.item[searchKey] === fetchedItem[searchKey]) < 0;
           let isSameMember = day.forecastMemberId === peopleHrMember.memberDocument.forecastId;
@@ -76,6 +77,7 @@ class PeopleHRMigration {
   };
 
   async updateMethodForecastAllocation () {
+    // TODO we load all leave days. Not just from date range
     const leaveDays = await mongoose.model('LeaveDay').find({});
     const apiLoader = new ForecastScrapingAuth();
 
@@ -83,14 +85,17 @@ class PeopleHRMigration {
       for (let day of leaveDays) {
 
         if (parseInt(day.status) === LeaveDayItem.NEW_STATUS) {
+          console.log('Create forecast allocation');
           await this.createForecastAllocation(api, day, csrfToken)
         }
 
         if (parseInt(day.status) === LeaveDayItem.SHOULD_UPDATE) {
+          console.log('Update forecast allocation');
           await this.updateForecastAllocation(api, day, csrfToken)
         }
 
         if (parseInt(day.status) === LeaveDayItem.SHOULD_DELETE) {
+          console.log('Deleted forecast allocation');
           await this.deleteForecastAllocation(api, day.forecastAllocationId, csrfToken);
           await day.remove()
         }

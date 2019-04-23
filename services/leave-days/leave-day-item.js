@@ -10,38 +10,34 @@ const FORECAST_ABSENCE_PROJECT_ID = "UHJvamVjdFR5cGU6NDQ4MzM=";
 class LeaveDayItem {
 
   static async updateLeaveDay (leaveDay, projectID, forecastMemberId) {
-    try {
-      let leaveDayObject = new LeaveDay({
-        item: leaveDay,
-        forecastMemberId: forecastMemberId,
-        forecastProjectId: projectID
-      });
+    let leaveDayObject = new LeaveDay({
+      item: leaveDay,
+      forecastMemberId: forecastMemberId,
+      forecastProjectId: projectID
+    });
 
-      // TODO extract few methods. Use pattern
-      let leaveDayId = projectID === FORECAST_ABSENCE_PROJECT_ID ? leaveDayObject.item.AbsenceLeaveTxnId : leaveDayObject.item.AnnualLeaveTxnId
-      let searchKey = projectID === FORECAST_ABSENCE_PROJECT_ID ? 'item.AbsenceLeaveTxnId' : 'item.AnnualLeaveTxnId';
+    // TODO separate 2 classes
+    let leaveDayId = projectID === FORECAST_ABSENCE_PROJECT_ID ? leaveDayObject.item.AbsenceLeaveTxnId : leaveDayObject.item.AnnualLeaveTxnId
+    let searchKey = projectID === FORECAST_ABSENCE_PROJECT_ID ? 'item.AbsenceLeaveTxnId' : 'item.AnnualLeaveTxnId';
 
-      let exists = await LeaveDay.find({[searchKey]: leaveDayId});
+    let exists = await LeaveDay.find({[searchKey]: leaveDayId});
 
-      if (exists.length < 1) {
-        leaveDayObject.set('status', this.NEW_STATUS);
+    if (exists.length < 1) {
+      leaveDayObject.set('status', this.NEW_STATUS);
 
-        return await leaveDayObject.save()
-      }
+      return await leaveDayObject.save()
+    }
 
-      if (exists.length > 0) {
-        leaveDayObject.status = this.SHOULD_UPDATE;
+    if (exists.length > 0) {
+      leaveDayObject.status = this.SHOULD_UPDATE;
 
-        let updated = await LeaveDay.findOneAndUpdate(
-          { [searchKey]: leaveDayId },
-          { status: this.SHOULD_UPDATE, item: leaveDay},
-          { new: true }
-        );
+      let updated = await LeaveDay.findOneAndUpdate(
+        { [searchKey]: leaveDayId },
+        { status: this.SHOULD_UPDATE, item: leaveDay},
+        { new: true }
+      );
 
-        return await updated.save()
-      }
-    } catch (error) {
-      console.log(error)
+      return await updated.save()
     }
   }
 
@@ -50,7 +46,7 @@ class LeaveDayItem {
       {['item.' + type]: peopleHRID},
       { status: this.SHOULD_DELETE},
       { new: true }
-      );
+    );
 
     return await deletedItem.save()
   }
