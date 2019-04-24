@@ -9,7 +9,11 @@ const leaveDaySchema = new mongoose.Schema({
     required: false
   },
   status: {
-    type: String,
+    type: Number,
+    required: false
+  },
+  type: {
+    type: Number,
     required: false
   }
 });
