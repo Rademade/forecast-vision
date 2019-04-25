@@ -14,6 +14,7 @@ block content
                 td Forecast id
                 td peopleHR id
                 td Actual utilization
+                td Email notification
                 td Actions
             each member in members
                 tr()
@@ -23,6 +24,7 @@ block content
                     td() #{member.forecastId}
                     td() #{member.peopleHRId}
                     td() #{member.actualUtilization} %
+                    td() #{member.hasEmail() ? '✔' : '✖'}
                     td()
                         a(href="/members/" + member.id) Edit
                         span(class="item-delete" data-url="/members/" + member.id) Delete
