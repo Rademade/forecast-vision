@@ -13,7 +13,6 @@ mongoose.connect([
 ].join(''), { useNewUrlParser: true });
 
 
-
 program
     .version('0.1.0')
     .option('--start', 'Start application')
