@@ -17,6 +17,4 @@ TeamSchema.methods.getMemberById = function(id) {
     return Member.findById(id);
 };
 
-const _self = TeamSchema.statics;
-
 module.exports = mongoose.model('Team', TeamSchema);

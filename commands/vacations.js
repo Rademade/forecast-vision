@@ -44,20 +44,19 @@ class PeopleHRMigration {
         const holidaysDays = await peopleHrMember.getHolidaysDays();
         const absenceDays = await peopleHrMember.getAbsenceDays();
 
+        await this.processAbsence(absenceDays,peopleHrMember);
+        await this.processDeleted(absenceDays, AbsenceItem, peopleHrMember);
 
-        if (peopleHrMember.peopleHRId === 'PW100') {
-          await this.processAbsence(absenceDays,peopleHrMember);
-          await this.processDeleted(absenceDays, AbsenceItem, peopleHrMember);
-
-          await this.processHolidays(holidaysDays, peopleHrMember);
-          await this.processDeleted(holidaysDays, HolidayItem, peopleHrMember);
-        }
+        await this.processHolidays(holidaysDays, peopleHrMember);
+        await this.processDeleted(holidaysDays, HolidayItem, peopleHrMember);
       }
 
       sleep.sleep(SLEEP_TIME)
     }
 
-    await this.updateMethodForecastAllocation()
+    await this.updateMethodForecastAllocation();
+
+    console.log('updateHolidaysAndAbsence completed');
   };
 
   async processHolidays (list, peopleHrMember) {
