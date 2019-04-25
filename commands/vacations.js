@@ -62,7 +62,7 @@ class PeopleHRMigration {
 
   async processHolidays (list, peopleHrMember) {
     for (let vacation of list) {
-      let leaveDayInstance = this._leaveDayItemBuilder(vacation, HolidayItem.PROJECT_ID, peopleHrMember.forecastId, HolidayItem.PROJECT_TYPE);
+      let leaveDayInstance =  new LeaveDayItem(vacation, HolidayItem.PROJECT_ID, peopleHrMember.forecastId, HolidayItem.PROJECT_TYPE);
 
       leaveDayInstance.setStrategy(HolidayItem)
 
@@ -72,7 +72,7 @@ class PeopleHRMigration {
 
   async processAbsence (list, peopleHrMember) {
     for (let absence of list) {
-      let leaveDayInstance = this._leaveDayItemBuilder(absence, AbsenceItem.PROJECT_ID, peopleHrMember.forecastId, AbsenceItem.PROJECT_TYPE);
+      let leaveDayInstance =  new LeaveDayItem(absence, AbsenceItem.PROJECT_ID, peopleHrMember.forecastId, AbsenceItem.PROJECT_TYPE);
 
       leaveDayInstance.setStrategy(AbsenceItem);
 
@@ -87,7 +87,7 @@ class PeopleHRMigration {
     });
 
     for (let day of leaveDays) {
-      let leaveDayInstance = this._leaveDayItemBuilder(day.item, strategy.PROJECT_ID, circleMemberId, strategy.PROJECT_TYPE);
+      let leaveDayInstance =  new LeaveDayItem(day.item, strategy.PROJECT_ID, circleMemberId, strategy.PROJECT_TYPE);
 
       leaveDayInstance.setStrategy(AbsenceItem);
 
@@ -122,14 +122,6 @@ class PeopleHRMigration {
       }
     })
   };
-
-  _leaveDayItemBuilder (leaveDay, projectID, forecastMemberId, type) {
-    return new LeaveDayItem(
-      leaveDay,
-      projectID,
-      forecastMemberId,
-      type)
-  }
 
   static _allocationBuilder(day, token, shouldUpdate) {
     let output = {
