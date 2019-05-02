@@ -36,7 +36,7 @@ class MemberClass {
                 .populate('team')
                 .then((document) => {
                     if (!document) {
-                        _self.createByTogglProject(togglMember).then((document) => { resolve(document) });
+                        this.createByTogglProject(togglMember).then((document) => { resolve(document) });
                     } else {
                         resolve(document);
                     }
@@ -83,7 +83,7 @@ class MemberClass {
                 .populate('team')
                 .then((document) => {
                     if (!document) {
-                        _self.createByForecastUser(forecastMember).then((document) => { resolve(document) });
+                        this.createByForecastUser(forecastMember).then((document) => { resolve(document) });
                     } else {
                         resolve(document);
                     }

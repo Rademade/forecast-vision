@@ -63,7 +63,7 @@ class PeopleHRMigration {
     for (let vacation of list) {
       let leaveDayInstance =  new LeaveDayItem(vacation, HolidayItem.PROJECT_ID, peopleHrMember.forecastId, HolidayItem.PROJECT_TYPE);
 
-      leaveDayInstance.setStrategy(HolidayItem)
+      leaveDayInstance.setStrategy(HolidayItem);
 
       await leaveDayInstance.update()
     }
@@ -123,14 +123,16 @@ class PeopleHRMigration {
   };
 
   static _allocationBuilder(day, token, shouldUpdate) {
+    // TODO extract variables for end and start date. Set strict format
+    // IDEA cover this scope with tests
     let output = {
       csrfToken: token,
-      endDay: moment(day.item.EndDate).get('day'),
+      endDay: moment(day.item.EndDate).get('date'),
       endMonth: moment(day.item.EndDate).get('month') + 1,
       endYear: moment(day.item.EndDate).get('year'),
       personId: day.forecastMemberId,
       projectId: day.forecastProjectId,
-      startDay: moment(day.item.StartDate).get('day'),
+      startDay: moment(day.item.StartDate).get('date'),
       startMonth: moment(day.item.StartDate).get('month') + 1,
       startYear: moment(day.item.StartDate).get('year'),
       sunday: 0,
