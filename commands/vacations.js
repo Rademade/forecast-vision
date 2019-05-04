@@ -27,8 +27,6 @@ class PeopleHRMigration {
     this.endDate = moment().add(5, 'weeks').startOf('week').subtract(1, 'day');
   }
 
-
-  // TODO split method
   async updateHolidaysAndAbsence() {
     const CHUNK_SIZE = 25;
     const SLEEP_TIME = 60;

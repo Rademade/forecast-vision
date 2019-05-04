@@ -5,7 +5,10 @@ const MemberSchema = new mongoose.Schema({
     togglId: String,
     forecastId: String,
     email: String,
-    peopleHRId: String,
+    peopleHRId: {
+        type: String,
+        required: false
+    },
     actualUtilization: {
         type: Number,
         default: 100

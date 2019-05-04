@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --verbose --forceExit --detectOpenHandles",
     "start": "node app.js --start",
     "send-report": "node app.js --send-report",
     "collect-holidays": "node app.js --collect-holidays"
@@ -25,6 +29,7 @@
     "graphql-client": "^2.0.1",
     "graphql-request": "^1.5.1",
     "graphql-tag": "^2.8.0",
+    "jest": "^24.7.1",
     "lodash": "^4.17.5",
     "mailgun-js": "^0.22.0",
     "moment": "^2.21.0",
