@@ -1,3 +1,7 @@
+// TODO extract to email configuration
+mixin space()
+    | !{' '}
+
 doctype html
 html
     head
@@ -8,7 +12,9 @@ html
             meta(name="x-apple-disable-message-reformatting")
             link(rel="stylesheet", href="style.css", data-inline)
     body
-        - isBillableNotification = lastWeekReport.isGoodAccuracy() && lastWeekReport.isGoodFactReport()
+        // TODO change for a team verification
+        - isBillableNotification = !lastWeekReport.isNormalBillableHours()
+        - hasToCheckToggl = !lastWeekReport.isGoodAccuracy() && !lastWeekReport.isNormalBillableHours()
         - isForecastEmpty = currentWeekReport && !currentWeekReport.isNormalBillableHours()
         - isToggleEmptyProject = lastWeekReport.isTasksWithoutProjects()
         - weekKinds = ['хорошей', 'замечательной', 'классной', 'приличной', 'недурственной', 'продуктивной', 'плодотворной']
@@ -19,31 +25,68 @@ html
         } src="https://avatars0.githubusercontent.com/u/6436057?s=200&v=4" alt="Rademade Logo")
 
         p(style={'margin-top': '16px'}) #{lastWeekReport.getName()}, привет.
+        br
 
         if isBillableNotification
-            p Твой процент billable часов на прошлой неделе составил #{lastWeekReport.getFactBillablePercent()}%, а планировалось #{lastWeekReport.getPlanningBillablePercent()}% загрузки.
-            p Попробуй следующее:
-            ul
-                li Пересмотри свой <a href="https://toggl.com/app/reports/summary/197313/period/prevWeek/users/#{currentWeekReport.getMemberTogglId()}">toggl отчет</a>
-                li Скажи, если тебе нужна помощь в этом вопросе
+            p Твой процент billable часов на
+                +space
+                b прошлой неделе
+                +space
+                span составил #{lastWeekReport.getFactBillablePercent()}%.
+            p Это не айс. Почему –
+                +space
+                a(href="https://rademade.atlassian.net/wiki/spaces/lifework/pages/1354006571/Rademade") можно узнать тут.
 
-        if isForecastEmpty
-            // TODO use const 80%
-            p(style={'margin-top': '16px'}) На эту неделю у тебя планируется #{currentWeekReport.getPlanningBillablePercent() || 0}% загрузки. Минимальный показатель должен быть 80%, если не считать отпуск/больничный.
-            p Стоит сделать следующее:
+            p Но, не отчаиваемся. Давай попробуем следующее:
+
             ul
-                li Поверить корректно ли заполен прогноз на <a href="https://app.forecast.it/scheduling">Forecast.it</a>
-                li Поговорить с командой о необходимости проекта. Представитель поднимет этот вопрос на RTeamsWeekly.
+                li Посмотрим твой <a href="https://toggl.com/app/reports/summary/197313/period/prevWeek/users/#{currentWeekReport.getMemberTogglId()}">toggl отчет</a>
+                    +space
+                    span за прошлую неделю. Возможно, там есть то, что ты не учел.
+
+                if hasToCheckToggl
+                    li Еще, стоит поработать над точностью планирования.
+                        +space
+                        span За прошлую неделю она #{lastWeekReport.getPlanningAccuracyPercent()}%.
+                        +space
+                        span Есть зоны роста ;)
+
+                li Возможно, вашей команде нужен проект или стоит оптимизировать, лучше организовать, свою работу.
+                li Скажи, если тебе нужна помощь в каком-то из этих вопросов.
+                    +space
+                    span Ты всегда можешь попросить помощи через представителя
+                    +space
+                    a(href="https://rademade.atlassian.net/wiki/spaces/rademade/pages/864256006/RademadeTeams") на встрече RTeamsWeekly.
+            br
 
         if isToggleEmptyProject
-            p Важный момент, у тебя есть задачи в Toggl без прикрепленного проекта
+            p Важный момент, у тебя есть задачи в Toggl без прикрепленного проекта.
             ul
-                li Просмотри пожалуйста свой <a href="https://toggl.com/app/reports/summary/197313/period/prevWeek/projects/0/users/#{currentWeekReport.getMemberTogglId()}">toggl за прошлую и текущую неделю</a> и прикрепи задачи к проектам
-                li Если проекта над которым ты работал нет, добавь его, или обратись к тому, кто сможет это сделать
- 
+                li Просмотри пожалуйста свой <a href="https://toggl.com/app/reports/summary/197313/period/prevWeek/projects/0/users/#{currentWeekReport.getMemberTogglId()}">toggl за прошлую и текущую неделю</a> и прикрепи задачи к проектам.
+                li Если проекта над которым ты работал нет, добавь его, или обратись к тому, кто сможет это сделать.
+            br
+
+        if isForecastEmpty
+            p(style={'margin-top': '16px'}) На
+                +space
+                b эту неделю
+                +space
+                span у тебя планируется #{currentWeekReport.getPlanningBillablePercent() || 0}% загрузки.
+                +space
+                span Минимальный показатель должен быть 80%, если не считать отпуск/больничный.
+                // TODO use const 80%
+
+            p Стоит сделать следующее:
+            ul
+                li Поверить корректно ли заполнен прогноз на
+                    +space
+                    a(href="https://app.forecast.it/scheduling") Forecast.it
+                li Поговорить с командой о необходимости проекта. Представитель поднимет этот вопрос на RTeamsWeekly.
+            br
+
         if !isBillableNotification && !isForecastEmpty && !isToggleEmptyProject
            p Спасибо, что клево ведешь forecast, toggl. Ты красавчик ❤
+           br
 
-        br
         p  Желаю тебе #{_.sample(weekKinds)} недели!
         p  С любовью, Rademade Vision

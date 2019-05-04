@@ -41,10 +41,6 @@ class ReportMember extends CollectionItem {
         return this.getPlanningAccuracyPercent() > GOOD_ACCURACY
     }
 
-    isGoodFactReport () {
-        return this.getFactBillablePercent() < NORMAL_BILLABLE_PERCENTAGE
-    }
-
     getName() {
         return this.userName
     }
