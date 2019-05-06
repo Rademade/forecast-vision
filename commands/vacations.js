@@ -80,7 +80,7 @@ class PeopleHRMigration {
   async processDeleted (list, strategy, circleMemberId) {
     const leaveDays = await mongoose.model('LeaveDay').find({
       'type': strategy.PROJECT_TYPE,
-      'item.StartDate': {$gte: this.startDate.format('YYYY-MM-DD')}
+      'item.StartDate': {$gte: this.startDate.format(LeaveDayItem.DATE_FORMAT)}
     });
 
     for (let day of leaveDays) {
@@ -94,7 +94,7 @@ class PeopleHRMigration {
 
   async updateMethodForecastAllocation() {
     const leaveDays = await mongoose.model('LeaveDay').find({
-      'item.StartDate': {$gte: this.startDate.format('YYYY-MM-DD')}
+      'item.StartDate': {$gte: this.startDate.format(LeaveDayItem.DATE_FORMAT)}
     });
     const apiLoader = new ForecastScrapingAuth();
 
@@ -121,18 +121,21 @@ class PeopleHRMigration {
   };
 
   static _allocationBuilder(day, token, shouldUpdate) {
+    const startDate = moment(day.item.StartDate).format(LeaveDayItem.DATE_FORMAT);
+    const endDate = moment(day.item.EndDate).format(LeaveDayItem.DATE_FORMAT);
+
     // TODO extract variables for end and start date. Set strict format
     // IDEA cover this scope with tests
     let output = {
       csrfToken: token,
-      endDay: moment(day.item.EndDate).get('date'),
-      endMonth: moment(day.item.EndDate).get('month') + 1,
-      endYear: moment(day.item.EndDate).get('year'),
+      endDay: moment(endDate).get('date'),
+      endMonth: moment(endDate).get('month'),
+      endYear: moment(endDate).get('year'),
       personId: day.forecastMemberId,
       projectId: day.forecastProjectId,
-      startDay: moment(day.item.StartDate).get('date'),
-      startMonth: moment(day.item.StartDate).get('month') + 1,
-      startYear: moment(day.item.StartDate).get('year'),
+      startDay: moment(startDate).get('date'),
+      startMonth: moment(startDate).get('month'),
+      startYear: moment(startDate).get('year'),
       sunday: 0,
       monday: 480 * day.item.DurationDays,
       tuesday: 480 * day.item.DurationDays,

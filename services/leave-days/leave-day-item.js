@@ -24,5 +24,6 @@ class LeaveDayItem {
 LeaveDayItem.NEW_STATUS = 0;
 LeaveDayItem.SHOULD_UPDATE = 1;
 LeaveDayItem.SHOULD_DELETE = 2;
+LeaveDayItem.DATE_FORMAT = 'YYYY-MM-DD';
 
 module.exports.LeaveDayItem = LeaveDayItem;
