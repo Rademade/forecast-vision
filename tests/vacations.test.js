@@ -100,7 +100,6 @@ describe('Vacation Command', () => {
 
   describe ('PeopleHRMigration._allocationBuilder', () => {
     it ('should create correct dates from db object', () => {
-      console.log(vacationCommand)
       let allocationObject = PeopleHRMigration._allocationBuilder(leaveDaysFake[0], csrfToken)
 
       let startDate = moment()
