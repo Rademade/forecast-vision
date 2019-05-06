@@ -120,22 +120,25 @@ class PeopleHRMigration {
     })
   };
 
+  /**
+   * Important! get('month') + 1 is needed for forecast api, by default moment get month is zero-indexed!
+   */
   static _allocationBuilder(day, token, shouldUpdate) {
-    const startDate = moment(day.item.StartDate).format(LeaveDayItem.DATE_FORMAT);
-    const endDate = moment(day.item.EndDate).format(LeaveDayItem.DATE_FORMAT);
+    const startDate = moment(day.item.StartDate, LeaveDayItem.DATE_FORMAT);
+    const endDate = moment(day.item.EndDate, LeaveDayItem.DATE_FORMAT);
 
     // TODO extract variables for end and start date. Set strict format
     // IDEA cover this scope with tests
     let output = {
       csrfToken: token,
-      endDay: moment(endDate).get('date'),
-      endMonth: moment(endDate).get('month'),
-      endYear: moment(endDate).get('year'),
+      endDay: endDate.get('date'),
+      endMonth: endDate.get('month') + 1,
+      endYear: endDate.get('year'),
       personId: day.forecastMemberId,
       projectId: day.forecastProjectId,
-      startDay: moment(startDate).get('date'),
-      startMonth: moment(startDate).get('month'),
-      startYear: moment(startDate).get('year'),
+      startDay: startDate.get('date'),
+      startMonth: startDate.get('month') + 1,
+      startYear: startDate.get('year'),
       sunday: 0,
       monday: 480 * day.item.DurationDays,
       tuesday: 480 * day.item.DurationDays,

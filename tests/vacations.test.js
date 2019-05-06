@@ -15,10 +15,33 @@ jest.mock('../services/forecast/scraping-auth');
  */
 const {Member} = require('../models/member');
 
+const api = 'api';
+const csrfToken = 'gfgjlnrjegfr33';
+
+const mockAllocationMethods = () => {
+  PeopleHRMigration.prototype.updateForecastAllocation = jest.fn();
+
+  PeopleHRMigration.prototype.createForecastAllocation = jest.fn();
+
+  PeopleHRMigration.prototype.deleteForecastAllocation = jest.fn();
+};
+
+const mockScrappingAuth = () => {
+  ForecastScrapingAuth.mockImplementation(() => {
+    return {
+      ready: async (callback) => {
+        await callback(api, csrfToken)
+      },
+    };
+  });
+};
+
+const insertFakeLeaveDays = async () => {
+  await LeaveDay.collection.insertMany(leaveDaysFake)
+};
+
 
 describe('Vacation Command', () => {
-  const api = 'api';
-  const csrfToken = 'gfgjlnrjegfr33';
   let vacationCommand;
 
   beforeEach(() => {
@@ -31,8 +54,6 @@ describe('Vacation Command', () => {
 
 
   describe('PeopleHRMigration.updateHolidaysAndAbsence', () => {
-    const memberHasPeoplehrIdString = (member) => typeof member.peopleHRId === 'string';
-
     beforeEach(async() => {
       await Member.collection.insertMany(membersFake)
     });
@@ -41,38 +62,22 @@ describe('Vacation Command', () => {
       let members = await Member.getMembersForHolidaysSync();
 
       expect(members.length).toEqual(2);
-
-      expect(members.every(memberHasPeoplehrIdString)).toBeTruthy();
     })
   });
 
   describe('PeopleHRMigration.updateMethodForecastAllocation',() => {
     beforeEach(async () => {
-      PeopleHRMigration.prototype.updateForecastAllocation = jest.fn();
+      mockAllocationMethods();
 
-      PeopleHRMigration.prototype.createForecastAllocation = jest.fn();
+      mockScrappingAuth();
 
-      PeopleHRMigration.prototype.deleteForecastAllocation = jest.fn();
-
-      ForecastScrapingAuth.mockImplementation(() => {
-        return {
-          ready: async (callback) => {
-            callback(api, csrfToken)
-          },
-        };
-      });
-
-      await LeaveDay.collection.insertMany(leaveDaysFake)
+      await insertFakeLeaveDays()
     });
 
-    it ('should loop through leaveDays and call create | update | delete method for allocation', async () => {
+    it ('should loop through leaveDays and call create method for allocation', async () => {
       await vacationCommand.updateMethodForecastAllocation();
 
       expect(ForecastScrapingAuth).toHaveBeenCalledTimes(1);
-
-      expect(vacationCommand.createForecastAllocation).toHaveBeenCalledTimes(1);
-      expect(vacationCommand.updateForecastAllocation).toHaveBeenCalledTimes(1);
-      expect(vacationCommand.deleteForecastAllocation).toHaveBeenCalledTimes(1);
 
       expect(vacationCommand.createForecastAllocation).toHaveBeenLastCalledWith(
         api,
@@ -80,6 +85,15 @@ describe('Vacation Command', () => {
           item: leaveDaysFake[0].item
         }),
         csrfToken);
+      // TODO mocks should return promise
+
+      // TODO check item with status SHOULD_DELETE is not present in db anymore
+    });
+
+    it ('should loop through leaveDays and call update method for allocation', async () => {
+      await vacationCommand.updateMethodForecastAllocation();
+
+      expect(ForecastScrapingAuth).toHaveBeenCalledTimes(1);
 
       expect(vacationCommand.updateForecastAllocation).toHaveBeenLastCalledWith(
         api,
@@ -87,16 +101,19 @@ describe('Vacation Command', () => {
           item: leaveDaysFake[1].item
         }),
         csrfToken);
+    });
+
+    it ('should loop through leaveDays and call delete method for allocation', async () => {
+      await vacationCommand.updateMethodForecastAllocation();
+
+      expect(ForecastScrapingAuth).toHaveBeenCalledTimes(1);
 
       expect(vacationCommand.deleteForecastAllocation).toHaveBeenLastCalledWith(
         api,
         expect.any(String),
         csrfToken);
-      // TODO mocks should return promise
-
-      // TODO check item with status SHOULD_DELETE is not present in db anymore
     })
-  })
+  });
 
   describe ('PeopleHRMigration._allocationBuilder', () => {
     it ('should create correct dates from db object', () => {
@@ -104,13 +121,13 @@ describe('Vacation Command', () => {
 
       let startDate = moment()
         .set('year', allocationObject.startYear)
-        .set('month', allocationObject.startMonth)
+        .set('month', allocationObject.startMonth - 1)
         .set('date', allocationObject.startDay)
         .format(LeaveDayItem.DATE_FORMAT);
 
       let endDate = moment()
         .set('year', allocationObject.endYear)
-        .set('month', allocationObject.endMonth)
+        .set('month', allocationObject.endMonth - 1)
         .set('date', allocationObject.endDay)
         .format(LeaveDayItem.DATE_FORMAT);
 
