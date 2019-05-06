@@ -6,7 +6,6 @@
   "directories": {
     "test": "tests"
   },
-
   "scripts": {
     "test": "jest --verbose --forceExit --detectOpenHandles",
     "start": "node app.js --start",

@@ -2,6 +2,7 @@ require('dotenv').config();
 require('./startup');
 
 const moment = require('moment');
+const mongoose = require('mongoose');
 const {PeopleHRMember} = require('../services/people-hr/member');
 const {PeopleHRMigration} = require('../commands/vacations');
 const {LeaveDayItem} = require('../services/leave-days/leave-day-item');
@@ -48,18 +49,34 @@ describe('Vacation Command', () => {
 
   describe('PeopleHRMigration.updateMethodForecastAllocation',() => {
     beforeEach(async () => {
-      // TODO mock create | update | delete allocation
+      PeopleHRMigration.prototype.updateForecastAllocation = jest.fn(() => {
+        return console.log('update!!!!!!!!!!!!!')
+      });
+
+      PeopleHRMigration.prototype.createForecastAllocation = jest.fn(() => {
+        return console.log('create!!!!!!!!!!!!!')
+      });
+
+      PeopleHRMigration.prototype.deleteForecastAllocation = jest.fn((api, allocationId, csrfToken) => {
+        return console.log('delete!!!!!!!!!!!!!')
+      });
+
       ForecastScrapingAuth.mockImplementation(() => {
         return {
-          ready: (callback) => {
+          ready: async (callback) => {
+            const api = 'api';
+            const csrfToken = 'gfgjlnrjegfr33';
+
             // Todo call calback with aruments api and token
+            callback(api, csrfToken)
           },
         };
       });
 
       await LeaveDay.collection.insertMany([
-        {"_id":"5cc01dd09ae62f6b51622845","item":{"AbsenceLeaveTxnId":2964119,"StartDate":"2018-11-02","EndDate":"2018-11-02","DurationDays":"1.00","DurationInDaysThisPeriod":"1.00","PartOfDay":"","BackToWorkInterviewRequried":true,"BackToWorkInterviewDate":"","MedicalCertificateType":1,"MedicalCertificateReceivedDate":"","Reason":"Cold/Flu","Comments":[],"AbsencePaidStatus":1,"EmergencyLeave":false,"ReferenceId":""},"forecastMemberId":"Q2FyZExpc3RDYXJkOjE1MTA5NQ==","forecastProjectId":"UHJvamVjdFR5cGU6NDQ4MzM=","type":0,"status":1,"__v":0},
-        {"_id":"5cc01dd09ae62f6b51622847","item":{"AbsenceLeaveTxnId":3189381,"StartDate":"2019-01-14","EndDate":"2019-01-14","DurationDays":"1.00","DurationInDaysThisPeriod":"1.00","PartOfDay":"","BackToWorkInterviewRequried":false,"BackToWorkInterviewDate":"","MedicalCertificateType":0,"MedicalCertificateReceivedDate":"","Reason":"Больничный / Sick leave","Comments":[],"AbsencePaidStatus":2,"EmergencyLeave":false,"ReferenceId":""},"forecastMemberId":"Q2FyZExpc3RDYXJkOjE1MTA5NQ==","forecastProjectId":"UHJvamVjdFR5cGU6NDQ4MzM=","type":0,"status":1,"__v":0}
+        {"_id":"5cc01dd09ae62f6b51622845","item":{"AbsenceLeaveTxnId":2964119,"StartDate":"2019-03-14","EndDate":"2019-03-14","DurationDays":"1.00","DurationInDaysThisPeriod":"1.00","PartOfDay":"","BackToWorkInterviewRequried":true,"BackToWorkInterviewDate":"","MedicalCertificateType":1,"MedicalCertificateReceivedDate":"","Reason":"Cold/Flu","Comments":[],"AbsencePaidStatus":1,"EmergencyLeave":false,"ReferenceId":""},"forecastMemberId":"Q2FyZExpc3RDYXJkOjE1MTA5NQ==","forecastProjectId":"UHJvamVjdFR5cGU6NDQ4MzM=","type":0,"status":0,"__v":0},
+        {"_id":"5cc01dd09ae62f6b51622847","item":{"AbsenceLeaveTxnId":3189381,"StartDate":"2019-01-14","EndDate":"2019-01-14","DurationDays":"1.00","DurationInDaysThisPeriod":"1.00","PartOfDay":"","BackToWorkInterviewRequried":false,"BackToWorkInterviewDate":"","MedicalCertificateType":0,"MedicalCertificateReceivedDate":"","Reason":"Больничный / Sick leave","Comments":[],"AbsencePaidStatus":2,"EmergencyLeave":false,"ReferenceId":""},"forecastMemberId":"Q2FyZExpc3RDYXJkOjE1MTA5NQ==","forecastProjectId":"UHJvamVjdFR5cGU6NDQ4MzM=","type":0,"status":1,"__v":0},
+        {"_id":"5ccec0a8c16ecd1b48cfc0ce","item":{"AbsenceLeaveTxnId":3411150,"StartDate":"2019-04-30","EndDate":"2019-04-30","DurationDays":"1.00","DurationInDaysThisPeriod":"1.00","PartOfDay":"","BackToWorkInterviewRequried":false,"BackToWorkInterviewDate":"","MedicalCertificateType":0,"MedicalCertificateReceivedDate":"","Reason":"Больничный / Sick leave","Comments":[],"AbsencePaidStatus":2,"EmergencyLeave":false,"ReferenceId":""},"forecastMemberId":"UGVyc29uOjc2NDE3","forecastProjectId":"UHJvamVjdFR5cGU6NDQ4MzM=","type":0,"status":2,"__v":0}
       ])
     });
 
@@ -68,6 +85,9 @@ describe('Vacation Command', () => {
 
       expect(ForecastScrapingAuth).toHaveBeenCalledTimes(1);
 
+      expect(vacationCommand.createForecastAllocation).toHaveBeenCalledTimes(1);
+      expect(vacationCommand.updateForecastAllocation).toHaveBeenCalledTimes(1);
+      expect(vacationCommand.deleteForecastAllocation).toHaveBeenCalledTimes(1);
       // TODO check that mocked functions were called with arguments and date
       // TODO check item with status SHOULD_DELETE is not present in db anymore
     })
