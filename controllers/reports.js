@@ -29,7 +29,7 @@ class ReportsController {
             projectTypeToString: (type) =>  { //TODO move to helpers file
                 if (type === ReportProject.PROJECT_TYPE_A) return "Good";
                 if (type === ReportProject.PROJECT_TYPE_B || type === ReportProject.PROJECT_TYPE_C) return "Ok";
-                if (type === ReportProject.PROJECT_TYPE_D) return "Bad";
+                return "Bad";
             }
         });
     }
