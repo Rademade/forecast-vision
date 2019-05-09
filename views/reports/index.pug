@@ -2,7 +2,6 @@ extends ../layouts/week-report
 
 include ../blocks/company-health
 include ../blocks/bench-members
-include ../blocks/project-list
 include ../blocks/report-teams
 
 block table_body
@@ -29,10 +28,6 @@ block table_body
 
         tr
             +benchMembers(weeksData)
-
-        tr
-            +projectList(weeksData)
-
 
 
 

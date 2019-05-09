@@ -31,6 +31,7 @@ class ReportDataBuilder {
     constructor(startDate, endDate, forecastMembers, allocationReport, togglReport) {
         this.startDate = startDate;
         this.endDate = endDate;
+        this.dateRange = moment.range(startDate, endDate);
         this.range = moment.range(startDate, endDate);
         this.allocationReport = allocationReport;
         this.togglReport = togglReport;
@@ -96,7 +97,7 @@ class ReportDataBuilder {
         // Build projects from toggl side
         for (let togglProject of this.togglReport.getProjectsList().getProjects()) {
             let projectDocument = await ProjectModel.getByTogglProject(togglProject);
-            let project = new ReportProject(togglProject.getName(), true, togglProject, projectDocument);
+            let project = new ReportProject(togglProject.getName(), true, togglProject, projectDocument, this.dateRange);
             projectsCollection.addProject( project );
         }
 
@@ -104,7 +105,7 @@ class ReportDataBuilder {
         for (let matchedItem of this.allocationReport.getMatchedAllocation(this.range)) {
             let allocation = matchedItem.getAllocation();
             let projectDocument = await  ProjectModel.getByForecastAllocation( allocation );
-            let project = new ReportProject(allocation.getProjectName(), allocation.isBillable(), TogglReportProject.initNull(), projectDocument);
+            let project = new ReportProject(allocation.getProjectName(), allocation.isBillable(), TogglReportProject.initNull(), projectDocument, this.dateRange);
             projectsCollection.addProject( project );
             projectsCollection.addMatchedAllocationItem( matchedItem );
         }

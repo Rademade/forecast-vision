@@ -40,9 +40,15 @@ class ReportProjectList extends CollectionList {
      * @return {ReportProject[]}
      */
     getBillableProjects() {
-        return this.getAllProjects().filter((project) => {
+        if (this.billableProjects) return this.billableProjects;
+
+        this.billableProjects = _.sortBy(this.getAllProjects().filter((project) => {
             return project.isBillable();
-        });
+        }), (project) => {
+            return project.getTotalDuration();
+        }).reverse();
+
+        return this.billableProjects;
     }
 
     /**
