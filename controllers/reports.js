@@ -1,6 +1,7 @@
 const moment = require('moment');
 
 const { ReportLoaderFactory } = require('../services/report-loader-factory');
+const { ReportProject } = require('../services/report/project');
 
 const Project = require('../models/project');
 
@@ -23,7 +24,14 @@ class ReportsController {
     static async monthReport(req, res) {
         const monthsReport = await ReportLoaderFactory.getMonthsReport();
 
-        res.render('reports/month-report', {monthsReport: monthsReport});
+        res.render('reports/month-report', {
+            monthsReport: monthsReport,
+            projectTypeToString: (type) =>  { //TODO move to helpers file
+                if (type === ReportProject.PROJECT_TYPE_A) return "Good";
+                if (type === ReportProject.PROJECT_TYPE_B || type === ReportProject.PROJECT_TYPE_C) return "Ok";
+                return "Bad";
+            }
+        });
     }
 
     static async matrixReport(req, res) {

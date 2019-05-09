@@ -1,5 +1,10 @@
-mixin reportProjects(reports)
-    - var maxIndex = reports.length - 1
+mixin reportProjects(reports, opts)
+    // Options:
+    //  displayTypes: Boolean
+
+    - let maxIndex = reports.length - 1
+
+
     each report, index in reports
         td.week-info.rotation
             table.simple-table
@@ -8,7 +13,15 @@ mixin reportProjects(reports)
                     td Planned h.
                     td Fact h.
                     td Accuracy %
+
+                - let displayType = null;
                 each project in report.getProjectList().getBillableProjects()
+
+                    if opts && opts.displayTypes && displayType !== projectTypeToString(project.getProjectType())
+                        - displayType = projectTypeToString(project.getProjectType())
+                        tr
+                            td.table-head(colspan=4)
+                                i Class "#{displayType}"
                     tr
                         td
                             span.project-name #{project.getName()}
