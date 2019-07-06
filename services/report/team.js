@@ -7,7 +7,7 @@ class ReportTeam extends MembersCircle {
         membersList.getAllMembers().forEach(function(member) {
             let name = member.getTeamName();
             if (!name || name === 'null') {
-                name = "No Team"
+                name = "OpenSpace"
             }
             if (!teams[name]) {
                 teams[name] = new ReportTeam( name );

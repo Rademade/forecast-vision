@@ -32,7 +32,7 @@ class ReportMembersList extends MembersCircle {
      */
     addMatchedAllocationItem(matchedItem) {
 
-        // Variant 1. Search by name
+        // Option 1. Search by name
 
         let slug = matchedItem.getAllocation().getMemberName();
         let member = this.items[ slug ];
@@ -43,7 +43,7 @@ class ReportMembersList extends MembersCircle {
         }
 
 
-        // Variant 2. Search by forecastId
+        // Option 2. Search by forecastId
 
         member =_.find(this.getAllMembers(), (member) => {
             return member.getForecastId() === matchedItem.getAllocation().getMemberId();
@@ -54,7 +54,7 @@ class ReportMembersList extends MembersCircle {
             return true;
         }
 
-        // Variant 3
+        // Option 3
         console.log(slug + ' member not found. Please check member list and Forecast');
         return false;
     }
