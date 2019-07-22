@@ -29,7 +29,11 @@ class ReportMember extends CollectionItem {
         this.memberDocument = memberDocument;
     }
 
-    isNormalBillableHours () {
+    isNormalBillableFactHours () {
+        return this.getFactBillablePercent() >= NORMAL_BILLABLE_PERCENTAGE
+    }
+
+    isNormalBillablePlanHours () {
         return this.getPlanningBillablePercent() >= NORMAL_BILLABLE_PERCENTAGE
     }
 

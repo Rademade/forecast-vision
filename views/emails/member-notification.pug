@@ -13,9 +13,9 @@ html
             link(rel="stylesheet", href="style.css", data-inline)
     body
         // TODO change for a team verification
-        - isBillableNotification = !lastWeekReport.isNormalBillableHours()
-        - hasToCheckToggl = !lastWeekReport.isGoodAccuracy() && !lastWeekReport.isNormalBillableHours()
-        - isForecastEmpty = currentWeekReport && !currentWeekReport.isNormalBillableHours()
+        - isBillableNotification = !lastWeekReport.isNormalBillableFactHours()
+        - hasToCheckToggl = !lastWeekReport.isGoodAccuracy() && !lastWeekReport.isNormalBillablePlanHours()
+        - isForecastEmpty = currentWeekReport && !currentWeekReport.isNormalBillablePlanHours()
         - isToggleEmptyProject = lastWeekReport.isTasksWithoutProjects()
         - weekKinds = ['хорошей', 'замечательной', 'классной', 'приличной', 'недурственной', 'продуктивной', 'плодотворной']
 
