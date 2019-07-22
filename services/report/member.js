@@ -30,7 +30,7 @@ class ReportMember extends CollectionItem {
     }
 
     isNormalBillableHours () {
-        return this.getPlanningBillablePercent() >= NORMAL_BILLABLE_PERCENTAGE
+        return this.getFactBillablePercent() >= NORMAL_BILLABLE_PERCENTAGE
     }
 
     isTasksWithoutProjects () {
