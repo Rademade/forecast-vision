@@ -26,22 +26,22 @@ mixin reportTeams(reports)
                             table.simple-table
                                 tr.table-head
                                     td
-                                        span(title="") Name
+                                        span Name
                                     td
-                                        span(title="Planned billable hours") Planned
+                                        span(title="Planned billable hours") Plan (h)
                                     td
-                                        span(title="Holidays and slick leaves removed from planned hours") LOA
+                                        span(title="Holidays and slick leaves removed from planned hours") LOA (h)
                                     td
-                                        span(title="") Fact
+                                        span Fact (h)
                                 each member in team.getAllMembers()
                                     //TODO Add styles for numbers
                                     tr
                                         td
                                             span() #{member.getName()}
                                         td
-                                            span(title="Available: #{member.getAvailableDuration()}") #{member.getBillableDuration()}
+                                            span(title="Available: " + member.getAvailableDuration() + "h.") #{member.getBillableDuration()}
                                         td
-                                            span(title="") #{member.getTotalLeaveDaysDuration()}
+                                            span() #{member.getTotalLeaveDaysDuration()}
                                         td
-                                            span(title="Accuracy #{member.getPlanningAccuracyPercent()}%") #{member.getFactBillableDuration()}
+                                            span(title="Accuracy: " + member.getPlanningAccuracyPercent() + "%") #{member.getFactBillableDuration()}
 
