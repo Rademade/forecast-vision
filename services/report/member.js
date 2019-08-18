@@ -218,9 +218,9 @@ class ReportMember extends CollectionItem {
         return [
             'https://toggl.com/app/reports/summary/197313/from',
             'from',
-            member.getRange().start.format('YYYY-MM-DD'),
+            this.getRange().start.format('YYYY-MM-DD'),
             'to',
-            member.getRange().end.format('YYYY-MM-DD'),
+            this.getRange().end.format('YYYY-MM-DD'),
             'users',
             this.getMemberTogglId(),
             "billable",
