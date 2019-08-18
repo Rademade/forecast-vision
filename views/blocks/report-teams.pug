@@ -43,5 +43,9 @@ mixin reportTeams(reports)
                                         td
                                             span() #{member.getTotalLeaveDaysDuration()}
                                         td
-                                            span(title="Accuracy: " + member.getPlanningAccuracyPercent() + "%") #{member.getFactBillableDuration()}
+                                            a(
+                                                href=member.getTogglLinkFact()
+                                                target="_blank"
+                                                title="Accuracy: " + member.getPlanningAccuracyPercent() + "%"
+                                            ) #{member.getFactBillableDuration()}
 

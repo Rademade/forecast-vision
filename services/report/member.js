@@ -11,14 +11,16 @@ const FORECAST_HOLIDAY_PROJECT_ID = 55;
 const FORECAST_ABSENCE_PROJECT_ID = 105;
 
 class ReportMember extends CollectionItem {
+
     /**
      * @param name
      * @param roleName
      * @param forcastAvailableMinutes
      * @param {TogglReportUser} togglFactReport
      * @param {Member} memberDocument
+     * @param {DateRange} range
      */
-    constructor(name, roleName, forcastAvailableMinutes = 0, togglFactReport, memberDocument) {
+    constructor(name, roleName, forcastAvailableMinutes = 0, togglFactReport, memberDocument, range) {
         super();
         this.userName = (name + '').trim();
         this.email = memberDocument.email || null;
@@ -27,6 +29,14 @@ class ReportMember extends CollectionItem {
         this.matchedAllocations = [];
         this.togglFactReport = togglFactReport;
         this.memberDocument = memberDocument;
+        this.range = range;
+    }
+
+    /**
+     * @returns {DateRange}
+     */
+    getRange() {
+        return this.range;
     }
 
     isNormalBillableFactHours () {
@@ -197,6 +207,25 @@ class ReportMember extends CollectionItem {
 
     getFactBillablePercent () {
         return this.getFactBillableDuration().getRatio( this.getAvailableDuration() );
+    }
+
+    /**
+     * @TODO extact toggl link creation service
+     *
+     * @returns {string}
+     */
+    getTogglLinkFact() {
+        return [
+            'https://toggl.com/app/reports/summary/197313/from',
+            'from',
+            member.getRange().start.format('YYYY-MM-DD'),
+            'to',
+            member.getRange().end.format('YYYY-MM-DD'),
+            'users',
+            this.getMemberTogglId(),
+            "billable",
+            "yes"
+        ].join("/");
     }
 
     /**

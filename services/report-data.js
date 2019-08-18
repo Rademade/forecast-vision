@@ -36,6 +36,9 @@ class ReportData {
         return this.startDate.format('MMMM');
     }
 
+    /**
+     * @returns {DateRange}
+     */
     getRange() {
         return this.range;
     }
