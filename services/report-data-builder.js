@@ -64,7 +64,8 @@ class ReportDataBuilder {
                 '',
                 0,
                 togglUser,
-                memberDocument
+                memberDocument,
+                this.range
             ));
         }
 
@@ -75,7 +76,8 @@ class ReportDataBuilder {
                 forecastMember.getRoleName(),
                 forecastMember.getAvailableMinutes(this.startDate, this.endDate),
                 TogglReportUser.null(),
-                memberDocument
+                memberDocument,
+                this.range
             ));
         }
 
