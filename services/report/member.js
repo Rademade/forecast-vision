@@ -216,7 +216,7 @@ class ReportMember extends CollectionItem {
      */
     getTogglLinkFact() {
         return [
-            'https://toggl.com/app/reports/summary/197313/from',
+            'https://toggl.com/app/reports/summary/197313',
             'from',
             this.getRange().start.format('YYYY-MM-DD'),
             'to',
