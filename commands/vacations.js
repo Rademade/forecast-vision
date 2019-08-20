@@ -155,7 +155,7 @@ class PeopleHRMigration {
       day.set('forecastAllocationId', response.data.createAllocation.allocation.node.id);
       await day.save();
     } catch (error) {
-      console.log('Raised error on allocation creation');
+      console.log('Raised error on allocation creation', error);
     }
   }
 
@@ -165,7 +165,7 @@ class PeopleHRMigration {
       day.set('forecastAllocationId', response.data.updateAllocation.allocation.id);
       await day.save();
     } catch (error) {
-      console.log('Raised error on allocation update');
+      console.log('Raised error on allocation update', error);
       await this.createForecastAllocation(api, day, csrfToken);
     }
   }
@@ -174,7 +174,7 @@ class PeopleHRMigration {
     try {
       await api.deleteAllocation({csrfToken: csrfToken, id: allocationId});
     } catch (error) {
-      console.log('Raised error on allocation delete');
+      console.log('Raised error on allocation delete', error);
     }
   }
 }
