@@ -53,6 +53,10 @@ class Duration {
         return Math.round(number * 10000) / 100
     }
 
+    isSame(duration) {
+        return this.getMinutes() === duration.getMinutes();
+    }
+
     compare(duration) {
         return this.getMinutes() - duration.getMinutes();
     }

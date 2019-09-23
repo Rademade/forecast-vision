@@ -29,6 +29,12 @@ class ReportMember extends CollectionItem {
         this.memberDocument = memberDocument;
     }
 
+    isUnavailable() {
+        return this.getAvailableDuration().getMinutes() <= 0;
+    }
+
+    //TODO isVacationPeriod()
+
     isNormalBillableHours () {
         return this.getPlanningBillablePercent() >= NORMAL_BILLABLE_PERCENTAGE
     }
