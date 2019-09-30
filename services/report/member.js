@@ -43,7 +43,7 @@ class ReportMember extends CollectionItem {
         return this.getAvailableDuration().getMinutes() <= 0;
     }
 
-    //TODO isVacationPeriod()
+    //TODO isVacationPeriod() {}
 
     isNormalBillableFactHours () {
         return this.getFactBillablePercent() >= NORMAL_BILLABLE_PERCENTAGE

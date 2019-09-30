@@ -34,10 +34,11 @@ class TeamsController {
         }
     }
 
-    static create(req, res) {
+    static async create(req, res) {
         let team = new Team();
-        TeamsController._setParams(team, req.body).save();
-        TeamsController._sendResult(team, res);
+        let updatedTeam = await TeamsController._setParams(team, req.body);
+        updatedTeam.save();
+        TeamsController._sendResult(updatedTeam, res);
     }
 
     static async update(req, res) {
@@ -72,7 +73,6 @@ class TeamsController {
 
         if (body.representative && body.representative !== '') {
             let representativeMember = await document.getMemberById(body.representative);
-
             document.set({
                 representative: representativeMember
             });

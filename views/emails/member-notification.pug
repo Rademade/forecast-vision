@@ -13,7 +13,7 @@ html
             link(rel="stylesheet", href="style.css", data-inline)
     body
         // TODO change for a team verification
-        - isBillableNotification = !lastWeekReport.isUnavailable() && !lastWeekReport.isNormalBillableHours()
+        - isBillableNotification = !lastWeekReport.isUnavailable() && !lastWeekReport.isNormalBillableFactHours()
         - hasToCheckToggl = !lastWeekReport.isGoodAccuracy() && !lastWeekReport.isNormalBillablePlanHours()
         - isForecastEmpty = currentWeekReport && !currentWeekReport.isNormalBillablePlanHours()
         - isToggleEmptyProject = lastWeekReport.isTasksWithoutProjects()
