@@ -1,0 +1,12 @@
+extends ../layouts/index
+
+include ../blocks/bench-members
+
+block content
+    table(border="1")
+        tbody
+            tr
+                +benchMembers(weeksData)
+
+
+

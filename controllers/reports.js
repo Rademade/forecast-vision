@@ -11,8 +11,12 @@ class ReportsController {
 
     static async weekReport(req, res) {
         const weeksData = await ReportLoaderFactory.getWeeksRhythmReport();
-
         res.render('reports/index', {weeksData: weeksData});
+    }
+
+    static async currentBench(req, res) {
+        const weeksData = await ReportLoaderFactory.getCurrentWeekReport();
+        res.render('reports/current-bench', {weeksData: weeksData});
     }
 
     static async factReport(req, res) {

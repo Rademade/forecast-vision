@@ -61,6 +61,7 @@ app.delete('/teams/:id', TeamsController.delete);
 // Reports routes
 app.get('/', ReportsController.weekReport);
 app.get('/plan-fact', ReportsController.factReport);
+app.get('/current-bench', ReportsController.currentBench);
 app.get('/month-report', ReportsController.monthReport);
 app.get('/custom-report', ReportsController.customReport);
 app.get('/matrix', ReportsController.matrixReport);

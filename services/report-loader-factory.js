@@ -17,6 +17,16 @@ class ReportLoaderFactory {
         }).load();
     }
 
+    static async getCurrentWeekReport() {
+        let startDate = moment().startOf('week');
+        // If we use endOf function we have 59 second
+        let endDate = moment().add(2, 'weeks').startOf('week').subtract(1, 'day');
+
+        return await new ReportLoader(startDate, endDate, null, (startIntervalDate) => {
+            return startIntervalDate.clone().add(1, 'week');
+        }).load();
+    }
+
     static async getWeeksFactReport() {
         let startDate = moment().subtract(4, 'weeks').startOf('week');
         // If we use endOf function we have 59 second
