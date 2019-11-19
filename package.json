@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": "12.13.1"
+    "node": "10.17.0"
   },
   "dependencies": {
     "apollo-client-preset": "^1.0.8",
