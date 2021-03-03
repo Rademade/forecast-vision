@@ -35,7 +35,7 @@
     "moment-weekdaysin": "^1.0.1",
     "mongoose": "^5.2.5",
     "node-fetch": "^2.1.2",
-    "pug": "^2.0.3",
+    "pug": "^3.0.1",
     "request": "^2.85.0",
     "sleep": "^6.0.0",
     "toggl-api": "^1.0.1",
